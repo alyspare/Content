@@ -1,0 +1,35 @@
+BLYSSFUL CONTENT PLANNER - START HERE
+=====================================
+
+This is your Content Planner as your own web page, hosted in your GitHub
+account like your Personal Planner. It saves on each device and syncs,
+locked with your passphrase, through the same GitHub key and passphrase
+your Personal Planner already uses.
+
+PUT IT ON GITHUB (one time, on a computer)
+  1. On github.com: + (top right) > New repository. Name it Content,
+     set it to Public, and don't tick "Add a README". Create repository.
+  2. Click "uploading an existing file" and drag in everything inside
+     this Content folder (not the folder itself). Commit changes.
+  3. Settings > Pages > Deploy from a branch > main > / (root) > Save.
+  4. After a minute it's live at https://alyspare.github.io/Content/
+
+TURN IT ON
+  Open https://alyspare.github.io/Content/ in the same browser where
+  your Personal Planner syncs. It picks up the Planner's sync by itself.
+  On iPhone and iPad: open it in Safari, Share > Add to Home Screen.
+  If the button at the top says "Sync off", tap it and enter the same
+  GitHub key and passphrase you use in the Personal Planner.
+
+BRING YOUR POSTS OVER FROM CLAUDE (one time, on one device)
+  Tap the sync button at the top > Import file > pick
+  content-planner-move-from-claude.json. Your posts, follower counts,
+  tab order and preview photos come across and sync to your other devices.
+
+PERSONAL PLANNER
+  Your posts now show in the Personal Planner automatically. There's no
+  more Copy and Paste.
+
+UPDATES
+  When you get new files, open the repository > Add file > Upload files,
+  drag them in and commit. Your entries aren't affected.

@@ -1,0 +1,2396 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blyssful Content Planner</title>
+<meta name="theme-color" content="#707F5E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Content">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: tabs = pages. Page 1: month bar, top-performing strip, calendar (left) + analytics rail (right). Tasks open in a side panel. */
+  color-scheme: light;
+  --bg:#707F5E;
+  --on-bg:#FFFFFF;
+  --card:#FFFDF8;
+  --wash:#F5F0E6;
+  --ink:#1D2633;
+  --muted:#6B675F;
+  --line:#E6DECF;
+  --accent:#F0B7CE;
+  --accent-ink:#A8326A;
+  --sage-ink:#4A5838;
+  --font-display:"DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-accent:"Instrument Serif", Georgia, "Times New Roman", serif;
+
+  --ig-bg:#D6E8F5; --ig-fg:#17557F; --ig-mid:#2B7BB4;
+  --igs-bg:#E6F3FB; --igs-fg:#2F6F96; --igs-mid:#7CB8DE;
+  --tt-bg:#D3E3D6; --tt-fg:#1E4D2B; --tt-mid:#2F6B3E;
+  --yts-bg:#FCE7E5; --yts-fg:#B04640; --yts-mid:#EE958E;
+  --yt-bg:#F9D6D4; --yt-fg:#A12F2B; --yt-mid:#D9514A;
+  --bl-bg:#ECEED3; --bl-fg:#5A6224; --bl-mid:#A9B262;
+
+  --idea-bg:#E7E5EE; --idea-fg:#4F4D63; --idea-mid:#A9A6BA;
+  --draft-bg:#FCDDBE; --draft-fg:#9A470A; --draft-mid:#EC8A35;
+  --prog-bg:#DEE3EE; --prog-fg:#3D4C70; --prog-mid:#6A7DA6;
+  --sched-bg:#F2DAE4; --sched-fg:#874060; --sched-mid:#C98AA4;
+  --pub-bg:#D3EDD4; --pub-fg:#2B6A33; --pub-mid:#5FAE68;
+  --warn-bg:#F8DCD6; --warn-fg:#9C2F22;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-display);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden}
+:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+button{font:inherit;color:inherit}
+[hidden]{display:none !important}
+.wrap{max-width:1440px;margin:0 auto;padding:0 24px 56px}
+
+/* header on sage */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 10px;color:var(--on-bg)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-0.01em;font-size:15px}
+.brand .sub2{font-weight:500;opacity:.9}
+.mark{width:30px;height:30px;border-radius:9px;background:var(--card);color:var(--sage-ink);display:grid;place-items:center;font-family:var(--font-accent);font-style:italic;font-size:21px;line-height:1}
+.sync{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.14);color:var(--on-bg);white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:#CFE3B8;display:block}
+.sync.saving i{background:#F7D9A6}
+.sync.off i{background:#F2B4A8}
+nav.pages{display:flex;gap:4px;overflow-x:auto;padding:4px 0 12px;border-bottom:1px solid rgba(255,255,255,.2);scrollbar-width:none}
+nav.pages::-webkit-scrollbar{display:none}
+nav.pages a{flex:none;display:flex;gap:7px;align-items:baseline;padding:8px 12px;border-radius:10px;text-decoration:none;color:var(--on-bg);font-weight:500;white-space:nowrap}
+nav.pages a:hover{background:rgba(255,255,255,.12)}
+nav.pages a .n{font-size:11px;font-variant-numeric:tabular-nums;opacity:.8}
+nav.pages a[aria-current="page"]{background:var(--card);color:var(--ink)}
+.navrow{display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid rgba(255,255,255,.2)}
+.navrow nav.pages{border-bottom:0;flex:1;min-width:0}
+.navmenu{position:relative;flex:none;padding-top:4px}
+.menu-btn{width:38px;height:38px;border-radius:10px;border:0;background:rgba(255,255,255,.14);color:var(--on-bg);display:grid;place-items:center;cursor:pointer}
+.menu-btn:hover{background:rgba(255,255,255,.24)}
+.menu-btn[aria-expanded="true"]{background:var(--card);color:var(--ink)}
+.menu-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;width:min(290px,calc(100vw - 32px));max-height:72vh;overflow-y:auto;background:var(--card);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);padding:6px}
+.menu-h{margin:6px 10px 4px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.menu-pop a{display:flex;gap:10px;align-items:baseline;padding:10px;border-radius:9px;text-decoration:none;color:var(--ink);font-weight:500}
+.menu-pop a:hover{background:var(--wash)}
+.menu-pop a .n{font-size:11px;color:var(--muted);min-width:18px;font-variant-numeric:tabular-nums}
+.menu-pop a[aria-current="page"]{background:#F7E1EA;color:var(--accent-ink);font-weight:700}
+nav.pages a{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+nav.pages a.dragging{background:var(--accent);color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.28);transform:scale(1.06);cursor:grabbing;position:relative;z-index:2}
+nav.pages.reordering a:not(.dragging){opacity:.7}
+
+.notice{margin:14px 0 0;padding:10px 14px;border-radius:12px;background:var(--card);display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px}
+.notice .grow{flex:1;min-width:200px}
+
+.page-head{padding:24px 0 16px;color:var(--on-bg)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px;opacity:.9}
+.card .eyebrow{color:var(--muted);opacity:1}
+h1{font-size:clamp(30px,4vw,46px);line-height:1.04;letter-spacing:-0.035em;margin:0;font-weight:700;text-wrap:balance}
+.hl{font-family:var(--font-accent);font-style:italic;font-weight:400;letter-spacing:-0.01em;font-size:1.12em;padding:0 .1em;color:#FFE6EF;background:linear-gradient(transparent 58%, rgba(240,183,206,.42) 58%, rgba(240,183,206,.42) 90%, transparent 90%)}
+.sub{margin:8px 0 0;max-width:65ch;font-size:15.5px;font-weight:500}
+.card{background:var(--card);border-radius:16px;box-shadow:0 1px 2px rgba(20,30,10,.12)}
+h2,h3{text-wrap:balance}
+
+/* controls */
+.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;flex:none}
+.icon-btn:hover:not(:disabled){background:var(--wash)}
+.icon-btn:disabled{opacity:.4;cursor:not-allowed}
+.ctl{height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);padding:0 10px;font:inherit;color:var(--ink);cursor:pointer;max-width:100%}
+.btn{height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);padding:0 14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--wash)}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.primary:hover{background:#2C3848}
+.btn.danger{color:var(--warn-fg)}
+.btn.danger.armed{background:var(--warn-fg);color:#fff;border-color:var(--warn-fg)}
+.btn.sm{height:30px;padding:0 10px;font-size:12.5px}
+
+/* month bar */
+.monthbar{position:sticky;top:0;z-index:6;background:var(--bg);padding:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.monthbar h2{font-size:26px;margin:0 6px;letter-spacing:-0.025em;color:var(--on-bg);min-width:10.5ch}
+.monthbar .spacer{flex:1}
+
+/* chips */
+.p-IG{background-color:var(--ig-bg);color:var(--ig-fg)}
+.p-IGS{background-color:var(--igs-bg);color:var(--igs-fg)}
+.p-TT{background-color:var(--tt-bg);color:var(--tt-fg)}
+.p-YTS{background-color:var(--yts-bg);color:var(--yts-fg)}
+.p-YT{background-color:var(--yt-bg);color:var(--yt-fg)}
+.p-BL{background-color:var(--bl-bg);color:var(--bl-fg)}
+.p-none{background-color:#EFEBE4;color:var(--muted)}
+.s-idea{background-color:var(--idea-bg);color:var(--idea-fg)}
+.s-drafting{background-color:var(--draft-bg);color:var(--draft-fg)}
+.s-in-progress{background-color:var(--prog-bg);color:var(--prog-fg)}
+.s-scheduled{background-color:var(--sched-bg);color:var(--sched-fg)}
+.s-published{background-color:var(--pub-bg);color:var(--pub-fg)}
+.st{flex:none;min-width:16px;height:16px;padding:0 3px;border-radius:4px;display:inline-grid;place-items:center;font-size:9px;font-weight:700;letter-spacing:.02em}
+.code-chip{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.02em;flex:none}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+
+/* 1:1 photo squares */
+.sq{position:relative;aspect-ratio:1/1;width:100%;border-radius:12px;overflow:hidden;display:grid;place-items:center;flex:none}
+.sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.sq .ph{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:6px}
+.sq .ph svg{width:22px;height:22px;opacity:.75}
+.sq .ph-code{font-weight:700;font-size:13px;letter-spacing:.03em}
+.sq .ph-hint{font-size:11px;font-weight:600;opacity:.85}
+.thumb{width:40px;height:40px;border-radius:8px;border:0;padding:0;cursor:pointer;flex:none}
+.thumb .sq{border-radius:8px}
+.thumb .ph svg{width:15px;height:15px}
+.thumb .ph-code,.thumb .ph-hint{display:none}
+
+/* top performing */
+.tp{padding:18px;margin-bottom:20px}
+.tp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.tp-head h2{margin:0;font-size:21px;letter-spacing:-0.02em}
+.tp-best{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:0 12px;height:32px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.tp-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.tp-card{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:8px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0}
+.tp-card{cursor:default}
+.tp-card:hover{border-color:#CFC3AE;box-shadow:0 2px 10px rgba(20,30,10,.08)}
+.tp-hit{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0;border-radius:10px}
+.tp-hit:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+.tp-live{font-size:12px;font-weight:600;color:var(--accent-ink);text-decoration:none;padding:2px 4px 4px}
+.tp-live:hover{text-decoration:underline}
+.eng{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.post-link{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:#F7E1EA;color:var(--accent-ink);text-decoration:none;font-weight:700;font-size:13px;line-height:1}
+.post-link:hover{background:var(--accent);color:#fff}
+.link-row{display:grid;gap:5px;margin-bottom:12px}
+.link-row>label{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.link-in{display:flex;gap:8px;align-items:center}
+.link-in input{flex:1;min-width:0;height:36px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;color:var(--ink);background:#fff}
+.link-in input:focus{outline:none;border-color:var(--sage-ink);box-shadow:0 0 0 3px rgba(74,88,56,.16)}
+.link-in .btn{display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}
+.link-row .hint{margin:0}
+.tp-card .sq{border-radius:10px}
+.rank{position:absolute;top:8px;left:8px;min-width:26px;height:26px;padding:0 7px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:12px;display:grid;place-items:center;z-index:1}
+.tp-card .sq .code-chip{position:absolute;top:8px;right:8px;z-index:1}
+.tp-body{padding:0 4px 4px;display:grid;gap:3px;min-width:0}
+.tp-title{font-weight:700;font-size:13.5px;line-height:1.25;overflow-wrap:anywhere}
+.tp-meta{font-size:11.5px;color:var(--muted)}
+.tp-er{font-size:22px;font-weight:700;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.tp-er small{font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:0;margin-left:3px}
+.tp-stats{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tp-stats b{color:var(--ink);font-weight:600}
+.tp-card .ph-code{display:none}
+.tp-7{grid-template-columns:repeat(7,minmax(0,1fr))}
+.tp-group{margin-bottom:0}
+.upnext .st-txt{display:none}
+.tp-empty{border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);font-size:13px;margin:0}
+
+/* dashboard layout */
+.dash{display:grid;grid-template-columns:minmax(0,1fr) 372px;grid-template-areas:"cal rail" "below rail";gap:20px;align-items:start}
+.cal-card{grid-area:cal;min-width:0;padding:16px}
+.rail{grid-area:rail;padding:18px;display:grid;gap:20px}
+.below{grid-area:below;min-width:0;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--line);gap:1px}
+.dow{background:var(--wash);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:8px}
+.day{background:var(--card);min-height:122px;padding:6px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.day.out{background:#F6F2EA}
+.day.out .dnum{color:#B9B0A2}
+.day.today{background:#FDF0F5}
+.day-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:1px}
+.dnum{font-weight:600;font-variant-numeric:tabular-nums;min-width:22px;height:22px;padding:0 4px;display:grid;place-items:center;border-radius:6px}
+.day.today .dnum{background:var(--accent-ink);color:#fff}
+.dcount{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip{display:flex;align-items:center;gap:5px;border-radius:6px;padding:3px 5px;font-size:11px;line-height:1.2;border:0;width:100%;text-align:left;cursor:pointer;min-width:0}
+.chip:hover{filter:brightness(.95)}
+.chip.needs-results{position:relative;z-index:1;box-shadow:0 0 0 2px #8B0000,0 0 9px 2px rgba(139,0,0,.6)}
+.chip .code{font-weight:700;font-size:10px;flex:none;letter-spacing:.02em}
+.chip .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.more{font-size:10.5px;color:var(--muted);padding-left:4px}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-top:12px;font-size:12px;color:var(--muted)}
+.lg{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.lg-label{font-weight:700;color:var(--ink);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.lg-item{display:inline-flex;gap:5px;align-items:center}
+
+.rail-head h2{margin:0;font-size:20px;letter-spacing:-0.02em}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border-radius:12px;padding:10px 12px;min-height:80px;display:flex;flex-direction:column;gap:1px}
+.tile .k{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.tile .v{font-size:26px;font-weight:700;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;line-height:1.15}
+.tile .d{font-size:11.5px;opacity:.85}
+.t-blue{background:var(--ig-bg);color:var(--ig-fg)}
+.t-green{background:var(--pub-bg);color:var(--pub-fg)}
+.t-mauve{background:var(--sched-bg);color:var(--sched-fg)}
+.t-orange{background:var(--draft-bg);color:var(--draft-fg)}
+.t-plain{background:#F1ECE4;color:var(--muted)}
+.t-plain.hot{background:var(--warn-bg);color:var(--warn-fg)}
+.t-sky{background:var(--igs-bg);color:var(--igs-fg)}
+.t-pink{background:#F7E1EA;color:var(--accent-ink)}
+.t-olive{background:var(--bl-bg);color:var(--bl-fg)}
+.t-sky2{background:#CFE4F3;color:#1F5A80}
+.er-low{color:var(--accent-ink)}
+.er-ok{color:var(--bl-fg)}
+.tier-pill{display:inline-flex;align-self:flex-start;justify-self:start;align-items:center;height:20px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:700}
+.tier-low{background:#F7E1EA;color:var(--accent-ink)}
+.tier-healthy,.tier-strong{background:var(--bl-bg);color:var(--bl-fg)}
+.socials{margin-top:18px}
+.socials-title{margin:0 0 10px;font-size:clamp(22px,2.6vw,30px);font-weight:400;letter-spacing:-0.01em}
+.socials-title .hl{font-size:1em}
+.soc-row{display:grid;grid-template-columns:minmax(0,220px) minmax(0,380px) minmax(0,220px);gap:10px}
+.soc-cell{display:grid;gap:4px;min-width:0}
+.soc-split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.soc-split .soc-cell+.soc-cell{padding-left:10px;border-left:1px solid var(--line)}
+.soc-lab{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.soc{background:var(--card);color:var(--ink);border-radius:14px;padding:10px 12px;display:grid;gap:6px;box-shadow:0 1px 2px rgba(20,30,10,.12)}
+.soc-top{display:flex;align-items:center;gap:8px}
+.soc-name{font-weight:700;font-size:13.5px}
+.soc-in{height:38px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink);background:#fff;width:100%}
+.soc-in.bad{border-color:var(--accent-ink);box-shadow:0 0 0 3px rgba(168,50,106,.15)}
+.soc-in:focus{outline:none;border-color:var(--sage-ink);box-shadow:0 0 0 3px rgba(74,88,56,.16)}
+.soc-meta{font-size:11.5px;color:var(--muted)}
+.soc-note{margin:8px 0 0;font-size:12.5px;max-width:65ch}
+@media (max-width:640px){.soc-row{grid-template-columns:1fr}}
+.block h3{font-size:13px;margin:0 0 10px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.block h3 span{font-weight:500;color:var(--muted)}
+.bars{display:grid;gap:7px}
+.bar-row{display:grid;grid-template-columns:112px minmax(0,1fr) 40px;align-items:center;gap:8px;font-size:12px}
+.bar-row .lab{display:flex;gap:6px;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:10px;border-radius:99px;background:#EFE9DE;overflow:hidden}
+.bar-fill{display:block;height:100%;border-radius:99px}
+.bar-n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.stack{display:flex;height:16px;border-radius:99px;overflow:hidden;background:#EFE9DE;gap:2px}
+.stack span{height:100%}
+.stack-legend{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;margin-top:10px;font-size:12px}
+.stack-legend div{display:flex;align-items:center;gap:6px}
+.stack-legend b{margin-left:auto;font-variant-numeric:tabular-nums}
+.dot{width:9px;height:9px;border-radius:3px;flex:none}
+.empty{color:var(--muted);font-size:12.5px;margin:0}
+.mini{padding:16px 18px}
+.upnext{list-style:none;margin:0;padding:0;display:grid}
+.upnext li{display:grid;grid-template-columns:40px 66px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.upnext li:last-child{border-bottom:0}
+.upnext .dt{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;line-height:1.25}
+.upnext .dt b{color:var(--ink);font-weight:600;display:block}
+.linkish{background:none;border:0;padding:0;text-align:left;cursor:pointer;min-width:0;display:flex;flex-direction:column}
+.linkish .t{overflow-wrap:anywhere;font-weight:600}
+.linkish:hover .t{text-decoration:underline}
+.linkish .g{color:var(--muted);font-size:11.5px}
+
+/* tables */
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);text-align:left;font-weight:700;padding:11px 8px;background:var(--wash);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#FFF9F0}
+.num{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;width:30px;text-align:right}
+.cell-in{width:100%;border:1px solid transparent;background:transparent;font:inherit;color:inherit;padding:6px 8px;border-radius:8px;min-width:0}
+.cell-in:hover{border-color:var(--line)}
+.cell-in:focus{outline:none;border-color:var(--sage-ink);background:#fff;box-shadow:0 0 0 3px rgba(74,88,56,.16)}
+.cell-in::placeholder{color:#AFA597;font-style:italic}
+input[type="date"].cell-in{font-variant-numeric:tabular-nums;width:146px}
+.pick{appearance:none;-webkit-appearance:none;border:0;border-radius:999px;height:26px;padding:0 24px 0 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23615b54' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;max-width:100%}
+.pick.neutral{background-color:#F1ECE3;color:var(--ink);font-weight:500}
+.pick.blank{background-color:#F6F2EC;color:#8F867A;font-weight:500;font-style:italic}
+.eff-Low{background-color:#E9F1E9;color:#36583A}
+.eff-Medium{background-color:#F6EBD3;color:#6B4D0E}
+.eff-High{background-color:#F8DDD8;color:#8C2E22}
+.sfx{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12.5px;user-select:none}
+.sfx input{width:16px;height:16px;accent-color:var(--accent-ink);margin:0}
+.del{width:28px;height:28px;border-radius:8px;border:0;background:transparent;color:#A99F92;cursor:pointer;font-size:17px;line-height:1}
+.del:hover{background:var(--warn-bg);color:var(--warn-fg)}
+.open-btn{height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;display:inline-flex;gap:6px;align-items:center}
+.open-btn:hover{background:var(--wash)}
+.open-btn .c{color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+tr.missing td:first-child{box-shadow:inset 3px 0 0 #E08A7C}
+tr.flash td{animation:flash 1.6s ease-out}
+@keyframes flash{0%,30%{background:#FCE3EC}100%{background:transparent}}
+@media (prefers-reduced-motion: reduce){tr.flash td{animation:none}}
+
+th .sort{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;white-space:nowrap}
+th .sort:hover{color:var(--ink)}
+th .sort:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px;border-radius:4px}
+th .sort .arr{font-size:9px;opacity:.45}
+th .sort.on{color:var(--ink)}
+th .sort.on .arr{opacity:1;color:var(--accent-ink)}
+.sum.jump{border:0;cursor:pointer;font:inherit;color:inherit}
+.sum.jump:hover{background:var(--wash)}
+.s-ideation{background-color:#F7E1EA;color:var(--accent-ink)}
+.idea-sec{margin-top:16px}
+.idea-note{margin:0;padding:12px 14px;border-radius:12px;background:#F7E1EA;color:#6E2147;font-size:13px}
+.idea-card{max-width:460px;margin-bottom:16px}
+.idea-mini{font-size:13px}
+.idea-mini th.r,.idea-mini td.r{text-align:right;font-variant-numeric:tabular-nums;padding-right:16px}
+.idea-mini td:first-child,.idea-mini th:first-child{padding-left:16px}
+.idea-mini a{color:var(--ink);font-weight:600;text-decoration:none}
+.idea-mini a:hover{text-decoration:underline}
+.idea-mini tr.total td{font-weight:700;background:var(--wash);border-top:1px solid var(--line)}
+.eyebrow.by-status{color:var(--on-bg);margin:28px 0 10px}
+.sumstrip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.sum{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--card);font-size:12.5px}
+.sum b{font-size:16px;font-variant-numeric:tabular-nums}
+.table-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-top:1px solid var(--line)}
+.codes{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
+.codes span{display:inline-flex;align-items:center;gap:5px}
+.tbl-empty{padding:22px 16px;color:var(--muted);margin:0}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;color:var(--on-bg)}
+.filters label{font-size:12.5px;font-weight:600}
+.pl{display:grid;gap:16px}
+.pl-sec{overflow:hidden}
+.pl-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.pl-head h2{margin:0;font-size:17px;letter-spacing:-0.015em}
+.pl-head .count{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pl-head .bar{width:6px;align-self:stretch;border-radius:4px}
+.pl-empty{padding:14px 16px;color:var(--muted);font-size:13px;margin:0}
+.task-link{background:none;border:0;padding:0;cursor:pointer;text-align:left;font-weight:600}
+.task-link:hover{text-decoration:underline}
+.muted{color:var(--muted)}
+.mini-prog{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mini-prog i{display:block;width:34px;height:5px;border-radius:9px;background:#EAE3D6;overflow:hidden}
+.mini-prog i span{display:block;height:100%;background:var(--pub-mid)}
+
+footer{margin-top:36px;padding-top:16px;border-top:1px solid rgba(255,255,255,.2);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--on-bg);font-size:13px}
+
+/* task panel */
+.scrim{position:fixed;inset:0;background:rgba(22,28,16,.5);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);background:var(--card);z-index:41;display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.25)}
+.d-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.d-crumb{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);font-weight:600;min-width:0;flex-wrap:wrap}
+.d-scroll{overflow-y:auto;padding:14px 20px 40px;display:grid;gap:24px;align-content:start;-webkit-overflow-scrolling:touch;flex:1}
+.d-title{font:700 24px/1.2 var(--font-display);letter-spacing:-.02em;border:1px solid transparent;border-radius:10px;padding:6px 8px;resize:none;width:100%;background:transparent;color:var(--ink);overflow:hidden}
+.d-title:hover{border-color:var(--line)}
+.d-title:focus{outline:none;border-color:var(--sage-ink);background:#fff}
+.d-main{display:grid;grid-template-columns:210px minmax(0,1fr);gap:18px;align-items:start}
+.d-photo{display:grid;gap:8px}
+.d-photo .sq{border-radius:14px;border:1px solid var(--line)}
+.d-photo .ph svg{width:30px;height:30px}
+.d-photo .ph-hint{font-size:12px}
+.photo-btn{border:0;padding:0;background:none;cursor:pointer;width:100%;display:block;border-radius:14px}
+.photo-acts{display:flex;gap:6px;flex-wrap:wrap}
+.photo-note{font-size:12px;color:var(--muted);margin:0}
+.photo-note.err{color:var(--warn-fg)}
+.d-fields{display:grid;gap:2px;margin:0}
+.d-fields>div{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:8px;min-height:36px}
+.d-fields dt{font-size:12px;color:var(--muted);font-weight:600}
+.d-fields dd{margin:0;min-width:0}
+.d-fields>div.sub-field{padding-left:12px;border-left:2px solid var(--accent);margin-left:2px}
+.d-sec h3{font-size:14px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.d-sec h3 span{font-size:12px;font-weight:500;color:var(--muted)}
+.d-desc{width:100%;min-height:110px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;line-height:1.5;resize:vertical;background:#fff;color:var(--ink)}
+.d-desc:focus{outline:none;border-color:var(--sage-ink);box-shadow:0 0 0 3px rgba(74,88,56,.16)}
+.prog{height:6px;border-radius:9px;background:#EAE3D6;overflow:hidden;margin-bottom:8px}
+.prog span{display:block;height:100%;background:var(--pub-mid)}
+.subs{list-style:none;margin:0;padding:0;display:grid}
+.subs li{display:grid;grid-template-columns:22px minmax(0,1fr) 28px;align-items:center;gap:6px;border-bottom:1px solid var(--line);padding:2px 0}
+.subs input[type="checkbox"]{width:17px;height:17px;accent-color:var(--pub-fg);margin:0 0 0 2px;cursor:pointer}
+.subs li.done .cell-in{text-decoration:line-through;color:var(--muted)}
+.sub-add{display:flex;gap:8px;margin-top:8px}
+.sub-add input{flex:1;height:34px;border:1px dashed #CFC3AE;border-radius:10px;padding:0 10px;font:inherit;background:transparent}
+.sub-add input:focus{outline:none;border-style:solid;border-color:var(--sage-ink);background:#fff}
+.m-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.m-grid label{display:grid;grid-template-rows:1fr auto;align-items:end;gap:3px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.m-grid input{height:36px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:14px;font-variant-numeric:tabular-nums;color:var(--ink);background:#fff;width:100%;letter-spacing:0;text-transform:none;font-weight:500}
+.m-grid input:focus{outline:none;border-color:var(--sage-ink);box-shadow:0 0 0 3px rgba(74,88,56,.16)}
+.m-label{margin:12px 0 6px;font-size:12px;font-weight:700;color:var(--ink)}
+.m-label:first-of-type{margin-top:0}
+.m-out{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+.m-out div{border-radius:12px;padding:10px 12px;background:var(--wash);display:grid;gap:2px}
+.m-out div.m-low{background:#F7E1EA;color:var(--accent-ink)}
+.m-out div.m-ok{background:var(--bl-bg);color:var(--bl-fg)}
+.m-out small{font-size:11px;line-height:1.3;opacity:.85}
+.m-out span{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.85}
+.m-out b{font-size:22px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hint{font-size:12px;color:var(--muted);margin:8px 0 0}
+.copied-from{margin:-14px 0 0;padding:0 8px;font-size:12.5px;color:var(--muted)}
+.inline-link{background:none;border:0;padding:0;font:inherit;font-weight:600;color:var(--accent-ink);cursor:pointer;text-decoration:underline}
+.dup-row{display:flex;flex-wrap:wrap;gap:8px}
+.dup-btn{border:0;height:32px;padding:0 12px;border-radius:999px;font-size:12.5px;font-weight:700;cursor:pointer}
+.dup-btn:hover{filter:brightness(.95)}
+.d-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}
+
+/* yearly page */
+.ycal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.ym{padding:12px 12px 10px;min-width:0}
+.ym h3{margin:0 0 8px;font-size:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ym h3 span{font-weight:500;color:var(--muted);font-size:12px}
+.ym-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.ym-dow{font-size:9.5px;font-weight:700;color:var(--muted);text-align:center;padding:2px 0 4px;letter-spacing:.04em}
+.yd{border:0;background:transparent;border-radius:7px;min-height:38px;padding:3px 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;cursor:pointer;font:inherit;color:var(--ink);min-width:0}
+.yd:hover{background:var(--wash)}
+.yd .n{font-size:11.5px;font-variant-numeric:tabular-nums;line-height:16px;padding:0 3px;border-radius:5px}
+.yd .c{min-width:18px;height:16px;padding:0 4px;border-radius:999px;background:var(--accent-ink);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.yd.has{background:#FDF0F5}
+.yd.today .n{background:var(--ink);color:#fff}
+.yd.sel{box-shadow:inset 0 0 0 2px var(--accent-ink)}
+.ya{padding:18px;margin:6px 0 20px}
+.yt{margin:6px 0 20px}
+.ya-ctl .seg+.seg{margin-left:0}
+.ycal-title{color:var(--on-bg);font-size:21px;letter-spacing:-0.02em;margin:22px 0 12px}
+.cp-h{font-size:13px;margin:22px 0 10px;display:flex;gap:8px;align-items:baseline}
+.cp-h span{font-weight:500;color:var(--muted)}
+.cp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.cp{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:6px;text-align:left;cursor:pointer;font:inherit;color:var(--ink);min-width:0}
+.cp:hover{background:var(--wash)}
+.cp .sq{border-radius:8px}
+.cp .ph svg{width:14px;height:14px}
+.cp .ph-code,.cp .ph-hint{display:none}
+.cp-t{display:grid;gap:1px;min-width:0}
+.cp-t b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-t span{font-size:11px;color:var(--muted)}
+.yt .tp-row{row-gap:14px}
+.ya-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ya-head h2{margin:0;font-size:21px;letter-spacing:-0.02em}
+.ya-sub{margin:4px 0 0;font-size:12.5px;color:var(--muted)}
+.ya-ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ya .seg{flex-wrap:wrap}
+.cmp-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tile .delta{font-weight:700;opacity:1}
+.tile .delta.up,.bar-prev .up{color:#2B6A33}
+.tile .delta.down,.bar-prev .down{color:#A8326A}
+.tile .prev{white-space:nowrap}
+.ya-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:22px}
+.bar-row.cmp{grid-template-columns:104px minmax(0,1fr) 44px 58px}
+.bar-prev{font-size:11px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mchart{margin-top:22px}
+.mbars{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;align-items:end;height:130px;border-bottom:1px solid var(--line)}
+.mbar{display:flex;gap:2px;align-items:flex-end;height:100%}
+.mbar i{flex:1;border-radius:4px 4px 0 0;display:block;min-height:2px}
+.mlab{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;font-size:10.5px;color:var(--muted);text-align:center;margin-top:4px}
+.ya-top{margin-top:22px}
+.soc-ro{display:flex;align-items:center;background:var(--wash);color:var(--ink)}
+.dd-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.dd-item{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:6px;cursor:pointer;font:inherit;color:var(--ink)}
+.dd-item:hover{background:var(--wash)}
+.dd-item .sq{border-radius:8px}
+.dd-item .ph svg{width:16px;height:16px}
+.dd-item .ph-code,.dd-item .ph-hint{display:none}
+.dd-txt{display:grid;gap:2px;min-width:0}
+.dd-txt b{overflow-wrap:anywhere}
+.dd-txt .g{font-size:11.5px;color:var(--muted)}
+@media (max-width:1180px){.ycal{grid-template-columns:repeat(3,minmax(0,1fr))}.ya-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:800px){.ycal{grid-template-columns:repeat(2,minmax(0,1fr))}.cmp-tiles{grid-template-columns:1fr 1fr}.ya-grid{grid-template-columns:1fr}}
+.seg button{white-space:nowrap}
+@media (max-width:640px){
+  .ya-ctl{width:100%}
+  #ytSeg,#yaSeg,#ytRank{display:grid;width:100%;gap:1px;background:var(--line)}
+  #ytSeg,#yaSeg{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #ytRank{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #ytSeg button,#yaSeg button,#ytRank button{padding:0 4px;height:36px;font-size:12.5px}
+  #ytSeg button:last-child,#yaSeg button:last-child{grid-column:span 2}
+  #ytQ,#yaQ{width:100%}
+  .ya,.yt{padding:14px}
+}
+@media (max-width:480px){.ycal{grid-template-columns:1fr}.dd-item{grid-template-columns:48px minmax(0,1fr)}.dd-item .pill{display:none}}
+
+.st-block{margin-top:22px}
+.st-title{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--ink)}
+.st-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+.st-table{margin-top:12px;min-width:320px}
+.st-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.st-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.st-row{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--card)}
+.st-when{display:grid;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.st-when b{color:var(--ink);font-size:13px}
+.st-nums{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:12.5px;min-width:0}
+.st-nums b{font-variant-numeric:tabular-nums}
+.st-nums .muted{font-size:11.5px}
+.st-desc{flex-basis:100%;color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-act{display:flex;gap:6px;align-items:center}
+.st-map{display:grid;gap:6px}
+.st-map label{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.st-map i{font-weight:400}
+.st-sum{margin:0 0 10px;padding:10px 12px;border-radius:12px;background:var(--wash);font-size:13px}
+.st-steps{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13px}
+@media (max-width:560px){.st-row{grid-template-columns:52px minmax(0,1fr)}.st-act{grid-column:1/-1;justify-content:flex-end}.st-map label{grid-template-columns:1fr}}
+/* responsive */
+@media (max-width:1180px){
+  .dash{grid-template-columns:1fr;grid-template-areas:"cal" "rail" "below"}
+  .rail{grid-template-columns:1fr 1fr;align-items:start}
+  .rail-head,.tiles{grid-column:1/-1}
+  .tiles{grid-template-columns:repeat(4,1fr)}
+  .tp-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(190px,1fr);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
+  .tp-card{scroll-snap-align:start}
+}
+@media (max-width:800px){
+  .wrap{padding:0 16px 48px}
+  .below{grid-template-columns:1fr}
+  .rail{grid-template-columns:1fr}
+  .tiles{grid-template-columns:1fr 1fr}
+  .cal-card{padding:10px}
+  .day{min-height:74px;padding:4px 3px;gap:2px}
+  .dcount{display:none}
+  .chip{padding:2px 3px;justify-content:center;gap:0}
+  .chip .t,.chip .st{display:none}
+  .chip .code{font-size:9px}
+  .dow{padding:6px 2px;text-align:center;font-size:10px;letter-spacing:.02em}
+  .day-top{justify-content:center}
+  .monthbar h2{font-size:21px;min-width:0}
+  .tp-row{grid-auto-columns:minmax(160px,46%)}
+  .m-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .upnext li{grid-template-columns:40px 52px minmax(0,1fr)}
+  .upnext .pill{display:none}
+  .upnext .st-txt{display:inline}
+}
+@media (max-width:560px){
+  .d-main{grid-template-columns:1fr}
+  .d-photo{max-width:340px}
+  .d-scroll{padding:12px 16px 40px}
+  .m-out b{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="mark" aria-hidden="true">B</span><span>Blyssful Travels <span class="sub2">Content Studio</span></span></div>
+    <span class="sync" id="sync" role="status"><i></i><span id="syncText">Loading your planner</span></span>
+  </header>
+  <div class="navrow">
+    <nav class="pages" id="pages" aria-label="Pages"></nav>
+    <div class="navmenu">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="All pages" aria-expanded="false" aria-controls="menuList"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <nav class="menu-pop" id="menuList" aria-label="All pages" hidden></nav>
+    </div>
+  </div>
+  <div class="notice" id="notice" hidden></div>
+
+  <main>
+    <section id="view-dashboard" class="view">
+      <div class="page-head">
+        <p class="eyebrow">Page 02 · Calendar dashboard</p>
+        <h1>Your month, <span class="hl">mapped</span></h1>
+        <p class="sub">Top posts, the calendar and the analytics all follow the month you pick. Tap any post to open its details.</p>
+        <div class="socials" id="socials"></div>
+      </div>
+      <div class="monthbar">
+        <button class="icon-btn" id="prevBtn" aria-label="Previous month">&#8249;</button>
+        <h2 id="monthLabel" aria-live="polite">November 2026</h2>
+        <button class="icon-btn" id="nextBtn" aria-label="Next month">&#8250;</button>
+        <span class="spacer"></span>
+        <select class="ctl" id="monthSelect" aria-label="Jump to month"></select>
+        <button class="btn" id="todayBtn">Today</button>
+      </div>
+
+      <section class="card tp" aria-labelledby="tpTitle">
+        <div class="tp-head">
+          <div>
+            <p class="eyebrow" id="tpEyebrow">Published in November 2026</p>
+            <h2 id="tpTitle">Top performing posts</h2>
+            <div class="tp-best" id="tpBest"></div>
+          </div>
+          <div class="seg" role="group" aria-label="Rank posts by">
+            <button type="button" data-rank="er" aria-pressed="true">Engagement rate</button>
+            <button type="button" data-rank="reach" aria-pressed="false">Reach</button>
+            <button type="button" data-rank="clicks" aria-pressed="false">Link clicks</button>
+          </div>
+        </div>
+        <div class="tp-row" id="tpRow"></div>
+      </section>
+
+      <div class="dash">
+        <div class="card cal-card">
+          <div class="cal" id="calGrid"></div>
+          <div class="legend" id="calLegend"></div>
+        </div>
+        <aside class="card rail" id="rail" aria-label="Monthly analytics"></aside>
+        <div class="below">
+          <div class="card mini"><div class="block"><h3 id="upHead">Up next</h3><ol class="upnext" id="upNext"></ol></div></div>
+          <div class="card mini" style="display:grid;gap:22px;align-content:start">
+            <div class="block"><h3>By content group <span id="grpTotal"></span></h3><div class="bars" id="grpBars"></div></div>
+            <div class="block"><h3>Effort load <span id="effNote"></span></h3><div class="bars" id="effBars"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-yearly" class="view" hidden>
+      <div class="page-head">
+        <p class="eyebrow">Page 01 · Yearly calendar dashboard</p>
+        <h1>Yearly Calendar <span class="hl">Dashboard</span></h1>
+        <p class="sub">Analytics and top posts for any period, compared with the one before, then every day of the year with its number of posts. Tap a date to preview its posts, then tap a post to open it.</p>
+        <div class="socials" id="ySocials"></div>
+      </div>
+      <div class="monthbar">
+        <button class="icon-btn" id="yPrev" aria-label="Previous year">&#8249;</button>
+        <h2 id="yearLabel" aria-live="polite">2026</h2>
+        <button class="icon-btn" id="yNext" aria-label="Next year">&#8250;</button>
+        <span class="spacer"></span>
+        <button class="btn" id="yToday">This year</button>
+      </div>
+      <section class="card tp yt" aria-labelledby="ytTitle">
+        <div class="tp-head">
+          <div><p class="eyebrow" id="ytEyebrow"></p><h2 id="ytTitle">Top 10 posts</h2><div class="tp-best" id="ytBest"></div></div>
+          <div class="ya-ctl">
+            <div class="seg" id="ytSeg" role="group" aria-label="Top posts period"><button type="button" data-yt="year" aria-pressed="true">Year</button><button type="button" data-yt="7" aria-pressed="false">7 days</button><button type="button" data-yt="14" aria-pressed="false">14 days</button><button type="button" data-yt="30" aria-pressed="false">30 days</button><button type="button" data-yt="60" aria-pressed="false">60 days</button><button type="button" data-yt="90" aria-pressed="false">90 days</button><button type="button" data-yt="q" aria-pressed="false">Quarter</button></div>
+            <select class="ctl" id="ytQ" aria-label="Quarter for top posts" hidden><option value="0">Q1 · Jan–Mar</option><option value="1">Q2 · Apr–Jun</option><option value="2">Q3 · Jul–Sep</option><option value="3">Q4 · Oct–Dec</option></select>
+            <div class="seg" id="ytRank" role="group" aria-label="Rank top posts by"><button type="button" data-ytr="er" aria-pressed="true">Engagement rate</button><button type="button" data-ytr="reach" aria-pressed="false">Reach</button><button type="button" data-ytr="clicks" aria-pressed="false">Link clicks</button></div>
+          </div>
+        </div>
+        <div class="tp-row" id="ytRow"></div>
+        <h3 class="cp-h">Content Posts for Duration <span id="cpCount"></span></h3>
+        <div class="cp-grid" id="cpGrid"></div>
+      </section>
+      <section class="card ya" aria-labelledby="yaTitle">
+        <div class="ya-head">
+          <div><p class="eyebrow">Analytics for</p><h2 id="yaTitle">2026</h2><p class="ya-sub" id="yaSub"></p></div>
+          <div class="ya-ctl">
+            <div class="seg" id="yaSeg" role="group" aria-label="Compare by">
+              <button type="button" data-yr="year" aria-pressed="true">Year</button>
+              <button type="button" data-yr="7" aria-pressed="false">7 days</button>
+              <button type="button" data-yr="14" aria-pressed="false">14 days</button>
+              <button type="button" data-yr="30" aria-pressed="false">30 days</button>
+              <button type="button" data-yr="60" aria-pressed="false">60 days</button>
+              <button type="button" data-yr="90" aria-pressed="false">90 days</button>
+              <button type="button" data-yr="q" aria-pressed="false">Quarter</button>
+            </div>
+            <select class="ctl" id="yaQ" aria-label="Quarter" hidden><option value="0">Q1 · Jan–Mar</option><option value="1">Q2 · Apr–Jun</option><option value="2">Q3 · Jul–Sep</option><option value="3">Q4 · Oct–Dec</option></select>
+          </div>
+        </div>
+        <div id="yaBody"></div>
+      </section>
+      <h2 class="ycal-title">Year at a glance</h2>
+      <div class="ycal" id="yCal"></div>
+    </section>
+
+    <section id="view-production" class="view" hidden>
+      <div class="page-head">
+        <p class="eyebrow">Page 03 · Production project list</p>
+        <h1>Production <span class="hl">project</span> list</h1>
+        <p class="sub">Every task from the destination pages, sorted into status sections by date. Change a status here or on its page and the task moves.</p>
+      </div>
+      <div class="filters">
+        <label for="fGroup">Content group</label>
+        <select class="ctl" id="fGroup"></select>
+        <label for="fPlat">Platform</label>
+        <select class="ctl" id="fPlat"></select>
+        <span id="fCount"></span>
+      </div>
+      <section class="card pl-sec idea-card" id="plIdeation" aria-label="Ideation totals"></section>
+      <div class="pl" id="plSections"></div>
+    </section>
+
+    <div id="destViews"></div>
+  </main>
+
+  <footer>
+    <span>Your planner saves on this device and syncs, locked with your passphrase, to your own GitHub. Open the same web address on desktop, iPad or iPhone.</span>
+  </footer>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Task details" hidden></aside>
+<input type="file" id="fileIn" accept="image/*" hidden>
+
+<script>
+/* ===== GitHub version: saves on this device and syncs, encrypted, to the user's own GitHub (shared with Personal Planner) ===== */
+(function(){
+"use strict";
+const DBN="contentPlanner", KV="kv", PH="photos";
+const CS_KEY="contentPlanner.sync.v1", PP_KEY="personalPlanner.sync.v1", SHARE_KEY="contentPlanner.share.v1";
+const CP_FILE="content-planner-sync.json", PP_FILE="personal-planner-sync.json", PH_DESC="Content Planner photos (encrypted)";
+const API="https://api.github.com", COLS=["tasks","stories","settings"], PH_MAX=250;
+const PLAT={IG:"Instagram",IGS:"Instagram Stories",TT:"TikTok",YTS:"YouTube Shorts",YT:"YouTube",BL:"Blog"};
+const GRP={lifestyle:"Lifestyle",sxm:"SXM",bali:"Bali",fiji:"Fiji",dtx:"DTX | Local",la:"Blog | Website",misc:"Travel Misc"};
+
+let idb=null, D={tasks:{},stories:{},settings:{},dead:{},photos:{}}, photoUrl={}, ready=null;
+const listeners=[]; // {path, fn, kind:"col"|"doc"}
+let dirty=false, saveT=null, syncT=null, busy=false, again=false;
+let ST={state:"off",err:"",last:0};
+
+/* ---------- storage on this device ---------- */
+function openIDB(){return new Promise((res,rej)=>{let r;try{r=indexedDB.open(DBN,1);}catch(e){rej(e);return;}
+  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(KV))d.createObjectStore(KV);if(!d.objectStoreNames.contains(PH))d.createObjectStore(PH);};
+  r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+const req=(store,mode,fn)=>new Promise((res,rej)=>{const tx=idb.transaction(store,mode);const q=fn(tx.objectStore(store));tx.oncomplete=()=>res(q&&q.result);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error);});
+const iget=(s,k)=>req(s,"readonly",o=>o.get(k));
+const iput=(s,k,v)=>req(s,"readwrite",o=>o.put(v,k));
+const idel=(s,k)=>req(s,"readwrite",o=>o.delete(k));
+const ikeys=s=>req(s,"readonly",o=>o.getAllKeys());
+async function persist(){
+  try{if(idb)await iput(KV,"data",D);else localStorage.setItem("contentPlanner.data.v1",JSON.stringify(D));}
+  catch(e){note("This device is out of space, so a change may not have saved. Remove some old photos or stories.");}
+}
+function persistSoon(){clearTimeout(saveT);saveT=setTimeout(persist,200);}
+async function load(){
+  try{idb=await openIDB();}catch(e){idb=null;}
+  let d=null;
+  try{d=idb?await iget(KV,"data"):JSON.parse(localStorage.getItem("contentPlanner.data.v1")||"null");}catch(e){}
+  if(d&&typeof d==="object")COLS.concat(["dead","photos"]).forEach(k=>{if(d[k]&&typeof d[k]==="object")D[k]=d[k];});
+  if(idb){try{const ks=await ikeys(PH);for(const k of ks){const v=await iget(PH,k);if(v&&v.blob)photoUrl[k]=URL.createObjectURL(v.blob);}}catch(e){}}
+}
+
+/* ---------- the db the app talks to ---------- */
+const clone=v=>JSON.parse(JSON.stringify(v==null?null:v));
+function strip(o){if(!o)return o;const c=clone(o);delete c._u;return c;}
+function colSnap(col){const docs=Object.keys(D[col]||{}).map(id=>({id,data:()=>strip(D[col][id])}));return{docs,metadata:{fromCache:false}};}
+function docSnap(col,id){const v=(D[col]||{})[id];return{exists:!!v,id,data:()=>v?strip(v):undefined};}
+let notifyT=null;const pending=new Set();
+function notify(col){pending.add(col);clearTimeout(notifyT);notifyT=setTimeout(()=>{const cs=[...pending];pending.clear();
+  listeners.forEach(l=>{if(cs.includes(l.col)){try{l.fn(l.kind==="col"?colSnap(l.col):docSnap(l.col,l.id));}catch(e){}}});
+  if(cs.includes("tasks"))writeShare();},0);}
+function changed(col){dirty=true;persistSoon();notify(col);syncSoon();}
+function setDoc(col,id,data){D[col]=D[col]||{};D[col][id]=Object.assign(clone(data),{_u:Date.now()});delete D.dead[col+"/"+id];changed(col);return Promise.resolve();}
+function delDoc(col,id){if(D[col])delete D[col][id];D.dead[col+"/"+id]=Date.now();changed(col);return Promise.resolve();}
+const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+function docRef(col,id){return{id,set:d=>setDoc(col,id,d),delete:()=>delDoc(col,id),
+  onSnapshot:(fn)=>{listeners.push({col,id,fn,kind:"doc"});setTimeout(()=>fn(docSnap(col,id)),0);return()=>{};}};}
+const DB={
+  collection:col=>({doc:id=>docRef(col,id||newId()),onSnapshot:(fn)=>{listeners.push({col,fn,kind:"col"});setTimeout(()=>fn(colSnap(col)),0);return()=>{};}}),
+  doc:path=>{const [col,id]=path.split("/");return docRef(col,id);}
+};
+const ASSETS={
+  upload:async(blob,opts)=>{const id="p"+newId();photoUrl[id]=URL.createObjectURL(blob);
+    if(idb){try{await iput(PH,id,{blob,type:(opts&&opts.type)||blob.type||"image/jpeg",up:false});}catch(e){const er=new Error("full");er.code="quota_or_state";throw er;}}
+    syncSoon();return{id,url:photoUrl[id]};},
+  delete:async id=>{if(photoUrl[id]){URL.revokeObjectURL(photoUrl[id]);delete photoUrl[id];}
+    if(idb){try{await idel(PH,id);}catch(e){}}
+    const g=D.photos[id];delete D.photos[id];D.dead["photos/"+id]=Date.now();dirty=true;persistSoon();
+    if(g)queueRemove(g,id);syncSoon();}
+};
+window.__photoUrl=id=>photoUrl[id]||"";
+window.claude={use:async name=>{await ready;if(name==="db")return DB;if(name==="assets")return ASSETS;throw new Error("unsupported");}};
+
+/* ---------- posts for the Personal Planner (same site, so it can read this) ---------- */
+function shareObj(){
+  let rev=0;
+  const posts=Object.keys(D.tasks).map(id=>{const r=D.tasks[id];rev=Math.max(rev,r._u||0);if(r.sample)return null;
+    const s=Array.isArray(r.subtasks)?r.subtasks:[];
+    return{id,task:r.task||"",date:r.date||"",platform:r.platform||"",platformName:PLAT[r.platform]||"",status:r.status||"",group:r.group||"",groupName:GRP[r.group]||"",
+      format:r.format||"",dest:r.dest||"",pillar:r.pillar||"",desc:String(r.desc||"").slice(0,4000),link:/^https?:\/\/\S+$/i.test(r.link||"")?r.link:"",
+      subDone:s.filter(x=>x&&x.done).length,subTotal:s.length,updated:r.updated||r.created||0};}).filter(Boolean);
+  Object.keys(D.dead).forEach(k=>{if(k.indexOf("tasks/")===0)rev=Math.max(rev,D.dead[k]);});
+  return{app:"blyssful-content-planner",kind:"content-sync",version:1,exported:new Date(rev||0).toISOString(),posts};
+}
+function writeShare(){try{localStorage.setItem(SHARE_KEY,JSON.stringify(shareObj()));}catch(e){}}
+
+/* ---------- encryption (same as Personal Planner) ---------- */
+function b64e(u8){let s="";for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s);}
+function b64d(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}
+async function derive(pass,salt,iter){const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveKey"]);
+  const k=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64d(salt),iterations:iter,hash:"SHA-256"},base,{name:"AES-GCM",length:256},true,["encrypt","decrypt"]);
+  return b64e(new Uint8Array(await crypto.subtle.exportKey("raw",k)));}
+const ikey=k=>crypto.subtle.importKey("raw",b64d(k),{name:"AES-GCM"},false,["encrypt","decrypt"]);
+async function enc(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},await ikey(key),new TextEncoder().encode(JSON.stringify(obj)));return{iv:b64e(iv),data:b64e(new Uint8Array(ct))};}
+async function dec(key,f){const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64d(f.iv)},await ikey(key),b64d(f.data));return JSON.parse(new TextDecoder().decode(pt));}
+
+/* ---------- GitHub ---------- */
+function err(c){const e=new Error(String(c));e.code=c;return e;}
+async function gh(token,method,path,body){
+  const h={"Accept":"application/vnd.github+json","Authorization":"Bearer "+token};if(body)h["Content-Type"]="application/json";
+  const url=API+path+(method==="GET"?(path.indexOf("?")>=0?"&":"?")+"_="+Date.now():"");let r;
+  try{r=await fetch(url,{method,headers:h,body:body?JSON.stringify(body):undefined});}catch(e){throw err(navigator.onLine===false?"offline":"network");}
+  if(!r.ok)throw err(r.status);return r.status===204?null:r.json();
+}
+async function fileText(f){if(!f)return null;if(f.truncated&&f.raw_url){const r=await fetch(f.raw_url+(f.raw_url.indexOf("?")>=0?"&":"?")+"_="+Date.now());return r.text();}return f.content;}
+function lj(k){try{return JSON.parse(localStorage.getItem(k)||"null");}catch(e){return null;}}
+function cs(){return lj(CS_KEY)||{};}
+function csSave(o){try{localStorage.setItem(CS_KEY,JSON.stringify(o));}catch(e){}}
+function creds(){
+  const p=lj(PP_KEY);if(p&&p.on&&p.token&&p.key&&p.gistId)return{token:p.token,key:p.key,gistId:p.gistId,salt:p.salt,iter:p.iter,from:"planner"};
+  const c=cs();if(c.token&&c.key&&c.gistId)return{token:c.token,key:c.key,gistId:c.gistId,salt:c.salt,iter:c.iter,from:"own"};
+  return null;
+}
+function device(){const u=navigator.userAgent||"";if(/iPad/.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1))return"iPad";if(/iPhone/.test(u))return"iPhone";if(/Android/.test(u))return"Android";if(/Mac/.test(u))return"Mac";if(/Windows/.test(u))return"PC";return"computer";}
+
+/* ---------- merging two copies: newest change wins, per item ---------- */
+function merge(L,R){
+  const out={tasks:{},stories:{},settings:{},dead:{},photos:Object.assign({},R.photos||{},L.photos||{})};
+  const ld=L.dead||{},rd=R.dead||{};
+  COLS.forEach(col=>{const a=L[col]||{},b=R[col]||{};
+    new Set(Object.keys(a).concat(Object.keys(b))).forEach(id=>{
+      const k=col+"/"+id,l=a[id],r=b[id],t=Math.max(ld[k]||0,rd[k]||0),lu=l?(l._u||0):-1,ru=r?(r._u||0):-1;
+      const best=lu>=ru?l:r,bu=Math.max(lu,ru);
+      if(t&&t>=bu)out.dead[k]=t;else out[col][id]=clone(best);
+    });});
+  const cut=Date.now()-120*864e5;
+  Object.keys(Object.assign({},ld,rd)).forEach(k=>{const t=Math.max(ld[k]||0,rd[k]||0);if(t>cut&&!out.dead[k]){const [c,id]=k.split("/");if(!(out[c]&&out[c][id]))out.dead[k]=t;}});
+  Object.keys(out.dead).forEach(k=>{if(k.indexOf("photos/")===0)delete out.photos[k.slice(7)];});
+  return out;
+}
+const sig=o=>{const s=JSON.stringify(o);let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193);}return(h>>>0).toString(36)+s.length;};
+
+/* ---------- sync ---------- */
+function syncSoon(){if(!creds())return;clearTimeout(syncT);syncT=setTimeout(syncNow,2500);if(!busy)state("pending");}
+async function syncNow(){
+  const c=creds();if(!c){state("off");return;}
+  if(busy){again=true;return;}
+  clearTimeout(syncT);if(navigator.onLine===false){state("offline");return;}
+  busy=true;state("busy");
+  try{
+    const me=cs();
+    const g=await gh(c.token,"GET","/gists/"+c.gistId);
+    if(!g.files||!g.files[PP_FILE])throw err("missing");
+    const f=g.files[CP_FILE];let remote=null;
+    if(f){try{const o=JSON.parse(await fileText(f));if(o&&o.app==="content-planner-sync"&&o.data)remote=o;}catch(e){}}
+    if(remote&&remote.rev!==me.rev){
+      let R;try{R=await dec(c.key,remote);}catch(e){throw err("lock");}
+      D=merge(D,R);persistSoon();COLS.forEach(notify);
+      const same=sig({t:D.tasks,s:D.stories,g:D.settings,d:D.dead,p:D.photos})===sig({t:R.tasks||{},s:R.stories||{},g:R.settings||{},d:R.dead||{},p:R.photos||{}});
+      if(same){me.rev=remote.rev;dirty=false;}else dirty=true;
+    }else if(!remote)dirty=true;
+    await photosUp(c);
+    if(dirty){
+      const e=await enc(c.key,{v:1,tasks:D.tasks,stories:D.stories,settings:D.settings,dead:D.dead,photos:D.photos,share:shareObj()});
+      const rev=Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+      const file={app:"content-planner-sync",v:1,rev,at:new Date().toISOString(),device:device(),kdf:"PBKDF2-SHA256",iter:c.iter,salt:c.salt,iv:e.iv,data:e.data};
+      await gh(c.token,"PATCH","/gists/"+c.gistId,{files:{[CP_FILE]:{content:JSON.stringify(file)}}});
+      me.rev=rev;dirty=false;
+    }
+    await photosDown(c);
+    me.last=Date.now();csSave(me);ST.err="";state("ok");
+  }catch(e){
+    if(e&&(e.code==="offline"||e.code==="network"))state("offline");
+    else{ST.err=e&&e.code===401?"GitHub no longer accepts your key. Update it in your Personal Planner (Backup), or here.":e&&e.code==="lock"?"Couldn’t unlock the synced copy. Check your passphrase.":e&&(e.code===404||e.code==="missing")?"Your synced Personal Planner file can’t be found on GitHub. Turn sync on in the Personal Planner first.":"Sync hit a problem and will try again ("+((e&&e.code)||"error")+").";state("error");}
+  }
+  busy=false;if(again){again=false;syncNow();}
+}
+
+/* photos: each one is locked and saved as its own file in "Content Planner photos" secret gists */
+let removals=[];
+function queueRemove(g,id){removals.push({g,id});}
+async function photosUp(c){
+  const me=cs();me.ph=me.ph||{};
+  if(removals.length){const rm=removals;removals=[];const by={};rm.forEach(x=>{(by[x.g]=by[x.g]||{})["p-"+x.id+".json"]=null;});
+    for(const g of Object.keys(by)){try{await gh(c.token,"PATCH","/gists/"+g,{files:by[g]});if(me.ph[g])me.ph[g]=Math.max(0,me.ph[g]-Object.keys(by[g]).length);}catch(e){}}}
+  if(!idb)return;
+  const keys=await ikeys(PH);const todo=[];
+  for(const k of keys){if(!D.photos[k]){const v=await iget(PH,k);if(v&&v.blob)todo.push([k,v]);}}
+  if(!todo.length){csSave(me);return;}
+  if(!Object.keys(me.ph).length){ // find existing photo gists
+    for(let pg=1;pg<=10;pg++){const list=await gh(c.token,"GET","/gists?per_page=100&page="+pg);
+      (list||[]).forEach(g=>{if(g.description===PH_DESC)me.ph[g.id]=Object.keys(g.files||{}).length;});if(!list||list.length<100)break;}
+  }
+  for(let i=0;i<todo.length;i+=8){
+    const part=todo.slice(i,i+8),files={};
+    for(const [k,v] of part){const b=new Uint8Array(await v.blob.arrayBuffer());const e=await enc(c.key,{t:v.type||"image/jpeg",b:b64e(b)});files["p-"+k+".json"]={content:JSON.stringify({app:"content-planner-photo",v:1,iv:e.iv,data:e.data})};}
+    let gid=Object.keys(me.ph).find(g=>me.ph[g]+part.length<=PH_MAX);
+    if(gid){await gh(c.token,"PATCH","/gists/"+gid,{files});me.ph[gid]+=part.length;}
+    else{const made=await gh(c.token,"POST","/gists",{description:PH_DESC,public:false,files});gid=made.id;me.ph[gid]=part.length;}
+    part.forEach(([k])=>{D.photos[k]=gid;});dirty=true;csSave(me);
+  }
+  persistSoon();
+  const e=await enc(c.key,{v:1,tasks:D.tasks,stories:D.stories,settings:D.settings,dead:D.dead,photos:D.photos,share:shareObj()});
+  const rev=Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+  await gh(c.token,"PATCH","/gists/"+c.gistId,{files:{[CP_FILE]:{content:JSON.stringify({app:"content-planner-sync",v:1,rev,at:new Date().toISOString(),device:device(),kdf:"PBKDF2-SHA256",iter:c.iter,salt:c.salt,iv:e.iv,data:e.data})}}});
+  me.rev=rev;dirty=false;csSave(me);
+}
+async function photosDown(c){
+  if(!idb)return;
+  const need={};Object.keys(D.tasks).forEach(id=>{const im=D.tasks[id].image;if(im&&!photoUrl[im]&&D.photos[im])(need[D.photos[im]]=need[D.photos[im]]||[]).push(im);});
+  let got=false;
+  for(const g of Object.keys(need)){
+    let gist;try{gist=await gh(c.token,"GET","/gists/"+g);}catch(e){continue;}
+    for(const id of need[g]){const f=gist.files&&gist.files["p-"+id+".json"];if(!f)continue;
+      try{const o=JSON.parse(await fileText(f));const p=await dec(c.key,o);const blob=new Blob([b64d(p.b)],{type:p.t||"image/jpeg"});
+        await iput(PH,id,{blob,type:p.t,up:true});photoUrl[id]=URL.createObjectURL(blob);got=true;}catch(e){}}
+  }
+  if(got)notify("tasks");
+}
+
+/* ---------- connect on a device where the Personal Planner's sync isn't on ---------- */
+async function connect(token,pass){
+  token=token.trim();if(!token)throw new Error("Paste your GitHub key first.");if(pass.length<8)throw new Error("Enter the same passphrase you use in your Personal Planner.");
+  if(!(window.crypto&&crypto.subtle))throw new Error("This browser can’t unlock your data. Open the planner from its web address (https://…).");
+  let best=null;
+  try{for(let pg=1;pg<=10;pg++){const list=await gh(token,"GET","/gists?per_page=100&page="+pg);(list||[]).forEach(g=>{if(g.files&&g.files[PP_FILE]&&(!best||g.updated_at>best.updated_at))best=g;});if(!list||list.length<100)break;}}
+  catch(e){throw new Error(e.code===401?"GitHub didn’t accept that key. Copy it again and paste the whole thing.":"Can’t reach GitHub right now. Check your internet and try again.");}
+  if(!best)throw new Error("No synced Personal Planner found for that key. Turn sync on in your Personal Planner first (Backup → Sync across devices).");
+  const g=await gh(token,"GET","/gists/"+best.id);const o=JSON.parse(await fileText(g.files[PP_FILE]));
+  const key=await derive(pass,o.salt,o.iter);
+  try{await dec(key,o);}catch(e){throw new Error("That passphrase doesn’t match the one in your Personal Planner.");}
+  csSave(Object.assign(cs(),{token,key,gistId:best.id,salt:o.salt,iter:o.iter}));
+}
+
+/* ---------- import a backup / the file moved from the Claude version ---------- */
+async function importFile(text){
+  const o=JSON.parse(text);if(!o||o.app!=="blyssful-content-backup")throw new Error("That isn’t a Content Planner backup file.");
+  const now=Date.now();let n=0,p=0;
+  ["tasks","stories","settings"].forEach(col=>{const src=o[col]||{};Object.keys(src).forEach(id=>{D[col][id]=Object.assign(clone(src[id]),{_u:Math.max((src[id]&&src[id]._u)||0,now)});delete D.dead[col+"/"+id];if(col==="tasks")n++;});});
+  if(o.photos&&idb){for(const id of Object.keys(o.photos)){const ph=o.photos[id];if(!ph||!ph.b)continue;const blob=new Blob([b64d(ph.b)],{type:ph.t||"image/jpeg"});
+    await iput(PH,id,{blob,type:ph.t,up:false});photoUrl[id]=URL.createObjectURL(blob);delete D.photos[id];p++;}}
+  dirty=true;await persist();COLS.forEach(notify);syncSoon();return{n,p,s:Object.keys(o.stories||{}).length};
+}
+async function exportFile(){
+  const o={app:"blyssful-content-backup",v:1,exported:new Date().toISOString(),tasks:D.tasks,stories:D.stories,settings:D.settings,photos:{}};
+  if(idb){for(const k of await ikeys(PH)){const v=await iget(PH,k);if(v&&v.blob)o.photos[k]={t:v.type||"image/jpeg",b:b64e(new Uint8Array(await v.blob.arrayBuffer()))};}}
+  const blob=new Blob([JSON.stringify(o)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="content-planner-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+}
+
+/* ---------- Backup & sync button and panel ---------- */
+function note(t){const n=document.getElementById("notice");if(n){n.innerHTML='<span class="grow">'+t+'</span>';n.hidden=false;}}
+function state(s){ST.state=s;const b=document.getElementById("ghSync");if(b){b.className="gh-sync gh-"+s;b.lastElementChild.textContent=s==="busy"?"Syncing…":s==="pending"?"Saving…":s==="offline"?"Offline":s==="error"?"Sync problem":s==="off"?"Sync off":"Synced";}const p=document.getElementById("ghStat");if(p)p.innerHTML=statHTML();}
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+function when(ms){if(!ms)return"not yet";return new Date(ms).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}
+function statHTML(){const c=creds();if(!c)return"<b>Sync is off on this device.</b> Your planner saves here only.";
+  return"<b>"+(ST.state==="error"?esc(ST.err):ST.state==="offline"?"Offline. Changes are saved here and will sync when you’re back online.":ST.state==="busy"?"Syncing now…":"Up to date.")+"</b> Last synced "+when(cs().last)+(c.from==="planner"?" · using your Personal Planner’s sync":"");}
+function panel(){
+  const c=creds(),wrap=document.createElement("div");
+  wrap.innerHTML='<div class="gh-scrim"></div><div class="gh-modal" role="dialog" aria-modal="true" aria-labelledby="ghT"><div class="gh-head"><h2 id="ghT">Backup &amp; sync</h2><button type="button" class="icon-btn" data-gh="close" aria-label="Close">&times;</button></div>'+
+  '<section><h3>Sync across devices</h3><p class="gh-stat" id="ghStat">'+statHTML()+'</p>'+
+  (c?'<div class="gh-row"><button type="button" class="btn primary" data-gh="now">Sync now</button>'+(c.from==="own"?'<button type="button" class="btn danger" data-gh="off">Turn off on this device</button>':'')+'</div>'+
+    '<p class="hint">Your posts, Stories, follower counts and photos are locked with your passphrase on this device, then saved to secret files in your own GitHub. Your Personal Planner picks up your posts automatically.</p>'
+  :'<p class="hint">This uses the same GitHub key and passphrase as your Personal Planner. If the Personal Planner already syncs on this device, open it once and sync turns on here by itself. Otherwise enter them below.</p>'+
+    '<label class="gh-f"><span>GitHub key</span><input id="ghTok" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ghp_…"></label>'+
+    '<label class="gh-f"><span>Sync passphrase</span><input id="ghPass" type="password" autocomplete="off" autocapitalize="off" spellcheck="false"></label>'+
+    '<div class="gh-row"><button type="button" class="btn primary" data-gh="connect">Turn on sync</button></div>')+
+  '<p class="gh-msg" id="ghMsg" role="status"></p></section>'+
+  '<section><h3>Backup file</h3><p class="hint" style="margin:0 0 8px">Import the file from the Claude version (or a backup) to bring everything in, photos included. Importing adds to what’s here and updates matching items.</p>'+
+  '<div class="gh-row"><button type="button" class="btn" data-gh="import">Import file</button><button type="button" class="btn" data-gh="export">Export backup</button></div><input type="file" id="ghFile" accept=".json,application/json" hidden></section></div>';
+  document.body.appendChild(wrap);
+  const msg=(t,bad)=>{const m=document.getElementById("ghMsg");if(m){m.textContent=t;m.className="gh-msg"+(bad?" err":" ok");}};
+  const close=()=>{wrap.remove();document.removeEventListener("keydown",key);};
+  const key=e=>{if(e.key==="Escape")close();};document.addEventListener("keydown",key);
+  wrap.addEventListener("click",async e=>{
+    if(e.target.classList.contains("gh-scrim"))return close();
+    const b=e.target.closest("[data-gh]");if(!b)return;const a=b.dataset.gh;
+    if(a==="close")close();
+    else if(a==="now"){await syncNow();msg(ST.state==="error"?ST.err:"Synced.",ST.state==="error");}
+    else if(a==="off"){if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="Tap again to turn off";return;}const m=cs();delete m.token;delete m.key;delete m.gistId;csSave(m);state("off");close();}
+    else if(a==="connect"){b.disabled=true;msg("Checking your key…");try{await connect(document.getElementById("ghTok").value,document.getElementById("ghPass").value);close();syncNow();panel();}catch(er){msg(er.message,true);b.disabled=false;}}
+    else if(a==="export"){msg("Preparing your backup…");try{await exportFile();msg("Backup downloaded. Keep it somewhere safe, like iCloud Drive.");}catch(er){msg("The backup couldn’t be made on this device.",true);}}
+    else if(a==="import"){const f=document.getElementById("ghFile");f.value="";f.click();}
+  });
+  document.getElementById("ghFile").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;msg("Importing…");
+    try{const r=await importFile(await f.text());msg("Imported "+r.n+" posts, "+r.s+" Stories and "+r.p+" photos."+(creds()?" Syncing them now.":""),false);}catch(er){msg(er.message||"That file couldn’t be read.",true);}});
+}
+
+/* ---------- start ---------- */
+ready=load();
+document.addEventListener("DOMContentLoaded",()=>{
+  const css=document.createElement("style");
+  css.textContent=`.gh-sync{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.gh-sync:hover{background:rgba(255,255,255,.24)}.gh-sync i{width:8px;height:8px;border-radius:50%;background:#CFE3B8;display:block}
+.gh-sync.gh-busy i,.gh-sync.gh-pending i{background:#F7D9A6}.gh-sync.gh-offline i,.gh-sync.gh-off i{background:#D9CFC8}.gh-sync.gh-error i{background:#FF8A7A;box-shadow:0 0 0 2px rgba(255,138,122,.35)}
+.gh-topr{display:flex;align-items:center;gap:8px;min-width:0}
+.gh-topr #sync{display:none}
+.gh-scrim{position:fixed;inset:0;background:rgba(22,28,16,.5);z-index:60}
+.gh-modal{position:fixed;z-index:61;left:50%;top:50%;transform:translate(-50%,-50%);width:min(480px,calc(100% - 28px));max-height:calc(100% - 40px);overflow:auto;background:var(--card);color:var(--ink);border-radius:16px;padding:18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.3);display:grid;gap:16px}
+.gh-head{display:flex;justify-content:space-between;align-items:center}.gh-modal h2{margin:0;font-size:20px;letter-spacing:-.02em}.gh-modal h3{margin:0 0 6px;font-size:14px}
+.gh-modal section{display:grid;gap:8px}.gh-stat{margin:0;font-size:13px;padding:10px 12px;border-radius:12px;background:var(--wash)}
+.gh-row{display:flex;gap:8px;flex-wrap:wrap}.gh-f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted)}
+.gh-f input{height:38px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:14px;color:var(--ink);background:#fff}
+.gh-msg{margin:0;font-size:12.5px;font-weight:600;min-height:1em}.gh-msg.ok{color:#2B6A33}.gh-msg.err{color:#9C2F22}
+@media (max-width:560px){.gh-sync span{display:none}.gh-sync{padding:0 10px}.top{flex-wrap:wrap;row-gap:8px}.gh-topr{margin-left:auto}}`;
+  document.head.appendChild(css);
+  const sync=document.getElementById("sync");
+  if(sync){const w=document.createElement("div");w.className="gh-topr";sync.parentNode.insertBefore(w,sync);
+    const b=document.createElement("button");b.type="button";b.id="ghSync";b.className="gh-sync gh-off";b.setAttribute("aria-label","Backup and sync");b.innerHTML="<i></i><span>Sync off</span>";
+    b.addEventListener("click",panel);w.appendChild(b);w.appendChild(sync);}
+  ready.then(()=>{writeShare();if(creds()){syncNow();}else state("off");});
+  window.addEventListener("online",()=>{if(creds())syncNow();});
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&creds())syncNow();});
+  if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("./sw.js").catch(()=>{});
+});
+})();
+
+</script>
+<script>
+(function(){
+"use strict";
+
+/* ---------- lists ---------- */
+const PLATFORMS=[
+  {code:"IG",short:"Instagram",name:"Instagram",mid:"var(--ig-mid)"},
+  {code:"IGS",short:"IG Stories",name:"Instagram Stories",mid:"var(--igs-mid)"},
+  {code:"TT",short:"TikTok",name:"TikTok",mid:"var(--tt-mid)"},
+  {code:"YTS",short:"YT Shorts",name:"YouTube Shorts",mid:"var(--yts-mid)"},
+  {code:"YT",short:"YouTube",name:"YouTube",mid:"var(--yt-mid)"},
+  {code:"BL",short:"Blog",name:"Blog",mid:"var(--bl-mid)"}
+];
+const PILLARS=["Travel Tips","Trendy","Editorial","Production Piece","Lifestyle","Misc"];
+const STATUSES=[
+  {key:"Idea",section:"Ideas",letter:"I",mid:"var(--idea-mid)"},
+  {key:"Drafting",section:"Drafting",letter:"D",mid:"var(--draft-mid)"},
+  {key:"In Progress",section:"In Progress",letter:"IP",mid:"var(--prog-mid)"},
+  {key:"Scheduled",section:"Scheduled",letter:"S",mid:"var(--sched-mid)"},
+  {key:"Published",section:"Published",letter:"P",mid:"var(--pub-mid)"}
+];
+const EFFORTS=["Low","Medium","High"];
+const FORMATS=["Reel","Short video","Long-form video","Carousel","Photo","Story","Blog post","Live"];
+const GROUPS=[
+  {key:"lifestyle",page:"04",name:"Lifestyle",def:""},
+  {key:"sxm",page:"05",name:"SXM",def:"SXM"},
+  {key:"bali",page:"06",name:"Bali",def:"Bali"},
+  {key:"fiji",page:"07",name:"Fiji",def:"Fiji"},
+  {key:"dtx",page:"08",name:"DTX | Local",def:"Local"},
+  {key:"misc",page:"09",name:"Travel Misc",def:"",title:"Travel Misc",plain:true,lead:"Travel Misc Planning List for supplemental and spur-of-the-moment content that doesn't fit a destination."},
+  {key:"la",page:"10",name:"Blog | Website",def:"",title:"Blog | Website",plain:true,lead:"Blog | Website Planning List."}
+].map(g=>Object.assign({title:g.name+" Content",lead:g.name+" Content Planning List."},g));
+const M={
+  reach:{k:"reach",l:"Reach"}, views:{k:"views",l:"Views"}, viewers:{k:"viewers",l:"Viewers"},
+  likes:{k:"likes",l:"Likes"}, comments:{k:"comments",l:"Comments"}, shares:{k:"shares",l:"Shares"},
+  reposts:{k:"reposts",l:"Reposts"}, saves:{k:"saves",l:"Saves"}, clicks:{k:"clicks",l:"Link clicks"},
+  follows:{k:"follows",l:"New followers"},
+  totalInter:{k:"totalInter",l:"Interactions"},
+  profile:{k:"profile",l:"Profile activity"},
+  engaged:{k:"engaged",l:"Accounts engaged"},
+  watchTime:{k:"watchTime",l:"Watch time",type:"text",ph:"e.g. 2h 14m 05s"},
+  photosViewed:{k:"photosViewed",l:"Photos viewed"},
+  plays:{k:"plays",l:"Plays"},
+  playTime:{k:"playTime",l:"Total play time",type:"text",ph:"e.g. 15h 23m 11s"},
+  avgWatch:{k:"avgWatch",l:"Avg. watch time",type:"dec",ph:"seconds, e.g. 8.4"},
+  fullWatch:{k:"fullWatch",l:"Watched full video",type:"dec",ph:"%, e.g. 23.5"}
+};
+const METRICS=Object.values(M);
+const BASE_SET=["reach","views","likes","comments","shares","saves","clicks","follows"];
+const IG_VIDEO=["Reel","Short video","Long-form video","Live"];
+const IG_SET=["reach","views","likes","comments","shares","reposts","saves","clicks","follows"];
+const PLATFORM_METRICS={
+  IG:IG_SET, IGS:["views","totalInter","profile","likes","comments","shares"],
+  TT:["views","plays","playTime","avgWatch","fullWatch","follows","reach","likes","shares","saves","comments"]
+};
+const LABELS={TT:{views:"Video views",reach:"Viewers"},IG:{reach:"Viewers"},IGS:{comments:"Replies"}};
+const isIGp=p=>p==="IG"||p==="IGS";
+const isTTPhoto=r=>r.platform==="TT"&&(r.format==="Carousel"||r.format==="Photo");
+const reachWord=r=>isIGp(r.platform)||r.platform==="TT"?"viewers":"reach";
+function metricsFor(platform,format){
+  if(platform==="TT"&&(format==="Carousel"||format==="Photo")){
+    const carousel=format==="Carousel";
+    const keyMetrics=["views"].concat(carousel?["photosViewed"]:[],["playTime","follows"]);
+    const more=(carousel?["plays"]:[]).concat(["reach","likes","comments","shares","saves"]);
+    const lab={reach:"Total viewers",views:"Post views",plays:"Total plays"};
+    return keyMetrics.map(k=>Object.assign({},M[k],{l:lab[k]||M[k].l,key:true})).concat(more.map(k=>Object.assign({},M[k],{l:lab[k]||M[k].l})));
+  }
+  let set=PLATFORM_METRICS[platform]||BASE_SET;
+  if(platform==="IG"&&IG_VIDEO.includes(format))set=set.slice(0,2).concat(["watchTime"],set.slice(2));
+  return set.map(k=>Object.assign({},M[k],{l:(LABELS[platform]||{})[k]||M[k].l}));
+}
+const VIEWS=[{key:"yearly",page:"01",name:"Yearly Calendar Dashboard"},{key:"dashboard",page:"02",name:"Calendar Dashboard"},{key:"production",page:"03",name:"Production List"}].concat(GROUPS.map(g=>({key:g.key,page:g.page,name:g.title})));
+const CAMERA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.6"/></svg>';
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const slug=s=>String(s||"").toLowerCase().replace(/\s+/g,"-");
+const pad=n=>String(n).padStart(2,"0");
+const ymd=(y,m,d)=>y+"-"+pad(m+1)+"-"+pad(d);
+const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const now=new Date();
+const TODAY=ymd(now.getFullYear(),now.getMonth(),now.getDate());
+const MONTHS=[];
+for(let y=2025;y<=2028;y++)for(let m=0;m<12;m++)MONTHS.push({y,m});
+function todayIndex(){const i=MONTHS.findIndex(x=>x.y===now.getFullYear()&&x.m===now.getMonth());return i>=0?i:(TODAY<"2025-01-01"?0:MONTHS.length-1);}
+let mi=todayIndex();
+let rankBy="er";
+const platOf=c=>PLATFORMS.find(p=>p.code===c);
+const statOf=k=>STATUSES.find(s=>s.key===k)||STATUSES[0];
+const groupOf=k=>GROUPS.find(g=>g.key===k)||GROUPS[0];
+function parts(s){const a=s.split("-").map(Number);return{y:a[0],m:a[1]-1,d:a[2]};}
+function fmtDate(s){if(!s)return "";const p=parts(s);return MS[p.m]+" "+p.d;}
+function fmtDow(s){const p=parts(s);return DOW[new Date(p.y,p.m,p.d).getDay()];}
+function addDays(s,n){const p=parts(s);const d=new Date(p.y,p.m,p.d+n);return ymd(d.getFullYear(),d.getMonth(),d.getDate());}
+function inMonth(r,y,m){return !!r.date&&r.date.slice(0,7)===y+"-"+pad(m+1);}
+function byDate(a,b){if(!a.date&&!b.date)return (a.created||0)-(b.created||0);if(!a.date)return 1;if(!b.date)return -1;return a.date<b.date?-1:a.date>b.date?1:(a.created||0)-(b.created||0);}
+const platRank=c=>{const i=PLATFORMS.findIndex(p=>p.code===c);return i<0?99:i;};
+const num=v=>{const n=Number(v);return isFinite(n)&&n>0?n:0;};
+function fmtNum(n){n=num(n);if(n>=100000)return Math.round(n/1000)+"K";if(n>=10000)return (n/1000).toFixed(1).replace(/\.0$/,"")+"K";return n.toLocaleString("en-US");}
+const interactions=m=>!m?0:num(m.totalInter)?num(m.totalInter):num(m.likes)+num(m.comments)+num(m.shares)+num(m.saves)+num(m.reposts);
+const erOf=m=>m&&num(m.reach)?interactions(m)/num(m.reach):null;
+const hasResults=r=>!!(r.metrics&&num(r.metrics.reach));
+const pctTxt=v=>v==null?"—":(v*100).toFixed(1)+"%";
+const safeUrl=u=>{u=String(u||"").trim();return /^https?:\/\/[^\s]+$/i.test(u)?u:"";};
+function postLink(r,cls){const u=safeUrl(r.link);return u?`<a class="${cls||"post-link"}" href="${esc(u)}" target="_blank" rel="noopener noreferrer" title="Open the live post" aria-label="Open the live post for ${esc(r.task||"task")}">&#8599;</a>`:"";}
+const BENCH={
+  IG:{low:.01,strong:.03,name:"Instagram",range:"under 1% low · 1–3% healthy · 3%+ strong"},
+  IGS:{low:.01,strong:.03,name:"Instagram",range:"under 1% low · 1–3% healthy · 3%+ strong"},
+  TT:{low:.02,strong:.05,name:"TikTok",range:"under 2% low · 2–5% healthy · 5%+ strong"}
+};
+function tierOf(platform,er){const b=BENCH[platform];if(!b||er==null)return null;return er<b.low?"low":er>=b.strong?"strong":"healthy";}
+const TIER_TXT={low:"Below benchmark",healthy:"Healthy",strong:"Strong"};
+const tierCls=t=>t==="low"?"er-low":t?"er-ok":"";
+function engCell(r){const er=erOf(r.metrics);return `<span class="eng">${er==null?`<span class="muted">—</span>`:`<b class="${tierCls(tierOf(r.platform,er))}">${pctTxt(er)}</b>`}${postLink(r)}</span>`;}
+
+/* follower counts, saved by date */
+const FOL=[{code:"IG",name:"Instagram",unit:"followers"},{code:"TT",name:"TikTok",unit:"followers",likes:true},{code:"YT",name:"YouTube",unit:"subscribers"}];
+const folKey=p=>p==="IG"||p==="IGS"?"IG":p==="TT"?"TT":p==="YT"||p==="YTS"?"YT":null;
+function parseCount(v){v=String(v==null?"":v).trim().replace(/,/g,"").toUpperCase();if(!v)return null;const m=v.match(/^(\d+(?:\.\d+)?)\s*([KM])?$/);if(!m)return NaN;let n=parseFloat(m[1]);if(m[2]==="K")n*=1e3;if(m[2]==="M")n*=1e6;return Math.round(n);}
+function fmtCompact(n){n=num(n);if(n<1000)return String(n);const t=(x,d)=>{const v=Math.floor(x/d*10)/10;return v%1?v.toFixed(1):String(v);};return n<1e6?t(n,1e3)+"K":t(n,1e6)+"M";}
+const FOL_KEYS=["IG","TT","YT","TT_likes"];
+let followers={IG:{},TT:{},YT:{},TT_likes:{}};
+function normFollowers(d){const o={IG:{},TT:{},YT:{},TT_likes:{}};if(d&&typeof d==="object")FOL_KEYS.forEach(key=>{const h=d[key];if(h&&typeof h==="object")Object.keys(h).forEach(k=>{if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&num(h[k]))o[key][k]=num(h[k]);});});return o;}
+function folDates(k){return Object.keys(followers[k]||{}).sort();}
+function followersOn(platform,date){const k=folKey(platform);if(!k)return null;const ds=folDates(k);const target=date||TODAY;let pick=null;ds.forEach(d=>{if(d<=target)pick=d;});return pick?{n:followers[k][pick],date:pick}:null;}
+function latestFollowers(k){const ds=folDates(k);if(!ds.length)return null;const d=ds[ds.length-1];return{n:followers[k][d],date:d,prev:ds.length>1?{n:followers[k][ds[ds.length-2]],date:ds[ds.length-2]}:null};}
+function subStats(r){const s=r.subtasks||[];return{done:s.filter(x=>x.done).length,total:s.length};}
+
+/* ---------- data + sync ---------- */
+let rows=[];
+let db=null, assets=null, mode="loading", readOnly=false, loaded=false;
+const urlCache={};
+const dirty=new Set(), inflight=new Set(), timers=new Map(), deletedLocal=new Set();
+const LKEY="blyssful-planner-local-v2";
+const FKEY="blyssful-followers-local-v1";
+let folTimer=null,folInflight=false,folDirty=false;
+function setFollower(k,val){
+  if(readOnly)return;
+  const h=Object.assign({},followers[k]||{});
+  const n=parseCount(val);if(Number.isNaN(n))return;
+  if(n==null||!n)delete h[TODAY];else h[TODAY]=n;
+  followers=Object.assign({},followers,{[k]:h});
+  folDirty=true;clearTimeout(folTimer);folTimer=setTimeout(flushFollowers,800);setSync();
+}
+async function flushFollowers(){
+  if(folInflight||!folDirty)return;
+  folDirty=false;
+  if(mode!=="live"){try{localStorage.setItem(FKEY,JSON.stringify(followers));}catch(e){}setSync();return;}
+  folInflight=true;setSync();
+  try{await db.doc("settings/followers").set(JSON.parse(JSON.stringify(followers)));}
+  catch(e){notice(`<span class="grow">A follower count didn't save. Check your connection and enter it again.</span>`);}
+  finally{folInflight=false;if(folDirty)flushFollowers();setSync();}
+}
+
+function normalize(o){
+  const n=normalizeRaw(o);
+  if(isIGp(n.platform)&&!num(n.metrics.reach)&&num(n.metrics.viewers))n.metrics.reach=n.metrics.viewers;
+  if(n.platform==="IGS"&&num(n.metrics.views))n.metrics.reach=num(n.metrics.views);
+  return n;
+}
+function normalizeRaw(o){
+  return {
+    id:o.id, group:GROUPS.some(g=>g.key===o.group)?o.group:"sxm",
+    task:String(o.task||""), date:/^\d{4}-\d{2}-\d{2}$/.test(o.date||"")?o.date:"",
+    pillar:PILLARS.includes(o.pillar)?o.pillar:"", dest:String(o.dest||""),
+    platform:platOf(o.platform)?o.platform:"", effort:EFFORTS.includes(o.effort)?o.effort:"",
+    status:STATUSES.some(s=>s.key===o.status)?o.status:(o.status===""?"":"Idea"), format:FORMATS.includes(o.format)?o.format:"",
+    sfx:!!o.sfx, desc:String(o.desc||""),
+    collab:!!o.collab, collabWith:String(o.collabWith||"").slice(0,300), promo:!!o.promo, promoBrand:String(o.promoBrand||"").slice(0,200),
+    subtasks:Array.isArray(o.subtasks)?o.subtasks.filter(s=>s&&typeof s==="object").map(s=>({t:String(s.t||""),done:!!s.done})):[],
+    metrics:(o.metrics&&typeof o.metrics==="object")?Object.fromEntries(METRICS.map(x=>{const v=o.metrics[x.k];return [x.k,v===""||v==null?null:(x.type==="text"?String(v).slice(0,40):num(v))];})):{},
+    image:typeof o.image==="string"?o.image:"", copiedFrom:typeof o.copiedFrom==="string"?o.copiedFrom:"", link:typeof o.link==="string"?o.link.slice(0,2000):"", sample:!!o.sample,
+    created:Number(o.created)||0, updated:Number(o.updated)||0
+  };
+}
+function toDoc(r){const d=Object.assign({},r);delete d.id;d.updated=Date.now();return JSON.parse(JSON.stringify(d));}
+const imgSrc=id=>id?(urlCache[id]||window.__photoUrl(id)||""):"";
+
+function setSync(){
+  const el=$("sync"),t=$("syncText");
+  el.classList.remove("saving","off");
+  if(mode==="loading"){t.textContent="Loading your planner";return;}
+  if(mode==="offline"){el.classList.add("off");t.textContent="Not syncing";return;}
+  if(readOnly){el.classList.add("off");t.textContent="View only";return;}
+  if(dirty.size||inflight.size||folDirty||folInflight){el.classList.add("saving");t.textContent="Saving…";return;}
+  t.textContent="Synced";
+}
+function notice(html){const n=$("notice");if(!html){n.hidden=true;n.innerHTML="";return;}n.innerHTML=html;n.hidden=false;}
+function refreshNotice(){
+  if(mode==="offline"){notice(`<span class="grow">This copy isn't connected to your account, so changes stay on this device and photos can't upload. Open the planner from claude.ai while signed in to sync across devices.</span>`);return;}
+  if(readOnly){notice(`<span class="grow">You can view this planner but not change it. Ask the owner for edit access.</span>`);return;}
+  if(mode==="live"&&rows.some(r=>r.sample)){notice(`<span class="grow"><b>These are sample tasks.</b> Explore, then clear them when you're ready to plan your own.</span><button class="btn sm danger" id="clearSamples">Clear sample tasks</button>`);return;}
+  if(stalled){notice(`<span class="grow">Can't reach your planner yet. Check your connection; it will load on its own.</span>`);return;}
+  notice("");
+}
+let stalled=false;
+
+function queueSave(id,delay){
+  if(readOnly)return;
+  dirty.add(id);
+  clearTimeout(timers.get(id));
+  timers.set(id,setTimeout(()=>flush(id),delay==null?600:delay));
+  setSync();
+}
+async function flush(id,retried){
+  timers.delete(id);
+  if(inflight.has(id)||!dirty.has(id))return;
+  dirty.delete(id);
+  const r=rows.find(x=>x.id===id);
+  if(mode!=="live"){saveLocal();setSync();return;}
+  inflight.add(id);setSync();
+  const ref=db.collection("tasks").doc(id);
+  try{
+    if(r)await ref.set(toDoc(r));else await ref.delete();
+  }catch(e){
+    const code=e&&e.code;
+    if(code==="unavailable"&&!retried){inflight.delete(id);dirty.add(id);setTimeout(()=>flush(id,true),600+Math.random()*900);return;}
+    if(code==="invalid_argument"||code==="not_granted"){readOnly=true;refreshNotice();}
+    else if(code==="quota_exceeded"){notice(`<span class="grow">Your planner is full, so this change didn't save. Delete some old tasks and try again.</span>`);}
+    else{notice(`<span class="grow">A change didn't save. Check your connection, then edit the task again.</span>`);}
+  }finally{
+    inflight.delete(id);
+    if(dirty.has(id)&&!timers.has(id))flush(id);
+    setSync();
+  }
+}
+function saveLocal(){try{localStorage.setItem(LKEY,JSON.stringify(rows));}catch(e){}}
+function loadLocal(){try{const v=JSON.parse(localStorage.getItem(LKEY)||"null");return Array.isArray(v)?v.map(normalize):[];}catch(e){return [];}}
+
+function onSnap(snap){
+  const local=new Map(rows.map(r=>[r.id,r]));
+  const next=[];
+  snap.docs.forEach(d=>{
+    if(deletedLocal.has(d.id))return;
+    if((dirty.has(d.id)||inflight.has(d.id))&&local.has(d.id)){next.push(local.get(d.id));return;}
+    const body=d.data();if(!body)return;
+    next.push(normalize(Object.assign(JSON.parse(JSON.stringify(body)),{id:d.id})));
+  });
+  rows.forEach(r=>{if((dirty.has(r.id)||inflight.has(r.id))&&!next.some(n=>n.id===r.id))next.push(r);});
+  rows=next;
+  if(!snap.metadata||!snap.metadata.fromCache){loaded=true;stalled=false;clearTimeout(loadTimer);}
+  mode="live";setSync();refreshNotice();scheduleRender();
+}
+let loadTimer=null;
+async function connect(){
+  try{
+    if(!window.claude||typeof window.claude.use!=="function")throw new Error("no runtime");
+    db=await window.claude.use("db");
+  }catch(e){db=null;}
+  if(!db){mode="offline";stories=loadStoriesLocal();try{applyNavOrder(JSON.parse(localStorage.getItem(NKEY)||"null"));}catch(e){}rows=loadLocal();try{followers=normFollowers(JSON.parse(localStorage.getItem(FKEY)||"null"));}catch(e){}setSync();refreshNotice();renderAll();return;}
+  try{assets=await window.claude.use("assets");}catch(e){assets=null;}
+  loadTimer=setTimeout(()=>{if(!loaded){stalled=true;refreshNotice();}},10000);
+  db.collection("stories").onSnapshot(snap=>{stories=snap.docs.map(d=>Object.assign({},d.data()||{},{id:d.id})).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.date||""));scheduleRender();if(sideMode==="stories"&&!isEditing())renderSide();},()=>{});
+  db.doc("settings/nav").onSnapshot(snap=>{const d=snap.exists?snap.data():null;if(d&&!document.querySelector("#pages .dragging")){applyNavOrder(d.order);scheduleRender();}},()=>{});
+  db.doc("settings/followers").onSnapshot(snap=>{if(folDirty||folInflight)return;followers=normFollowers(snap.exists?snap.data():null);scheduleRender();},()=>{});
+  db.collection("tasks").onSnapshot(onSnap,err=>{
+    clearTimeout(loadTimer);
+    if(err&&err.code==="revoked"){readOnly=true;}
+    notice(`<span class="grow">The live connection to your planner stopped. Reload the page to reconnect.</span>`);
+    mode="live";setSync();
+  });
+}
+
+/* render only when nobody is typing, so focus never jumps */
+let needRender=false;
+function isEditing(){const a=document.activeElement;if(!a)return false;if(a.id==="monthSelect"||a.id==="yaQ"||a.id==="ytQ"||a.closest(".filters"))return false;return a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT";}
+function scheduleRender(){if(isEditing()){needRender=true;return;}needRender=false;renderAll();}
+document.addEventListener("focusout",()=>{setTimeout(()=>{if(needRender&&!isEditing()){needRender=false;renderAll();}},0);});
+function renderAll(){render();if(openId)renderDrawer();else if(openDay)renderDayDrawer();else if(sideMode==="stories")renderSide();}
+
+function update(id,patch,delay){
+  const r=rows.find(x=>x.id===id);if(!r||readOnly)return;
+  Object.assign(r,patch);queueSave(id,delay);
+}
+function newTask(groupKey,extra){
+  const g=groupOf(groupKey);
+  const id=mode==="live"?db.collection("tasks").doc().id:"n"+Date.now();
+  const r=normalize(Object.assign({id,group:g.key,dest:g.def,status:"Idea",created:Date.now()},extra||{}));
+  rows.push(r);queueSave(id,0);return r;
+}
+function releaseImage(imgId,exceptId){if(!imgId||!assets)return;if(rows.some(x=>x.id!==exceptId&&x.image===imgId))return;assets.delete(imgId).catch(()=>{});}
+function duplicateTask(id,platform){
+  const r=rows.find(x=>x.id===id);if(!r||readOnly)return null;
+  return newTask(r.group,{task:r.task,date:r.date,pillar:r.pillar,dest:r.dest,platform:platform||"",format:r.format,effort:r.effort,sfx:r.sfx,desc:r.desc,
+    subtasks:r.subtasks.map(x=>({t:x.t,done:false})),image:r.image,collab:r.collab,collabWith:r.collabWith,promo:r.promo,promoBrand:r.promoBrand,
+    status:r.status==="Published"?"Drafting":r.status,copiedFrom:r.id});
+}
+function removeTask(id){
+  const r=rows.find(x=>x.id===id);if(!r)return;
+  releaseImage(r.image,id);
+  rows=rows.filter(x=>x.id!==id);deletedLocal.add(id);queueSave(id,0);
+}
+
+/* ---------- tabs + routing ---------- */
+$("destViews").innerHTML=GROUPS.map(g=>`<section id="view-${g.key}" class="view" hidden></section>`).join("");
+let current="dashboard";
+/* page tabs: order can be changed by holding a tab and dragging it */
+const NKEY="blyssful-nav-order-v1";
+let navOrder=VIEWS.map(v=>v.key);
+function orderedViews(){return navOrder.map(k=>VIEWS.find(v=>v.key===k)).filter(Boolean).concat(VIEWS.filter(v=>!navOrder.includes(v.key)));}
+function pageNum(k){return pad(orderedViews().findIndex(v=>v.key===k)+1);}
+function renderNav(){
+  const nav=$("pages");const sl=nav.scrollLeft;
+  nav.innerHTML=orderedViews().map(v=>`<a href="#${v.key}" data-view="${v.key}" draggable="false"><span class="n">${pageNum(v.key)}</span>${esc(v.name)}</a>`).join("");
+  nav.scrollLeft=sl;
+  $("menuList").innerHTML=`<p class="menu-h">All pages</p>`+orderedViews().map(v=>`<a href="#${v.key}" data-view="${v.key}"${v.key===current?' aria-current="page"':""}><span class="n">${pageNum(v.key)}</span>${esc(v.name)}</a>`).join("");
+  nav.querySelectorAll("a").forEach(a=>{if(a.dataset.view===current)a.setAttribute("aria-current","page");});
+  GROUPS.forEach(g=>{g.page=pageNum(g.key);});
+  ["yearly","dashboard","production"].forEach(k=>{const ey=document.querySelector("#view-"+k+" .page-head .eyebrow");if(ey)ey.textContent=ey.textContent.replace(/^Page \d+/,"Page "+pageNum(k));});
+}
+function applyNavOrder(o){if(!Array.isArray(o))return;const clean=o.filter((k,i)=>VIEWS.some(v=>v.key===k)&&o.indexOf(k)===i);if(!clean.length)return;navOrder=clean;renderNav();}
+async function setNavOrder(o){
+  applyNavOrder(o);render();
+  if(mode!=="live"){try{localStorage.setItem(NKEY,JSON.stringify(navOrder));}catch(e){}return;}
+  if(readOnly)return;
+  try{await db.doc("settings/nav").set({order:navOrder});}catch(e){notice(`<span class="grow">The new tab order didn't save. Check your connection and try again.</span>`);}
+}
+renderNav();
+function setMenu(open){const m=$("menuList"),b=$("menuBtn");m.hidden=!open;b.setAttribute("aria-expanded",String(open));if(open){const a=m.querySelector('[aria-current="page"]')||m.querySelector("a");if(a)a.focus({preventScroll:true});}}
+$("menuBtn").addEventListener("click",e=>{e.stopPropagation();setMenu($("menuList").hidden);});
+$("menuList").addEventListener("click",e=>{if(e.target.closest("a"))setMenu(false);});
+document.addEventListener("click",e=>{if(!$("menuList").hidden&&!e.target.closest(".navmenu"))setMenu(false);});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("menuList").hidden){setMenu(false);$("menuBtn").focus();}});
+(function(){
+  const nav=$("pages");let drag=null,suppress=0;
+  const start=()=>{if(!drag||readOnly&&mode==="live")return;drag.active=true;drag.el.classList.add("dragging");nav.classList.add("reordering");try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}};
+  const move=x=>{
+    const a=drag.el;let before=null;
+    for(const o of nav.querySelectorAll("a")){if(o===a)continue;const r=o.getBoundingClientRect();if(x<r.left+r.width/2){before=o;break;}}
+    if(a.nextElementSibling!==before&&before!==a)nav.insertBefore(a,before);
+    const nr=nav.getBoundingClientRect();if(x<nr.left+36)nav.scrollLeft-=10;else if(x>nr.right-36)nav.scrollLeft+=10;
+  };
+  const end=()=>{
+    if(!drag)return;clearTimeout(drag.t);
+    if(drag.active){drag.el.classList.remove("dragging");nav.classList.remove("reordering");suppress=Date.now();
+      const o=[...nav.querySelectorAll("a")].map(a=>a.dataset.view);drag=null;
+      if(o.join()!==navOrder.join())setNavOrder(o);else renderNav();return;}
+    drag=null;
+  };
+  nav.addEventListener("touchstart",e=>{const a=e.target.closest("a");if(!a||e.touches.length!==1)return;const t=e.touches[0];drag={el:a,x:t.clientX,y:t.clientY,active:false};drag.t=setTimeout(start,380);},{passive:true});
+  nav.addEventListener("touchmove",e=>{if(!drag)return;const t=e.touches[0];if(drag.active){e.preventDefault();move(t.clientX);}else if(Math.hypot(t.clientX-drag.x,t.clientY-drag.y)>8){clearTimeout(drag.t);drag=null;}},{passive:false});
+  nav.addEventListener("touchend",end);nav.addEventListener("touchcancel",end);
+  nav.addEventListener("mousedown",e=>{if(e.button!==0)return;const a=e.target.closest("a");if(!a)return;drag={el:a,x:e.clientX,y:e.clientY,active:false,mouse:true};drag.t=setTimeout(start,300);});
+  document.addEventListener("mousemove",e=>{if(!drag||!drag.mouse)return;if(!drag.active){if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>6){clearTimeout(drag.t);start();}else return;}if(drag&&drag.active){e.preventDefault();move(e.clientX);}});
+  document.addEventListener("mouseup",()=>{if(drag&&drag.mouse)end();});
+  nav.addEventListener("click",e=>{if(Date.now()-suppress<450){e.preventDefault();e.stopPropagation();}},true);
+  nav.addEventListener("contextmenu",e=>{if(e.target.closest("a"))e.preventDefault();});
+  nav.addEventListener("dragstart",e=>e.preventDefault());
+})();
+let pendingJump=null;
+document.addEventListener("click",e=>{const a=e.target.closest("[data-jumpidea]");if(a)pendingJump="tbl-"+a.dataset.jumpidea+"-ideation";});
+function show(view){
+  if(!VIEWS.some(v=>v.key===view))view="yearly";
+  current=view;
+  document.querySelectorAll(".view").forEach(s=>{s.hidden=s.id!=="view-"+view;});
+  document.querySelectorAll("#pages a,#menuList a").forEach(a=>{if(a.dataset.view===view)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+  render();
+  if(pendingJump){const t=$(pendingJump);pendingJump=null;if(t){t.scrollIntoView({block:"start"});return;}}
+  window.scrollTo(0,0);
+}
+function render(){
+  if(current==="dashboard")renderDashboard();
+  else if(current==="production")renderProduction();
+  else if(current==="yearly")renderYearly();
+  else renderGroup(current);
+}
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+
+/* ---------- shared bits ---------- */
+function photoSq(r,hint){
+  const pl=platOf(r.platform);
+  if(r.image)return `<div class="sq ${pl?"p-"+r.platform:"p-none"}"><img src="${esc(imgSrc(r.image))}" alt="Preview for ${esc(r.task||"task")}" loading="lazy" onerror="this.remove()"></div>`;
+  return `<div class="sq ${pl?"p-"+r.platform:"p-none"}"><div class="ph">${CAMERA}<span class="ph-code">${esc(r.platform||"")}</span><span class="ph-hint">${hint||""}</span></div></div>`;
+}
+function thumb(r){return `<button class="thumb" data-open="${r.id}" aria-label="Open ${esc(r.task||"task")}">${photoSq(r)}</button>`;}
+function opts(list,val,blank){
+  return (blank?`<option value=""${val?"":" selected"}>${blank}</option>`:"")+list.map(o=>{const v=typeof o==="string"?o:o.v;const l=typeof o==="string"?o:o.l;return `<option value="${esc(v)}"${v===val?" selected":""}>${esc(l)}</option>`;}).join("");
+}
+const platOpts=PLATFORMS.map(p=>({v:p.code,l:p.code+" · "+p.name}));
+const platClass=v=>v?"p-"+v:"blank";
+const statClass=v=>v?"s-"+slug(v):"blank";
+const effClass=v=>v?"eff-"+v:"blank";
+const neutral=v=>v?"neutral":"blank";
+function pickClass(f,v){return f==="platform"?platClass(v):f==="status"?statClass(v):f==="effort"?effClass(v):neutral(v);}
+
+/* ---------- dashboard ---------- */
+$("monthSelect").innerHTML=MONTHS.map((x,i)=>`<option value="${i}">${MS[x.m]} ${x.y}</option>`).join("");
+$("prevBtn").addEventListener("click",()=>{if(mi>0){mi--;renderDashboard();}});
+$("nextBtn").addEventListener("click",()=>{if(mi<MONTHS.length-1){mi++;renderDashboard();}});
+$("monthSelect").addEventListener("change",e=>{mi=+e.target.value;renderDashboard();});
+$("todayBtn").addEventListener("click",()=>{mi=todayIndex();renderDashboard();});
+document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-rank]");if(!b)return;rankBy=b.dataset.rank;document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));renderTop();});
+$("calLegend").innerHTML=
+  `<div class="lg"><span class="lg-label">Platform</span>${PLATFORMS.map(p=>`<span class="lg-item"><span class="code-chip p-${p.code}">${p.code}</span>${esc(p.name)}</span>`).join("")}</div>`+
+  `<div class="lg"><span class="lg-label">Status</span>${STATUSES.map(s=>`<span class="lg-item"><span class="st s-${slug(s.key)}">${s.letter}</span>${esc(s.key)}</span>`).join("")}</div>`;
+
+function monthRowsNow(){const {y,m}=MONTHS[mi];return rows.filter(r=>r.status&&inMonth(r,y,m));}
+
+const RANK_TXT={er:"engagement rate",reach:"reach",clicks:"link clicks"};
+function rankFn(rb){return {er:r=>erOf(r.metrics)||0,reach:r=>num(r.metrics.reach),clicks:r=>num(r.metrics.clicks)}[rb];}
+function bestPillsHTML(list){
+  if(!list.length)return "";
+  const agg=(keyFn,labels)=>{let best=null;labels.forEach(l=>{const rs=list.filter(r=>keyFn(r)===l.v);const reach=rs.reduce((a,r)=>a+num(r.metrics.reach),0);if(!reach)return;const er=rs.reduce((a,r)=>a+interactions(r.metrics),0)/reach;if(!best||er>best.er)best={l:l.l,er};});return best;};
+  const bp=agg(r=>r.platform,PLATFORMS.map(p=>({v:p.code,l:p.name})));
+  const bpl=agg(r=>r.pillar,PILLARS.map(p=>({v:p,l:p})));
+  return `<span class="pill t-blue">Best platform: ${esc(bp?bp.l:"—")} ${bp?pctTxt(bp.er):""}</span><span class="pill t-green">Best pillar: ${esc(bpl?bpl.l:"—")} ${bpl?pctTxt(bpl.er):""}</span><span class="pill t-plain">${list.length} post${list.length===1?"":"s"} with results</span>`;
+}
+function topCardsHTML(top,rb,showGroup){
+  return top.map((r,i)=>{
+    const g=groupOf(r.group);const er=erOf(r.metrics);const t=tierOf(r.platform,er);
+    const big=rb==="reach"?`${fmtNum(r.metrics.reach)}<small>${reachWord(r)}</small>`:rb==="clicks"?`${fmtNum(r.metrics.clicks)}<small>link clicks</small>`:`${pctTxt(er)}<small>engagement</small>`;
+    return `<div class="tp-card"><button class="tp-hit" data-open="${r.id}">
+      <div style="position:relative">${photoSq(r,r.image?"":"Add photo")}<span class="rank">${i+1}</span><span class="code-chip p-${r.platform||"none"}" style="position:absolute;top:8px;right:8px">${esc(r.platform||"—")}</span></div>
+      <div class="tp-body">
+        <span class="tp-title">${esc(r.task||"Untitled")}</span>
+        <span class="tp-meta">${showGroup?esc(g.name)+" · ":""}${esc(r.format||"No format")} · ${fmtDate(r.date)}${r.date&&parts(r.date).y!==now.getFullYear()?", "+parts(r.date).y:""}</span>
+        <span class="tp-er ${rb==="er"?tierCls(t):""}">${big}</span>${t?`<span class="tier-pill tier-${t}">${TIER_TXT[t]} for ${BENCH[r.platform].name}</span>`:""}
+        <span class="tp-stats">${rb!=="er"?`<span><b>${pctTxt(er)}</b> eng.</span>`:""}${rb!=="reach"?`<span><b>${fmtNum(r.metrics.reach)}</b> ${reachWord(r)}</span>`:""}<span><b>${fmtNum(r.metrics.likes)}</b> likes</span><span><b>${fmtNum(r.metrics.saves)}</b> saves</span>${rb!=="clicks"&&num(r.metrics.clicks)?`<span><b>${fmtNum(r.metrics.clicks)}</b> clicks</span>`:""}</span>
+      </div></button>${safeUrl(r.link)?`<a class="tp-live" href="${esc(safeUrl(r.link))}" target="_blank" rel="noopener noreferrer">View live post &#8599;</a>`:""}</div>`;
+  }).join("");
+}
+function renderTop(){
+  const {y,m}=MONTHS[mi];
+  const list=monthRowsNow().filter(r=>r.status==="Published"&&hasResults(r));
+  const k=rankFn(rankBy);
+  const top=list.slice().sort((a,b)=>k(b)-k(a)).slice(0,5);
+  $("tpEyebrow").textContent="Published in "+MN[m]+" "+y+" · ranked by "+RANK_TXT[rankBy];
+  $("tpBest").innerHTML=bestPillsHTML(list);
+  if(!top.length){
+    $("tpRow").style.display="block";
+    $("tpRow").innerHTML=`<p class="tp-empty">No results logged for ${MN[m]} yet. Open a published post and add its reach, likes, comments, shares and saves under Engagement results.</p>`;
+    return;
+  }
+  $("tpRow").style.display="";
+  $("tpRow").innerHTML=topCardsHTML(top,rankBy,true);
+}
+const rankByGroup={};
+function groupTopHTML(key){
+  const g=groupOf(key);const rb=rankByGroup[key]||"er";
+  const list=rows.filter(r=>r.group===key&&r.status==="Published"&&hasResults(r));
+  const k=rankFn(rb);
+  const top=list.slice().sort((a,b)=>k(b)-k(a)).slice(0,7);
+  return `<section class="card tp tp-group" aria-labelledby="tp-${key}">
+    <div class="tp-head">
+      <div><p class="eyebrow">All time · ranked by ${RANK_TXT[rb]}</p><h2 id="tp-${key}">Top performing ${esc(g.name)} posts</h2><div class="tp-best">${bestPillsHTML(list)}</div></div>
+      <div class="seg" role="group" aria-label="Rank ${esc(g.name)} posts by">${["er","reach","clicks"].map(x=>`<button type="button" data-rankg="${x}" aria-pressed="${x===rb}">${x==="er"?"Engagement rate":x==="reach"?"Reach":"Link clicks"}</button>`).join("")}</div>
+    </div>
+    ${top.length?`<div class="tp-row tp-7">${topCardsHTML(top,rb,false)}</div>`:`<p class="tp-empty">No published ${esc(g.name)} posts with results yet. Once a post is Published and has its engagement logged, its rank shows here.</p>`}
+  </section>`;
+}
+function renderSocials(){
+  const box=$("socials");if(!box)return;
+  if(isEditing()&&box.contains(document.activeElement))return;
+  box.innerHTML=`<h2 class="socials-title"><span class="hl">BlyssfulTravels Socials</span></h2>
+    <div class="soc-row">${FOL.map(f=>{
+      const cell=(key,unit,label)=>{
+        const l=latestFollowers(key);const tv=(followers[key]||{})[TODAY];const shown=tv!=null?fmtCompact(tv):(l?fmtCompact(l.n):"");
+        const d=l&&l.prev?l.n-l.prev.n:null;
+        const meta=l?`as of ${fmtDate(l.date)}${l.date===TODAY?" (today)":""}${d?` · ${d>0?"+":"−"}${fmtCompact(Math.abs(d))} since ${fmtDate(l.prev.date)}`:""}`:"not set yet";
+        return `<div class="soc-cell">${label?`<label class="soc-lab" for="fol-${key}">${label}</label>`:""}
+          <input type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" class="soc-in" id="fol-${key}" data-fol="${key}" value="${shown}" placeholder="e.g. 21.7K" aria-label="${f.name} ${unit}"${readOnly?" disabled":""}>
+          <span class="soc-meta">${label?"":unit+" · "}${meta}</span></div>`;
+      };
+      return `<div class="soc${f.likes?" soc-wide":""}"><div class="soc-top"><span class="code-chip p-${f.code}">${f.code}</span><span class="soc-name">${f.name}</span></div>
+        ${f.likes?`<div class="soc-split">${cell(f.code,"followers","Followers")}${cell("TT_likes","likes","Likes")}</div>`:cell(f.code,f.unit,"")}</div>`;}).join("")}</div>
+    <p class="soc-note">Type counts the way the app shows them, like 21.7K or 1.2M. Update any day; it's saved for today. Each post uses the count saved on or before its post date, so earlier posts keep their earlier numbers.</p>`;
+}
+$("socials").addEventListener("input",e=>{const el=e.target.closest("[data-fol]");if(!el)return;const bad=Number.isNaN(parseCount(el.value));el.classList.toggle("bad",bad);el.setAttribute("aria-invalid",String(bad));if(!bad)setFollower(el.dataset.fol,el.value);});
+$("socials").addEventListener("change",e=>{const el=e.target.closest("[data-fol]");if(el)setTimeout(()=>{if(!$("socials").contains(document.activeElement))renderSocials();},0);});
+$("socials").addEventListener("focusout",()=>setTimeout(()=>{if(!$("socials").contains(document.activeElement))renderSocials();},0));
+function renderDashboard(){
+  const {y,m}=MONTHS[mi];
+  $("monthLabel").textContent=MN[m]+" "+y;
+  $("prevBtn").disabled=mi===0;
+  $("nextBtn").disabled=mi===MONTHS.length-1;
+  $("monthSelect").value=String(mi);
+  const monthRows=monthRowsNow();
+  renderSocials();
+  renderTop();
+
+  const map={};
+  monthRows.forEach(r=>{(map[r.date]=map[r.date]||[]).push(r);});
+  const startDow=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
+  const cells=Math.ceil((startDow+dim)/7)*7;
+  let html=DOW.map(d=>`<div class="dow">${d}</div>`).join("");
+  for(let i=0;i<cells;i++){
+    const dt=new Date(y,m,1-startDow+i);
+    const key=ymd(dt.getFullYear(),dt.getMonth(),dt.getDate());
+    const out=dt.getMonth()!==m;
+    const posts=out?[]:(map[key]||[]).slice().sort((a,b)=>platRank(a.platform)-platRank(b.platform));
+    let inner=`<div class="day-top"><span class="dnum">${dt.getDate()}</span>${posts.length?`<span class="dcount">${posts.length} post${posts.length>1?"s":""}</span>`:""}</div>`;
+    posts.slice(0,3).forEach(p=>{
+      const st=statOf(p.status);const pl=platOf(p.platform);
+      const late=p.status==="Published"&&!hasResults(p)&&addDays(p.date,2)<=TODAY;
+      inner+=`<button class="chip p-${pl?p.platform:"none"}${late?" needs-results":""}" data-open="${p.id}" title="${esc(p.task)} · ${esc(pl?pl.name:"No platform")} · ${esc(p.status)}${late?" · results not logged yet":""}"><span class="st s-${slug(st.key)}">${st.letter}</span><span class="code">${esc(p.platform||"—")}</span><span class="t">${esc(p.task||"Untitled")}</span></button>`;
+    });
+    if(posts.length>3)inner+=`<span class="more">+${posts.length-3} more</span>`;
+    html+=`<div class="day${out?" out":""}${key===TODAY?" today":""}">${inner}</div>`;
+  }
+  $("calGrid").innerHTML=html;
+
+  /* monthly analytics */
+  const count=(arr,f)=>arr.filter(f).length;
+  const total=monthRows.length;
+  const pub=count(monthRows,r=>r.status==="Published");
+  const sched=count(monthRows,r=>r.status==="Scheduled");
+  const work=count(monthRows,r=>r.status==="Idea"||r.status==="Drafting"||r.status==="In Progress");
+  const overdue=count(monthRows,r=>r.date<TODAY&&r.status!=="Published");
+  const withRes=monthRows.filter(r=>r.status==="Published"&&hasResults(r));
+  const reach=withRes.reduce((a,r)=>a+num(r.metrics.reach),0);
+  const inter=withRes.reduce((a,r)=>a+interactions(r.metrics),0);
+  const clicks=withRes.reduce((a,r)=>a+num(r.metrics.clicks),0);
+  const pct=total?Math.round(pub/total*100):0;
+  const bench=withRes.filter(r=>BENCH[r.platform]);
+  let engCls="t-plain",engD=reach?"interactions ÷ reach":"no results logged yet";
+  if(bench.length){
+    const br=bench.reduce((a,r)=>a+num(r.metrics.reach),0),bi=bench.reduce((a,r)=>a+interactions(r.metrics),0);
+    const thr=bench.reduce((a,r)=>a+num(r.metrics.reach)*BENCH[r.platform].low,0)/br;
+    const lowN=bench.filter(r=>tierOf(r.platform,erOf(r.metrics))==="low").length;
+    engCls=bi/br<thr?"t-pink":"t-olive";
+    engD=lowN?`${lowN} of ${bench.length} IG/TikTok posts below benchmark`:`IG & TikTok posts at or above benchmark`;
+  }
+  const tile=(cls,k,v,d)=>`<div class="tile ${cls}"><span class="k">${k}</span><span class="v">${v}</span><span class="d">${d}</span></div>`;
+  const platCounts=PLATFORMS.map(p=>({p,n:count(monthRows,r=>r.platform===p.code)}));
+  const maxPlat=Math.max(1,...platCounts.map(x=>x.n));
+  const platER=PLATFORMS.map(p=>{const rs=withRes.filter(r=>r.platform===p.code);const re=rs.reduce((a,r)=>a+num(r.metrics.reach),0);return{p,er:re?rs.reduce((a,r)=>a+interactions(r.metrics),0)/re:null};});
+  const maxER=Math.max(0.0001,...platER.map(x=>x.er||0));
+  const statCounts=STATUSES.map(s=>({s,n:count(monthRows,r=>r.status===s.key)}));
+  const pillCounts=PILLARS.map(p=>({p,n:count(monthRows,r=>r.pillar===p)}));
+  const maxPill=Math.max(1,...pillCounts.map(x=>x.n));
+
+  $("rail").innerHTML=
+    `<div class="rail-head"><p class="eyebrow">Analytics for</p><h2>${MN[m]} ${y}</h2></div>`+
+    `<div class="tiles">`+
+      tile("t-blue","Posts planned",total,"dated this month")+
+      tile("t-green","Published",pub,total?pct+"% of planned":"nothing planned")+
+      tile("t-mauve","Scheduled",sched,"ready to go out")+
+      tile("t-orange","In the works",work,"idea, drafting, in progress")+
+      tile("t-plain"+(overdue?" hot":""),"Overdue",overdue,"past date, not published")+
+      tile("t-sky","Total reach",fmtNum(reach),"incl. Instagram viewers · "+withRes.length+" post"+(withRes.length===1?"":"s"))+
+      tile(engCls,"Engagement",reach?pctTxt(inter/reach):"—",engD)+
+      tile("t-sky2","Link clicks",fmtNum(clicks),reach?pctTxt(clicks/reach)+" click rate":"from logged results")+
+    `</div>`+
+    `<div class="block"><h3>Posts by platform <span>${total} total</span></h3><div class="bars">${platCounts.slice().sort((a,b)=>b.n-a.n).map(x=>
+      `<div class="bar-row"><span class="lab"><span class="code-chip p-${x.p.code}">${x.p.code}</span>${esc(x.p.short)}</span><span class="bar-track"><span class="bar-fill" style="width:${x.n/maxPlat*100}%;background:${x.p.mid}"></span></span><span class="bar-n">${x.n}</span></div>`).join("")}</div></div>`+
+    `<div class="block"><h3>Engagement by platform <span>published posts</span></h3>${withRes.length?`<div class="bars">${platER.slice().sort((a,b)=>(b.er==null?-1:b.er)-(a.er==null?-1:a.er)).map(x=>
+      `<div class="bar-row"><span class="lab"><span class="code-chip p-${x.p.code}">${x.p.code}</span>${esc(x.p.short)}</span><span class="bar-track"><span class="bar-fill" style="width:${(x.er||0)/maxER*100}%;background:${x.p.mid}"></span></span><span class="bar-n ${tierCls(tierOf(x.p.code,x.er))}">${x.er==null?"—":pctTxt(x.er)}</span></div>`).join("")}</div>`:`<p class="empty">Log results on published posts to compare platforms.</p>`}</div>`+
+    `<div class="block"><h3>Status mix <span>${pct}% published</span></h3>`+
+      `<div class="stack" role="img" aria-label="Status mix">${total?statCounts.filter(x=>x.n).map(x=>`<span title="${esc(x.s.key)}: ${x.n}" style="width:${x.n/total*100}%;background:${x.s.mid}"></span>`).join(""):""}</div>`+
+      `<div class="stack-legend">${statCounts.map(x=>`<div><span class="dot" style="background:${x.s.mid}"></span>${esc(x.s.key)}<b>${x.n}</b></div>`).join("")}</div></div>`+
+    `<div class="block"><h3>Pillar mix</h3><div class="bars">${pillCounts.slice().sort((a,b)=>b.n-a.n).map(x=>
+      `<div class="bar-row"><span class="lab">${esc(x.p)}</span><span class="bar-track"><span class="bar-fill" style="width:${x.n/maxPill*100}%;background:var(--sage-ink)"></span></span><span class="bar-n">${x.n}</span></div>`).join("")}</div></div>`;
+
+  $("rail").insertAdjacentHTML("beforeend",storiesRailHTML(y,m));
+  /* up next */
+  const monthEnd=ymd(y,m,dim);
+  const up=monthRows.filter(r=>r.status!=="Published"&&r.date>=TODAY).sort(byDate);
+  $("upHead").innerHTML=`Up next <span>${monthEnd<TODAY?"month is over":(up.length+" left to post")}</span>`;
+  if(!up.length){
+    $("upNext").innerHTML=`<li style="display:block"><p class="empty">${monthEnd<TODAY?"Nothing left from this month. Overdue posts show in the tiles.":(total?"Everything dated this month is published.":(loaded||mode==="offline"?"No posts dated this month yet. Add dates on a destination page.":"Loading…"))}</p></li>`;
+  }else{
+    $("upNext").innerHTML=up.slice(0,6).map(r=>{const st=statOf(r.status);return `<li>${thumb(r)}<span class="dt"><b>${fmtDate(r.date)}</b>${fmtDow(r.date)}</span><button class="linkish" data-open="${r.id}"><span class="t">${esc(r.task||"Untitled")}</span><span class="g"><span class="st-txt">${esc(st.key)} · </span>${esc(r.platform||"—")} · ${esc(groupOf(r.group).name)} · ${esc(r.dest)}</span></button><span class="pill s-${slug(st.key)}">${esc(st.key)}</span></li>`;}).join("")+(up.length>6?`<li style="display:block"><p class="empty">and ${up.length-6} more after these</p></li>`:"");
+  }
+
+  const gc=GROUPS.map(g=>({g,n:count(monthRows,r=>r.group===g.key)}));
+  const maxG=Math.max(1,...gc.map(x=>x.n));
+  $("grpTotal").textContent=total+" post"+(total===1?"":"s");
+  $("grpBars").innerHTML=gc.slice().sort((a,b)=>b.n-a.n).map(x=>`<div class="bar-row"><span class="lab">${esc(x.g.name)}</span><span class="bar-track"><span class="bar-fill" style="width:${x.n/maxG*100}%;background:var(--accent-ink)"></span></span><span class="bar-n">${x.n}</span></div>`).join("");
+  const ec=EFFORTS.map(e=>({e,n:count(monthRows,r=>r.effort===e)}));
+  const maxE=Math.max(1,...ec.map(x=>x.n));
+  const effCol={Low:"#7FAE84",Medium:"#D9A93A",High:"#D46A55"};
+  const sfx=count(monthRows,r=>r.sfx);
+  $("effNote").textContent=sfx+" with special effects";
+  $("effBars").innerHTML=ec.map(x=>`<div class="bar-row"><span class="lab"><span class="pill eff-${x.e}">${x.e}</span></span><span class="bar-track"><span class="bar-fill" style="width:${x.n/maxE*100}%;background:${effCol[x.e]}"></span></span><span class="bar-n">${x.n}</span></div>`).join("");
+}
+
+/* ---------- yearly calendar metrics ---------- */
+const YEARS=[...new Set(MONTHS.map(x=>x.y))];
+let yi=Math.max(0,YEARS.indexOf(now.getFullYear()));
+let yRange="year", yQuarter=Math.floor(now.getMonth()/3);
+let openDay=null, dayReturn=null;
+$("yaQ").value=String(yQuarter);
+const statusRows=()=>rows.filter(r=>r.status&&r.date);
+function firstOf(y,m){const d=new Date(y,m,1);return ymd(d.getFullYear(),d.getMonth(),1);}
+const fmtLong=d=>fmtDate(d)+", "+parts(d).y;
+function yRanges(mode,q){
+  mode=mode||yRange;q=q==null?yQuarter:q;
+  const y=YEARS[yi];
+  if(mode==="year")return{cur:[ymd(y,0,1),ymd(y,11,31)],prev:[ymd(y-1,0,1),ymd(y-1,11,31)],label:String(y),plabel:String(y-1)};
+  if(mode==="q"){const py=q?y:y-1,pq=q?q-1:3;
+    return{cur:[firstOf(y,q*3),addDays(firstOf(y,q*3+3),-1)],prev:[firstOf(py,pq*3),addDays(firstOf(py,pq*3+3),-1)],label:"Q"+(q+1)+" "+y,plabel:"Q"+(pq+1)+" "+py};}
+  const n=+mode,s=addDays(TODAY,-(n-1));
+  return{cur:[s,TODAY],prev:[addDays(s,-n),addDays(s,-1)],label:"Last "+n+" days",plabel:"the "+n+" days before"};
+}
+let tRange="year",tQuarter=yQuarter,tRank="er";
+$("ytQ").value=String(tQuarter);
+function renderYearTop(){
+  const R=yRanges(tRange,tQuarter),[a,b]=R.cur;
+  document.querySelectorAll("#ytSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.yt===tRange)));
+  document.querySelectorAll("#ytRank button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.ytr===tRank)));
+  $("ytQ").hidden=tRange!=="q";
+  const pub=statusRows().filter(r=>r.status==="Published"&&r.date>=a&&r.date<=b);
+  const withRes=pub.filter(hasResults),k=rankFn(tRank);
+  const top=withRes.slice().sort((x,y)=>k(y)-k(x)).slice(0,10);
+  $("ytEyebrow").textContent="Published "+(/^\d+$/.test(tRange)?"in the "+R.label.toLowerCase():"in "+R.label)+" · "+fmtLong(a)+" – "+fmtLong(b)+" · ranked by "+RANK_TXT[tRank];
+  $("ytBest").innerHTML=bestPillsHTML(withRes);
+  if(top.length){$("ytRow").style.display="";$("ytRow").innerHTML=topCardsHTML(top,tRank,true);}
+  else{$("ytRow").style.display="block";$("ytRow").innerHTML=`<p class="tp-empty">No published posts with results in this period yet. Open a published post and add its results under Engagement results.</p>`;}
+  const ids=new Set(top.map(r=>r.id));
+  const rest=pub.filter(r=>!ids.has(r.id)).sort((x,y)=>x.date<y.date?1:x.date>y.date?-1:0);
+  $("cpCount").textContent=rest.length?rest.length+" more published post"+(rest.length===1?"":"s"):"";
+  $("cpGrid").innerHTML=rest.length?rest.map(r=>{const er=erOf(r.metrics);return `<button class="cp" data-open="${r.id}">${photoSq(r)}<span class="cp-t"><b>${esc(r.task||"Untitled")}</b><span>${esc(r.platform||"—")} · ${fmtDate(r.date)} · ${er==null?"no results yet":pctTxt(er)+" eng."}</span></span></button>`;}).join(""):`<p class="empty" style="grid-column:1/-1">${top.length?"Every published post in this period is in the top 10.":"No other published posts in this period."}</p>`;
+}
+$("ytSeg").addEventListener("click",e=>{const b=e.target.closest("[data-yt]");if(!b)return;tRange=b.dataset.yt;renderYearTop();});
+$("ytRank").addEventListener("click",e=>{const b=e.target.closest("[data-ytr]");if(!b)return;tRank=b.dataset.ytr;renderYearTop();});
+$("ytQ").addEventListener("change",e=>{tQuarter=+e.target.value;renderYearTop();});
+function rangeStats(a,b){
+  const list=statusRows().filter(r=>r.date>=a&&r.date<=b);
+  const pub=list.filter(r=>r.status==="Published"),wr=pub.filter(hasResults);
+  const sum=f=>wr.reduce((s,r)=>s+f(r),0);
+  const reach=sum(r=>num(r.metrics.reach)),inter=sum(r=>interactions(r.metrics));
+  return{list,wr,total:list.length,published:pub.length,reach,inter,er:reach?inter/reach:null,clicks:sum(r=>num(r.metrics.clicks)),views:sum(r=>num(r.metrics.views)),follows:sum(r=>num(r.metrics.follows))};
+}
+function erOfList(rs){const re=rs.reduce((s,r)=>s+num(r.metrics.reach),0);return re?rs.reduce((s,r)=>s+interactions(r.metrics),0)/re:null;}
+function deltaTxt(c,p,ratio){
+  if(ratio){if(c==null||p==null)return "";const d=(c-p)*100;return `<b class="delta ${d>=0?"up":"down"}">${d>=0?"&#9650;":"&#9660;"} ${Math.abs(d).toFixed(1)} pts</b>`;}
+  if(!p)return c?`<b class="delta up">new</b>`:"";
+  const d=Math.round((c-p)/p*100);return `<b class="delta ${d>=0?"up":"down"}">${d>=0?"&#9650;":"&#9660;"} ${Math.abs(d)}%</b>`;
+}
+const fmtCount=v=>v==null?"—":fmtNum(v)||"0";
+const fmtER=v=>pctTxt(v);
+const cmpTile=(cls,k,c,p,f,ratio)=>`<div class="tile ${cls}"><span class="k">${k}</span><span class="v">${f(c)}</span><span class="d">${deltaTxt(c,p,ratio)} <span class="prev">vs ${f(p)}</span></span></div>`;
+function cmpBars(items,f){
+  const max=Math.max(1e-9,...items.map(x=>x.n||0));
+  return items.slice().sort((a,b)=>(b.n==null?-1:b.n)-(a.n==null?-1:a.n)).map(x=>`<div class="bar-row cmp"><span class="lab">${x.lab}</span><span class="bar-track"><span class="bar-fill" style="width:${(x.n||0)/max*100}%;background:${x.col}"></span></span><span class="bar-n ${x.cls||""}">${f(x.n)}</span><span class="bar-prev">was ${f(x.p)}</span></div>`).join("");
+}
+function countOn(key,date){const ds=folDates(key);let pick=null;ds.forEach(d=>{if(d<=date)pick=d;});return pick?{n:followers[key][pick],date:pick}:null;}
+function yearSocialsHTML(){
+  const y=YEARS[yi];const end=ymd(y,11,31)<TODAY?ymd(y,11,31):TODAY;
+  const cell=(key,unit,label)=>{
+    const at=countOn(key,end);
+    const inYear=folDates(key).filter(d=>d.slice(0,4)===String(y)&&d<=end);
+    const first=inYear.length?{n:followers[key][inYear[0]],date:inYear[0]}:null;
+    const d=at&&first&&first.date!==at.date?at.n-first.n:null;
+    const meta=at?`as of ${fmtDate(at.date)}${parts(at.date).y!==y?", "+parts(at.date).y:""}${d!=null?` · ${d>=0?"+":"−"}${fmtCompact(Math.abs(d))} since ${fmtDate(first.date)}`:""}`:"no counts saved yet";
+    return `<div class="soc-cell">${label?`<span class="soc-lab">${label}</span>`:""}<div class="soc-in soc-ro" aria-label="${unit}">${at?fmtCompact(at.n):"—"}</div><span class="soc-meta">${label?"":unit+" · "}${meta}</span></div>`;
+  };
+  return `<h2 class="socials-title"><span class="hl">BlyssfulTravels Socials</span></h2>
+    <div class="soc-row">${FOL.map(f=>`<div class="soc"><div class="soc-top"><span class="code-chip p-${f.code}">${f.code}</span><span class="soc-name">${f.name}</span></div>
+      ${f.likes?`<div class="soc-split">${cell(f.code,"followers","Followers")}${cell("TT_likes","likes","Likes")}</div>`:cell(f.code,f.unit,"")}</div>`).join("")}</div>
+    <p class="soc-note">Read only. These come from the follower counts saved on the Calendar Dashboard (page ${pageNum("dashboard")}); update them there.</p>`;
+}
+function renderYearly(){
+  const y=YEARS[yi];
+  $("yearLabel").textContent=y;$("yPrev").disabled=yi===0;$("yNext").disabled=yi===YEARS.length-1;
+  $("ySocials").innerHTML=yearSocialsHTML();
+  const counts={};statusRows().forEach(r=>{if(r.date.slice(0,4)===String(y))counts[r.date]=(counts[r.date]||0)+1;});
+  let html="";
+  for(let m=0;m<12;m++){
+    const start=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
+    let tot=0,cells="";
+    for(let i=0;i<start;i++)cells+=`<span></span>`;
+    for(let d=1;d<=dim;d++){const key=ymd(y,m,d),n=counts[key]||0;tot+=n;
+      cells+=`<button class="yd${n?" has":""}${key===TODAY?" today":""}${key===openDay||key===dayReturn?" sel":""}" data-day="${key}" aria-label="${MN[m]} ${d}: ${n||"no"} post${n===1?"":"s"}"><span class="n">${d}</span>${n?`<span class="c">${n}</span>`:""}</button>`;}
+    html+=`<div class="card ym"><h3>${MN[m]} <span>${tot?tot+" post"+(tot===1?"":"s"):""}</span></h3><div class="ym-grid">${DOW.map(x=>`<span class="ym-dow">${x[0]}</span>`).join("")}${cells}</div></div>`;
+  }
+  $("yCal").innerHTML=html;
+  renderYearAnalytics();
+  renderYearTop();
+}
+function renderYearAnalytics(){
+  const R=yRanges(),c=rangeStats(R.cur[0],R.cur[1]),p=rangeStats(R.prev[0],R.prev[1]);
+  document.querySelectorAll("#yaSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.yr===yRange)));
+  $("yaQ").hidden=yRange!=="q";
+  $("yaTitle").textContent=R.label;
+  $("yaSub").textContent=`${fmtLong(R.cur[0])} – ${fmtLong(R.cur[1])}, compared with ${R.plabel} (${fmtLong(R.prev[0])} – ${fmtLong(R.prev[1])}).${/^\d+$/.test(yRange)?" Day ranges count back from today.":""}`;
+  const tiles=`<div class="cmp-tiles">`+
+    cmpTile("t-blue","Posts planned",c.total,p.total,fmtCount)+
+    cmpTile("t-green","Published",c.published,p.published,fmtCount)+
+    cmpTile("t-sky","Total reach",c.reach,p.reach,fmtCount)+
+    cmpTile(c.er!=null&&p.er!=null&&c.er<p.er?"t-pink":"t-olive","Engagement",c.er,p.er,fmtER,true)+
+    cmpTile("t-orange","Interactions",c.inter,p.inter,fmtCount)+
+    cmpTile("t-mauve","Views",c.views,p.views,fmtCount)+
+    cmpTile("t-sky2","Link clicks",c.clicks,p.clicks,fmtCount)+
+    cmpTile("t-plain","New followers",c.follows,p.follows,fmtCount)+`</div>`;
+  const by=(list,fn)=>list.filter(fn);
+  const platPosts=cmpBars(PLATFORMS.map(pl=>({lab:`<span class="code-chip p-${pl.code}">${pl.code}</span>${esc(pl.short)}`,n:by(c.list,r=>r.platform===pl.code).length,p:by(p.list,r=>r.platform===pl.code).length,col:pl.mid})),fmtCount);
+  const platER=cmpBars(PLATFORMS.map(pl=>{const n=erOfList(by(c.wr,r=>r.platform===pl.code));return{lab:`<span class="code-chip p-${pl.code}">${pl.code}</span>${esc(pl.short)}`,n,p:erOfList(by(p.wr,r=>r.platform===pl.code)),col:pl.mid,cls:tierCls(tierOf(pl.code,n))};}),fmtER);
+  const pill=cmpBars(PILLARS.map(x=>({lab:esc(x),n:by(c.list,r=>r.pillar===x).length,p:by(p.list,r=>r.pillar===x).length,col:"var(--sage-ink)"})),fmtCount);
+  const grp=cmpBars(GROUPS.map(g=>({lab:esc(g.name),n:by(c.list,r=>r.group===g.key).length,p:by(p.list,r=>r.group===g.key).length,col:"var(--accent-ink)"})),fmtCount);
+  let chart="";
+  if(yRange==="year"){
+    const y=YEARS[yi],cy=Array(12).fill(0),py=Array(12).fill(0);
+    statusRows().forEach(r=>{const q=parts(r.date);if(q.y===y)cy[q.m]++;else if(q.y===y-1)py[q.m]++;});
+    const mx=Math.max(1,...cy,...py);
+    chart=`<div class="block mchart"><h3>Posts per month <span><span class="dot" style="display:inline-block;background:var(--bg)"></span> ${y} &nbsp; <span class="dot" style="display:inline-block;background:#B5B3AE"></span> ${y-1}</span></h3>
+      <div class="mbars">${cy.map((n,i)=>`<div class="mbar" title="${MS[i]}: ${n} in ${y}, ${py[i]} in ${y-1}"><i style="height:${n/mx*100}%;background:var(--bg)"></i><i style="height:${py[i]/mx*100}%;background:#B5B3AE"></i></div>`).join("")}</div>
+      <div class="mlab">${MS.map(m=>`<span>${m}</span>`).join("")}</div></div>`;
+  }
+  $("yaBody").innerHTML=tiles+storiesYearHTML(R)+chart+
+    `<div class="ya-grid">
+      <div class="block"><h3>Posts by platform <span>${c.total} total</span></h3><div class="bars">${platPosts}</div></div>
+      <div class="block"><h3>Engagement by platform <span>published posts</span></h3><div class="bars">${platER}</div></div>
+      <div class="block"><h3>Pillar mix</h3><div class="bars">${pill}</div></div>
+      <div class="block"><h3>By content group <span>${c.total} post${c.total===1?"":"s"}</span></h3><div class="bars">${grp}</div></div>
+    </div>`;
+}
+$("yPrev").addEventListener("click",()=>{if(yi>0){yi--;renderYearly();}});
+$("yNext").addEventListener("click",()=>{if(yi<YEARS.length-1){yi++;renderYearly();}});
+$("yToday").addEventListener("click",()=>{yi=Math.max(0,YEARS.indexOf(now.getFullYear()));renderYearly();});
+$("yaSeg").addEventListener("click",e=>{const b=e.target.closest("[data-yr]");if(!b)return;yRange=b.dataset.yr;renderYearAnalytics();});
+$("yaQ").addEventListener("change",e=>{yQuarter=+e.target.value;renderYearAnalytics();});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-day]");if(b&&!drawer.contains(b))openDayPanel(b.dataset.day);});
+function openDayPanel(date){
+  opener=document.activeElement;openId=null;dayReturn=null;openDay=date;
+  drawer.hidden=false;scrim.hidden=false;document.body.classList.add("locked");
+  renderDayDrawer();if(current==="yearly")renderYearly();
+  const c=$("dClose");if(c)c.focus({preventScroll:true});
+}
+function renderDayDrawer(){
+  const list=statusRows().filter(r=>r.date===openDay).sort((a,b)=>platRank(a.platform)-platRank(b.platform));
+  const q=parts(openDay);
+  drawer.innerHTML=`<div class="d-top"><div class="d-crumb"><span>${fmtDow(openDay)}, ${MN[q.m]} ${q.d}, ${q.y}</span><span class="pill t-pink">${list.length} post${list.length===1?"":"s"}</span></div><button class="icon-btn" id="dClose" aria-label="Close day preview">&times;</button></div>
+    <div class="d-scroll" id="dScroll">${list.length?`<ul class="dd-list">${list.map(r=>{const st=statOf(r.status);return `<li><button class="dd-item" data-dayopen="${r.id}"><span>${photoSq(r)}</span><span class="dd-txt"><b>${esc(r.task||"Untitled")}</b><span class="g">${esc(r.platform||"—")} · ${esc(r.format||"No format")} · ${esc(groupOf(r.group).name)}${hasResults(r)?" · "+pctTxt(erOf(r.metrics))+" eng.":""}</span></span><span class="pill s-${slug(st.key)}">${esc(st.key)}</span></button></li>`;}).join("")}</ul><p class="hint">Tap a post to open its preview and details.</p>`:`<p class="empty">No posts on this day.</p>`}${dayStoriesHTML(openDay)}</div>`;
+}
+$("drawer").addEventListener("click",e=>{
+  const d=e.target.closest("[data-dayopen]");
+  if(d){dayReturn=openDay;openDay=null;openId=d.dataset.dayopen;renderDrawer();const c=$("dClose");if(c)c.focus({preventScroll:true});return;}
+  if(e.target.closest("#dDayBack")){const day=dayReturn;dayReturn=null;justDup=null;openId=null;openDay=day;renderDayDrawer();const c=$("dClose");if(c)c.focus({preventScroll:true});}
+});
+
+/* ---------- IG Stories: import from a Meta export, totals in analytics, make tasks on demand ---------- */
+const SKEY="blyssful-stories-v1";
+let stories=[];
+let sideMode=null, sideArg=null, imp=null;
+function storyDoc(s){const d=Object.assign({},s);delete d.id;return JSON.parse(JSON.stringify(d));}
+function saveStoriesLocal(){try{localStorage.setItem(SKEY,JSON.stringify(stories));}catch(e){}}
+function loadStoriesLocal(){try{const v=JSON.parse(localStorage.getItem(SKEY)||"null");return Array.isArray(v)?v:[];}catch(e){return [];}}
+async function saveStory(s){if(mode!=="live"){saveStoriesLocal();return;}try{await db.collection("stories").doc(s.id).set(storyDoc(s));}catch(e){}}
+function storyStats(a,b){const l=stories.filter(s=>s.date>=a&&s.date<=b);return{n:l.length,views:l.reduce((t,s)=>t+num(s.views),0),inter:l.reduce((t,s)=>t+num(s.inter),0),list:l};}
+const stBtns=(a,b,label)=>`<div class="st-acts"><button class="btn sm" data-stimport>Import IG Stories</button>${stories.length?`<button class="btn sm" data-stbrowse data-a="${a}" data-b="${b}" data-l="${esc(label)}">Browse stories</button>`:""}</div>`;
+function storiesYearHTML(R){
+  const c=storyStats(R.cur[0],R.cur[1]),p=storyStats(R.prev[0],R.prev[1]);
+  let table="";
+  if(yRange==="year"){const y=YEARS[yi];const ms=MS.map((m,i)=>Object.assign({m},storyStats(ymd(y,i,1),addDays(firstOf(y,i+1),-1))));
+    const d=v=>v?fmtNum(v):"—";
+    table=`<div class="tbl-wrap"><table class="idea-mini st-table"><thead><tr><th>Month</th><th class="r">Stories</th><th class="r">Views</th><th class="r">Interactions</th></tr></thead><tbody>${ms.map(x=>`<tr><td>${x.m}</td><td class="r">${d(x.n)}</td><td class="r">${d(x.views)}</td><td class="r">${d(x.inter)}</td></tr>`).join("")}<tr class="total"><td>${y} total</td><td class="r">${d(c.n)}</td><td class="r">${d(c.views)}</td><td class="r">${d(c.inter)}</td></tr></tbody></table></div>`;}
+  return `<div class="block st-block"><h3><span class="st-title"><span class="code-chip p-IGS">IGS</span>Instagram Stories</span><span>${stories.length?"from your Meta export":"none imported yet"}</span></h3>
+    <div class="cmp-tiles st-tiles">${cmpTile("t-sky","Stories posted",c.n,p.n,fmtCount)}${cmpTile("t-blue","Story views",c.views,p.views,fmtCount)}${cmpTile("t-pink","Story interactions",c.inter,p.inter,fmtCount)}</div>
+    ${table}${stBtns(R.cur[0],R.cur[1],R.label)}</div>`;
+}
+function storiesRailHTML(y,m){
+  const a=ymd(y,m,1),b=addDays(firstOf(y,m+1),-1),pa=firstOf(y,m-1),pb=addDays(a,-1);
+  const c=storyStats(a,b),p=storyStats(pa,pb);const pm=MS[parts(pa).m];
+  return `<div class="block"><h3><span class="st-title"><span class="code-chip p-IGS">IGS</span>Instagram Stories</span><span>vs ${pm}</span></h3>
+    <div class="cmp-tiles st-tiles">${cmpTile("t-sky","Stories",c.n,p.n,fmtCount)}${cmpTile("t-blue","Views",c.views,p.views,fmtCount)}${cmpTile("t-pink","Interactions",c.inter,p.inter,fmtCount)}</div>
+    ${stBtns(a,b,MN[m]+" "+y)}</div>`;
+}
+function storyRowHTML(s){
+  const linked=s.taskId&&rows.some(r=>r.id===s.taskId);const u=safeUrl(s.link);
+  return `<li class="st-row"><div class="st-when"><b>${fmtDate(s.date)}</b><span>${esc(s.time||"")}</span></div>
+    <div class="st-nums"><span><b>${fmtNum(s.views)||0}</b> views</span><span><b>${fmtNum(s.inter)||0}</b> interactions</span><span class="muted">${num(s.likes)} likes · ${num(s.replies)} replies · ${num(s.shares)} shares${num(s.profile)?" · "+num(s.profile)+" profile":""}</span>${s.desc?`<span class="st-desc">${esc(s.desc)}</span>`:""}</div>
+    <div class="st-act">${u?`<a class="post-link" href="${esc(u)}" target="_blank" rel="noopener noreferrer" aria-label="Open story">&#8599;</a>`:""}${linked?`<button class="btn sm" data-opentask="${s.taskId}">Open task</button>`:readOnly?"":`<button class="btn sm" data-mktask="${s.id}">Make task</button>`}</div></li>`;
+}
+function dayStoriesHTML(d){const l=stories.filter(s=>s.date===d).sort((a,b)=>(a.time||"")<(b.time||"")?-1:1);if(!l.length)return "";const t=storyStats(d,d);
+  return `<section class="d-sec"><h3>Instagram Stories <span>${l.length} · ${fmtNum(t.views)||0} views · ${fmtNum(t.inter)||0} interactions</span></h3><ul class="st-list">${l.map(storyRowHTML).join("")}</ul><p class="hint">Stories count toward the Stories totals. Make one a task only when you want to plan or track it on its own.</p></section>`;}
+function openSide(kind,arg){
+  opener=document.activeElement;openId=null;openDay=null;dayReturn=null;sideMode=kind;sideArg=arg||null;
+  drawer.hidden=false;scrim.hidden=false;document.body.classList.add("locked");renderSide();
+  const c=$("dClose");if(c)c.focus({preventScroll:true});
+}
+function renderSide(){const sc=($("dScroll")||{}).scrollTop||0;drawer.innerHTML=sideMode==="import"?importHTML():storiesListHTML();const n=$("dScroll");if(n)n.scrollTop=sc;}
+function storiesListHTML(){
+  const {a,b,label}=sideArg||{};const l=stories.filter(s=>s.date>=a&&s.date<=b).sort((x,y)=>(y.date+(y.time||""))<(x.date+(x.time||""))?-1:1);const t=storyStats(a,b);
+  return `<div class="d-top"><div class="d-crumb"><span class="code-chip p-IGS">IGS</span><span>Stories · ${esc(label||"")}</span><span class="pill t-pink">${l.length}</span></div><button class="icon-btn" id="dClose" aria-label="Close stories">&times;</button></div>
+    <div class="d-scroll" id="dScroll"><p class="st-sum"><b>${fmtNum(t.views)||0}</b> views · <b>${fmtNum(t.inter)||0}</b> interactions · ${fmtLong(a)} – ${fmtLong(b)}</p>
+    ${l.length?`<ul class="st-list">${l.slice(0,300).map(storyRowHTML).join("")}</ul>${l.length>300?`<p class="hint">Showing the newest 300. Pick a shorter period to see older ones.</p>`:""}`:`<p class="empty">No stories in this period.</p>`}</div>`;
+}
+const SF=[
+  {k:"date",l:"Publish date/time",m:[/publish.*time/,/publish/,/creation_timestamp/,/taken_at/,/timestamp/,/date.*time/,/time/,/^date$/]},
+  {k:"views",l:"Views",m:[/^views$/,/impressions/,/view/]},
+  {k:"interactions",l:"Interactions",opt:1,m:[/interactions/,/engagement/]},
+  {k:"likes",l:"Likes",m:[/like/]},
+  {k:"replies",l:"Replies",m:[/repl/]},
+  {k:"shares",l:"Shares",m:[/share/]},
+  {k:"profile",l:"Profile activity",m:[/profile/]},
+  {k:"reach",l:"Reach",opt:1,m:[/^reach$/,/reach/]},
+  {k:"id",l:"Post ID",opt:1,m:[/post id/,/media id/,/^id$/,/^uri$/,/uri/]},
+  {k:"link",l:"Permalink",opt:1,m:[/permalink/,/^url$/,/^link$/]},
+  {k:"desc",l:"Description",opt:1,m:[/description/,/caption/,/^title$/]},
+  {k:"type",l:"Post type",opt:1,m:[/post type/,/media type/,/^type$/]}
+];
+function parseCSV(text){
+  const first=text.split("\n")[0];const dl=(first.match(/\t/g)||[]).length>(first.match(/,/g)||[]).length?"\t":(first.match(/;/g)||[]).length>(first.match(/,/g)||[]).length?";":",";
+  const out=[];let row=[],f="",q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else if(c==='"')q=true;else if(c===dl){row.push(f);f="";}else if(c==="\n"){row.push(f);out.push(row);row=[];f="";}else if(c!=="\r")f+=c;}
+  if(f||row.length){row.push(f);out.push(row);}
+  return out.filter(r=>r.some(x=>String(x).trim()));
+}
+function parseWhen(v){
+  v=String(v||"").trim();if(!v)return null;let y,mo,d,h,mi,m;
+  if(/^\d{10}(\d{3})?$/.test(v)){const x=new Date(v.length===10?+v*1000:+v);return{date:ymd(x.getFullYear(),x.getMonth(),x.getDate()),time:pad(x.getHours())+":"+pad(x.getMinutes())};}
+  if((m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T ](\d{1,2}):(\d{2}))?/))){y=m[1];mo=m[2];d=m[3];h=m[4];mi=m[5];}
+  else if((m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})(?:,?\s+(\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?)?/))){mo=m[1];d=m[2];y=m[3].length===2?"20"+m[3]:m[3];h=m[4];mi=m[5];if(h&&m[6])h=(+h%12)+(/p/i.test(m[6])?12:0);}
+  else{const t=Date.parse(v);if(isNaN(t))return null;const x=new Date(t);return{date:ymd(x.getFullYear(),x.getMonth(),x.getDate()),time:pad(x.getHours())+":"+pad(x.getMinutes())};}
+  y=+y;mo=+mo;d=+d;if(!(y>=2000&&mo>=1&&mo<=12&&d>=1&&d<=31))return null;
+  return{date:ymd(y,mo-1,d),time:h!=null&&h!==""?pad(+h)+":"+mi:""};
+}
+function guessMap(H){const low=H.map(h=>String(h).toLowerCase().trim());const map={};const used=new Set();
+  SF.forEach(f=>{let pick="";for(const re of f.m){const i=low.findIndex((h,j)=>!used.has(j)&&re.test(h));if(i>=0){pick=String(i);used.add(i);break;}}map[f.k]=pick;});return map;}
+function impBuild(){
+  const M=imp.map;const col=k=>M[k]===""||M[k]==null?-1:+M[k];const byId=new Map();let skipType=0,skipDate=0;
+  imp.rows.forEach(r=>{
+    const g=k=>{const i=col(k);return i<0?"":String(r[i]==null?"":r[i]).trim();};
+    if(col("type")>=0&&g("type")&&!/stor/i.test(g("type"))){skipType++;return;}
+    const dt=parseWhen(g("date"));if(!dt){skipDate++;return;}
+    const n=k=>{const x=parseFloat(g(k).replace(/[,\s]/g,""));return isFinite(x)&&x>0?x:0;};
+    const likes=n("likes"),replies=n("replies"),shares=n("shares");
+    const inter=col("interactions")>=0&&g("interactions")!==""?n("interactions"):likes+replies+shares;
+    let id=g("id").replace(/[^A-Za-z0-9_\-.~:@+]/g,"_").slice(-150);
+    if(!id)id=dt.date.replace(/-/g,"")+"-"+(dt.time||"").replace(/:/g,"")+"-"+n("views")+"-"+likes;
+    byId.set("ig_"+id,{id:"ig_"+id,date:dt.date,time:dt.time,views:n("views"),inter,likes,replies,shares,profile:n("profile"),reach:n("reach"),link:safeUrl(g("link")),desc:g("desc").slice(0,300)});
+  });
+  return{out:[...byId.values()],skipType,skipDate};
+}
+function importHTML(){
+  let body="";
+  if(imp&&imp.err)body+=`<p class="photo-note err">${esc(imp.err)}</p>`;
+  if(imp&&imp.rows){
+    const b=impBuild();const ds=b.out.map(s=>s.date).sort();const tv=b.out.reduce((t,s)=>t+s.views,0),ti=b.out.reduce((t,s)=>t+s.inter,0);
+    const opt=k=>`<option value="">— not in file —</option>`+imp.headers.map((h,i)=>`<option value="${i}"${String(imp.map[k])===String(i)?" selected":""}>${esc(h||"Column "+(i+1))}</option>`).join("");
+    body+=`<section class="d-sec"><h3>3. Check the columns <span>matched automatically</span></h3><div class="st-map">${SF.map(f=>`<label for="map-${f.k}"><span>${f.l}${f.opt?" <i>(optional)</i>":""}</span><select class="ctl" id="map-${f.k}" data-map="${f.k}">${opt(f.k)}</select></label>`).join("")}</div>
+      <p class="hint">If Interactions isn't in the file, likes + replies + shares are added up instead. If Post type is matched, only rows that say Story are imported.</p></section>
+      <section class="d-sec"><h3>4. Import</h3><p class="st-sum">${b.out.length?`<b>${b.out.length}</b> stories found${ds.length?` · ${fmtLong(ds[0])} – ${fmtLong(ds[ds.length-1])}`:""} · <b>${fmtNum(tv)||0}</b> views · <b>${fmtNum(ti)||0}</b> interactions`:"No stories found yet. Check that Publish date/time points at the column with the story's date."}${b.skipType?`<br>${b.skipType} non-story rows skipped.`:""}${b.skipDate?`<br>${b.skipDate} rows skipped because the date couldn't be read.`:""}</p>
+      ${imp.finished?`<p class="idea-note"><b>Imported ${imp.done-(imp.fail||0)} stories.</b>${imp.fail?` ${imp.fail} didn't save; import the file again to retry.`:""} Totals now show in Analytics for, on both dashboards.</p>`:""}
+      <button class="btn primary" id="stImport"${!b.out.length||imp.busy||readOnly?" disabled":""}>${imp.busy?`Importing… <span id="stProg">${imp.done||0}/${imp.total}</span>`:`Import ${b.out.length} stories`}</button></section>`;
+  }
+  const ds=stories.map(s=>s.date).sort();
+  return `<div class="d-top"><div class="d-crumb"><span class="code-chip p-IGS">IGS</span><span>Import Instagram Stories</span></div><button class="icon-btn" id="dClose" aria-label="Close import">&times;</button></div>
+  <div class="d-scroll" id="dScroll">
+    <section class="d-sec"><h3>1. Export from Meta</h3><ol class="st-steps"><li>On a computer, open Meta Business Suite (business.facebook.com) and go to <b>Insights → Content</b>.</li><li>Filter the content type to <b>Stories</b> (Instagram) and set the date range you want.</li><li>Choose <b>Export data</b>, pick a CSV of the content-level data, and download it.</li></ol>
+      <p class="hint">Do this about once a month so no stories are missed. Re-importing an overlapping file is safe: stories already here are updated, not doubled, and any you've made into tasks stay linked.</p></section>
+    <section class="d-sec"><h3>2. Choose the file <span>${imp&&imp.name?esc(imp.name):""}</span></h3><button class="btn" id="stPick"${readOnly?" disabled":""}>Choose CSV or JSON file</button></section>
+    ${body}
+    <section class="d-sec"><h3>Imported so far <span>${stories.length} stor${stories.length===1?"y":"ies"}</span></h3><p class="hint" style="margin:0 0 8px">${ds.length?`${fmtLong(ds[0])} – ${fmtLong(ds[ds.length-1])}`:"Nothing imported yet."}</p>${stories.length&&!readOnly?`<button class="btn sm danger" id="stClear">Remove all imported stories</button>`:""}</section>
+  </div>`;
+}
+document.body.insertAdjacentHTML("beforeend",`<input type="file" id="stFile" accept=".csv,text/csv,.txt,.tsv,.json,application/json" hidden>`);
+$("stFile").addEventListener("change",async e=>{
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  try{
+    const buf=await f.arrayBuffer();const u=new Uint8Array(buf);
+    let text=u[0]===0xFF&&u[1]===0xFE?new TextDecoder("utf-16le").decode(buf):u[0]===0xFE&&u[1]===0xFF?new TextDecoder("utf-16be").decode(buf):new TextDecoder("utf-8").decode(buf);
+    text=text.replace(/^﻿/,"");
+    const t0=text.trim();
+    const all=/^[\[{]/.test(t0)?jsonTable(JSON.parse(t0)):parseCSV(text);if(all.length<2)throw new Error("empty");
+    let hi=all.findIndex(r=>r.some(c=>/views|publish|impressions/i.test(c)));if(hi<0)hi=0;
+    imp={name:f.name,headers:all[hi].map(h=>String(h).trim()),rows:all.slice(hi+1)};imp.map=guessMap(imp.headers);
+  }catch(err){imp={name:f.name,err:"That file couldn't be read. Choose the CSV, or the stories .json file from inside the unzipped download, and try again."};}
+  if(sideMode==="import")renderSide();
+});
+/* JSON exports (e.g. Download your information): find the list of stories and flatten it into a table */
+function jsonTable(data){
+  const cands=[];
+  const walk=(v,key,depth)=>{if(depth>6||v==null)return;
+    if(Array.isArray(v)){const objs=v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x));
+      if(objs.length&&objs.some(o=>Object.keys(o).some(k=>/timestamp|taken_at|publish|date|time/i.test(k))))cands.push({key:key||"",objs});
+      v.forEach(x=>walk(x,key,depth+1));}
+    else if(typeof v==="object")Object.keys(v).forEach(k=>walk(v[k],k,depth+1));};
+  walk(data,"",0);if(!cands.length)return [];
+  cands.sort((a,b)=>(/stor/i.test(b.key)-/stor/i.test(a.key))||(b.objs.length-a.objs.length));
+  const objs=cands[0].objs;
+  const flat=o=>{const r={};Object.keys(o).forEach(k=>{const v=o[k];if(v==null)return;if(typeof v!=="object")r[k]=v;else if(!Array.isArray(v))Object.keys(v).forEach(k2=>{const w=v[k2];if(w!=null&&typeof w!=="object")r[k+"."+k2]=w;});});return r;};
+  const fl=objs.map(flat);const heads=[...new Set(fl.flatMap(o=>Object.keys(o)))];
+  return [heads].concat(fl.map(o=>heads.map(h=>o[h]==null?"":String(o[h]))));
+}
+async function doImport(){
+  if(!imp||imp.busy||readOnly)return;const {out}=impBuild();if(!out.length)return;
+  const byId=new Map(stories.map(s=>[s.id,s]));
+  const items=out.map(s=>{const old=byId.get(s.id);return old&&old.taskId?Object.assign(s,{taskId:old.taskId}):s;});
+  imp.busy=true;imp.finished=false;imp.done=0;imp.fail=0;imp.total=items.length;renderSide();
+  if(mode!=="live"){items.forEach(s=>byId.set(s.id,s));stories=[...byId.values()];saveStoriesLocal();imp.done=items.length;}
+  else{let i=0;const worker=async()=>{while(i<items.length){const s=items[i++];try{await db.collection("stories").doc(s.id).set(storyDoc(s));}catch(e){imp.fail++;}imp.done++;const p=$("stProg");if(p)p.textContent=imp.done+"/"+imp.total;}};await Promise.all(Array.from({length:6},worker));}
+  imp.busy=false;imp.finished=true;if(sideMode==="import")renderSide();render();
+}
+async function clearStories(){
+  const ids=stories.map(s=>s.id);stories=[];
+  if(mode!=="live"){saveStoriesLocal();}else{let i=0;const worker=async()=>{while(i<ids.length){const id=ids[i++];try{await db.collection("stories").doc(id).delete();}catch(e){}}};await Promise.all(Array.from({length:6},worker));}
+  if(sideMode==="import")renderSide();render();
+}
+document.addEventListener("click",e=>{
+  if(drawer.contains(e.target))return;
+  if(e.target.closest("[data-stimport]")){openSide("import");return;}
+  const b=e.target.closest("[data-stbrowse]");if(b)openSide("stories",{a:b.dataset.a,b:b.dataset.b,label:b.dataset.l});
+});
+$("drawer").addEventListener("click",e=>{
+  if(e.target.closest("#stPick")){$("stFile").value="";$("stFile").click();return;}
+  if(e.target.closest("#stImport")){doImport();return;}
+  const cl=e.target.closest("#stClear");
+  if(cl){if(!cl.classList.contains("armed")){cl.classList.add("armed");cl.textContent="Tap again to remove all";setTimeout(()=>{if(cl.isConnected){cl.classList.remove("armed");cl.textContent="Remove all imported stories";}},3500);return;}clearStories();return;}
+  const mk=e.target.closest("[data-mktask]");
+  if(mk&&!readOnly){
+    const s=stories.find(x=>x.id===mk.dataset.mktask);if(!s)return;const from=openDay;
+    const g=GROUPS.some(x=>x.key===current)?current:"misc";
+    const r=newTask(g,{task:s.desc?s.desc.slice(0,80):"IG Story · "+fmtDate(s.date),date:s.date,platform:"IGS",format:"Story",status:"Published",link:s.link||"",
+      metrics:{views:s.views||null,reach:s.views||null,totalInter:s.inter||null,likes:s.likes||null,comments:s.replies||null,shares:s.shares||null,profile:s.profile||null}});
+    s.taskId=r.id;saveStory(s);sideMode=null;openDay=null;dayReturn=from||null;justDup=null;render();openTask(r.id);return;
+  }
+  const ot=e.target.closest("[data-opentask]");
+  if(ot){const from=openDay;sideMode=null;openDay=null;dayReturn=from||null;openTask(ot.dataset.opentask);return;}
+});
+$("drawer").addEventListener("change",e=>{const s=e.target.closest("[data-map]");if(!s||!imp)return;imp.map[s.dataset.map]=s.value;imp.finished=false;const id=s.id;renderSide();const a=$(id);if(a)a.focus({preventScroll:true});});
+
+/* ---------- production list ---------- */
+$("fGroup").innerHTML=`<option value="">All groups</option>`+GROUPS.map(g=>`<option value="${g.key}">${esc(g.name)}</option>`).join("");
+$("fPlat").innerHTML=`<option value="">All platforms</option>`+platOpts.map(p=>`<option value="${p.v}">${esc(p.l)}</option>`).join("");
+$("fGroup").addEventListener("change",renderProduction);
+$("fPlat").addEventListener("change",renderProduction);
+function progHTML(r){const s=subStats(r);if(!s.total)return `<span class="muted">—</span>`;return `<span class="mini-prog"><i><span style="width:${s.done/s.total*100}%"></span></i>${s.done}/${s.total}</span>`;}
+function renderProduction(){
+  const fg=$("fGroup").value,fp=$("fPlat").value;
+  const list=rows.filter(r=>r.status&&(!fg||r.group===fg)&&(!fp||r.platform===fp)).sort(byDate);
+  const ic=GROUPS.map(g=>({g,n:rows.filter(r=>!r.status&&r.group===g.key).length}));
+  const itotal=ic.reduce((a,x)=>a+x.n,0);
+  $("plIdeation").innerHTML=`<header class="pl-head"><span class="bar" style="background:var(--accent-ink)"></span><h2>Ideation</h2><span class="count">not counted as tasks</span></header>
+    <table class="idea-mini"><thead><tr><th>Page</th><th class="r">Ideas</th></tr></thead><tbody>${ic.map(x=>`<tr><td><a href="#${x.g.key}" data-jumpidea="${x.g.key}">${esc(x.g.title)}</a></td><td class="r">${x.n}</td></tr>`).join("")}<tr class="total"><td>Total ideations</td><td class="r">${itotal}</td></tr></tbody></table>`;
+  $("fCount").textContent="Showing "+list.length+" task"+(list.length===1?"":"s");
+  $("plSections").innerHTML=STATUSES.map(s=>{
+    const items=list.filter(r=>r.status===s.key);
+    const head=`<header class="pl-head"><span class="bar" style="background:${s.mid}"></span><span class="st s-${slug(s.key)}">${s.letter}</span><h2>${esc(s.section)}</h2><span class="count">${items.length} task${items.length===1?"":"s"}</span></header>`;
+    if(!items.length)return `<section class="card pl-sec">${head}<p class="pl-empty">Nothing in ${esc(s.section)} right now.</p></section>`;
+    const body=items.map(r=>{const pl=platOf(r.platform);const er=erOf(r.metrics);return `<tr data-id="${r.id}">
+      <td>${thumb(r)}</td>
+      <td style="white-space:nowrap;font-variant-numeric:tabular-nums">${r.date?`<b>${fmtDate(r.date)}</b> <span class="muted">${fmtDow(r.date)}</span>`:`<span class="muted">No date</span>`}</td>
+      <td><button class="task-link" data-open="${r.id}">${esc(r.task||"Untitled")}</button></td>
+      <td><select class="pick ${statClass(r.status)}" data-field="status" aria-label="Status for ${esc(r.task)}"${readOnly?" disabled":""}>${opts(STATUSES.map(x=>x.key),r.status)}</select></td>
+      <td>${pl?`<span class="code-chip p-${r.platform}" title="${esc(pl.name)}">${r.platform}</span>`:`<span class="muted">—</span>`}</td>
+      <td>${esc(r.format||"—")}</td>
+      <td>${esc(groupOf(r.group).name)}</td>
+      <td>${esc(r.pillar||"—")}</td>
+      <td>${r.effort?`<span class="pill eff-${r.effort}">${r.effort}</span>`:"—"}</td>
+      <td>${progHTML(r)}</td>
+      <td>${engCell(r)}</td>
+    </tr>`;}).join("");
+    return `<section class="card pl-sec">${head}<div class="tbl-wrap"><table style="min-width:1120px;table-layout:fixed"><colgroup><col style="width:58px"><col style="width:104px"><col style="width:24%"><col style="width:140px"><col style="width:76px"><col style="width:12%"><col style="width:96px"><col style="width:12%"><col style="width:88px"><col style="width:88px"><col style="width:82px"></colgroup><thead><tr><th>Photo</th><th>Post date</th><th>Content task</th><th>Status</th><th>Platform</th><th>Format</th><th>Group</th><th>Pillar</th><th>Effort</th><th>Sub-tasks</th><th>Eng.</th></tr></thead><tbody>${body}</tbody></table></div></section>`;
+  }).join("");
+}
+$("plSections").addEventListener("change",e=>{
+  const sel=e.target.closest("select[data-field]");if(!sel)return;
+  update(sel.closest("tr").dataset.id,{status:sel.value},0);renderProduction();
+});
+
+/* ---------- destination pages ---------- */
+const sortState={};
+const SORTERS={
+  date:r=>r.date||null,
+  task:r=>r.task?r.task.toLowerCase():null,
+  status:r=>STATUSES.findIndex(s=>s.key===r.status),
+  platform:r=>r.platform?platRank(r.platform):null,
+  format:r=>r.format?r.format.toLowerCase():null,
+  group:r=>GROUPS.findIndex(g=>g.key===r.group),
+  pillar:r=>r.pillar?PILLARS.indexOf(r.pillar):null,
+  effort:r=>r.effort?EFFORTS.indexOf(r.effort):null,
+  subtasks:r=>{const s=subStats(r);return s.total?s.done/s.total:null;},
+  eng:r=>erOf(r.metrics),
+  sfx:r=>r.sfx?1:0,
+  created:r=>r.created||0
+};
+function sortRows(list,st){
+  const f=SORTERS[st.key]||SORTERS.date;const d=st.dir==="desc"?-1:1;
+  return list.slice().sort((a,b)=>{const x=f(a),y=f(b);if(x==null&&y==null)return byDate(a,b);if(x==null)return 1;if(y==null)return -1;if(x<y)return -d;if(x>y)return d;return byDate(a,b);});
+}
+const COLS=[
+  {key:null,label:"Photo"},{key:"date",label:"Post date"},{key:"task",label:"Content task",min:230},{key:"status",label:"Status"},
+  {key:"platform",label:"Platform"},{key:"format",label:"Format"},{key:"group",label:"Group"},{key:"pillar",label:"Pillar"},
+  {key:"effort",label:"Effort"},{key:"subtasks",label:"Sub-tasks"},{key:"eng",label:"Eng."}
+];
+function tableHTML(groupKey,tkey,list){
+  const st=sortState[groupKey+":"+tkey]||{key:"date",dir:"asc"};
+  const head=COLS.map(c=>sortTh(st,tkey,c)).join("");
+  return `<div class="tbl-wrap"><table style="min-width:1350px"><thead><tr>${head}<th><span style="position:absolute;left:-9999px">Actions</span></th></tr></thead><tbody>${sortRows(list,st).map(r=>rowHTML(r,tkey)).join("")}</tbody></table></div>`;
+}
+function sortTh(st,tkey,c){
+  const mw=c.min?` style="min-width:${c.min}px"`:"";
+  if(!c.key)return `<th${mw}>${c.label}</th>`;
+  const on=st.key===c.key;
+  return `<th${mw} aria-sort="${on?(st.dir==="asc"?"ascending":"descending"):"none"}"><button class="sort${on?" on":""}" data-sort="${c.key}" data-table="${tkey}" aria-label="Sort by ${c.label}">${c.label}<span class="arr" aria-hidden="true">${on?(st.dir==="asc"?"&#9650;":"&#9660;"):"&#8597;"}</span></button></th>`;
+}
+function ideaTableHTML(groupKey,list){
+  const st=sortState[groupKey+":ideation"]||{key:"created",dir:"asc"};
+  const head=[{key:null,label:"Photo"},{key:"task",label:"Content task",min:260},{key:"pillar",label:"Pillar"}].map(c=>sortTh(st,"ideation",c)).join("");
+  return `<div class="tbl-wrap"><table style="min-width:620px"><colgroup><col style="width:64px"><col><col style="width:190px"><col style="width:120px"></colgroup><thead><tr>${head}<th><span style="position:absolute;left:-9999px">Actions</span></th></tr></thead><tbody>${sortRows(list,st).map(ideaRowHTML).join("")}</tbody></table></div>`;
+}
+function ideaRowHTML(r){
+  const dis=readOnly?" disabled":"";
+  return `<tr data-id="${r.id}">
+    <td>${thumb(r)}</td>
+    <td><input class="cell-in" id="ideation-task-${r.id}" data-field="task" value="${esc(r.task)}" placeholder="Type an idea" aria-label="Idea"${dis}></td>
+    <td><select class="pick ${neutral(r.pillar)}" id="ideation-pillar-${r.id}" data-field="pillar" aria-label="Pillar"${dis}>${opts(PILLARS,r.pillar,"Pick pillar")}</select></td>
+    <td style="white-space:nowrap;text-align:right"><button class="open-btn" data-open="${r.id}">Open</button> <button class="del" data-del="${r.id}" aria-label="Delete ${esc(r.task||"idea")}"${dis}>&times;</button></td>
+  </tr>`;
+}
+function renderGroup(key){
+  const g=groupOf(key);
+  const list=rows.filter(r=>r.group===key&&r.status).sort(byDate);
+  const ideas=rows.filter(r=>r.group===key&&!r.status);
+  const next=list.find(r=>r.date&&r.date>=TODAY&&r.status!=="Published");
+  const sums=STATUSES.map(s=>`<button class="sum jump" data-jump="tbl-${key}-${slug(s.key)}"><span class="st s-${slug(s.key)}">${s.letter}</span>${esc(s.key)} <b>${list.filter(r=>r.status===s.key).length}</b></button>`).join("");
+  const sec=$("view-"+key);
+  const y=window.scrollY;
+  const statusTables=STATUSES.map(s=>{
+    const items=list.filter(r=>r.status===s.key);
+    const head=`<header class="pl-head"><span class="bar" style="background:${s.mid}"></span><span class="st s-${slug(s.key)}">${s.letter}</span><h2>${esc(s.section)}</h2><span class="count">${items.length} task${items.length===1?"":"s"}</span></header>`;
+    return `<section class="card pl-sec" id="tbl-${key}-${slug(s.key)}">${head}${items.length?tableHTML(key,slug(s.key),items):`<p class="pl-empty">Nothing in ${esc(s.section)} right now.</p>`}</section>`;
+  }).join("");
+  sec.innerHTML=`
+    <div class="page-head">
+      <p class="eyebrow">Page ${g.page} · Content group</p>
+      <h1><span class="hl">${esc(g.name)}</span>${g.plain?"":" Content"}</h1>
+      <p class="sub">${esc(g.lead)} Type the task and pick the rest from the lists. Tap a column name to sort. Open a task to add its destination, photo, description, sub-tasks and results.</p>
+    </div>
+    <div class="sumstrip">
+      <div class="sum">Tasks <b>${list.length}</b></div><button class="sum jump" data-jump="tbl-${key}-ideation"><span class="dot" style="background:var(--accent-ink)"></span>Ideation <b>${ideas.length}</b></button>${sums}
+      <div class="sum">Next post <b>${next?fmtDate(next.date):"—"}</b></div>
+    </div>
+    <div class="card pl-sec">
+      <header class="pl-head"><h2>All ${esc(g.name)} tasks</h2><span class="count">${list.length} task${list.length===1?"":"s"}</span></header>
+      ${list.length?tableHTML(key,"all",list):`<p class="tbl-empty">${loaded||mode==="offline"?"No "+esc(g.name)+" tasks yet. Add your first one below.":"Loading tasks…"}</p>`}
+      <div class="table-foot">
+        <button class="btn primary" data-add="${key}"${readOnly?" disabled":""}>+ Add a task</button><span class="muted" style="font-size:12px">Press Tab or Enter after a task name to start the next one.</span>
+        <div class="codes">${PLATFORMS.map(p=>`<span><span class="code-chip p-${p.code}">${p.code}</span>${esc(p.name)}</span>`).join("")}</div>
+      </div>
+    </div>
+    <section class="card pl-sec idea-sec" id="tbl-${key}-ideation">
+      <header class="pl-head"><span class="bar" style="background:var(--accent-ink)"></span><h2>Ideation</h2><span class="count">${ideas.length} idea${ideas.length===1?"":"s"} · not counted as tasks</span></header>
+      ${ideas.length?ideaTableHTML(key,ideas):`<p class="pl-empty">Brainstorm here first. When an idea is ready, open it and pick a status to make it a task.</p>`}
+      <div class="table-foot"><button class="btn" data-addidea="${key}"${readOnly?" disabled":""}>+ Add an idea</button><span class="muted" style="font-size:12px">Press Tab or Enter after typing an idea to start the next one. Open an idea and pick a status to turn it into a task.</span></div>
+    </section>
+    <p class="eyebrow by-status">By status</p>
+    <div class="pl">${statusTables}</div>
+    <p class="eyebrow by-status">Top performing</p>
+    ${groupTopHTML(key)}`;
+  window.scrollTo(0,y);
+}
+function rowHTML(r,t){
+  const miss=!r.date||!r.platform;const s=subStats(r);const dis=readOnly?" disabled":"";const p=t+"-";
+  return `<tr data-id="${r.id}" class="${miss?"missing":""}" title="${miss?"Add a post date and platform to show this on the calendar":""}">
+    <td>${thumb(r)}</td>
+    <td><input class="cell-in" type="date" id="${p}date-${r.id}" data-field="date" value="${esc(r.date)}" min="2025-01-01" max="2028-12-31" aria-label="Post date"${dis}></td>
+    <td><input class="cell-in" id="${p}task-${r.id}" data-field="task" value="${esc(r.task)}" placeholder="Type a content task" aria-label="Content task"${dis}></td>
+    <td><select class="pick ${statClass(r.status)}" id="${p}status-${r.id}" data-field="status" aria-label="Status"${dis}>${opts(STATUSES.map(x=>x.key),r.status)}</select></td>
+    <td><select class="pick ${platClass(r.platform)}" id="${p}platform-${r.id}" data-field="platform" aria-label="Platform"${dis}>${opts(platOpts,r.platform,"Pick platform")}</select></td>
+    <td><select class="pick ${neutral(r.format)}" id="${p}format-${r.id}" data-field="format" aria-label="Format"${dis}>${opts(FORMATS,r.format,"Pick format")}</select></td>
+    <td><select class="pick neutral" id="${p}group-${r.id}" data-field="group" aria-label="Content group"${dis}>${opts(GROUPS.map(x=>({v:x.key,l:x.name})),r.group)}</select></td>
+    <td><select class="pick ${neutral(r.pillar)}" id="${p}pillar-${r.id}" data-field="pillar" aria-label="Pillar"${dis}>${opts(PILLARS,r.pillar,"Pick pillar")}</select></td>
+    <td><select class="pick ${effClass(r.effort)}" id="${p}effort-${r.id}" data-field="effort" aria-label="Effort"${dis}>${opts(EFFORTS,r.effort,"Pick effort")}</select></td>
+    <td><button class="open-btn" data-open="${r.id}" aria-label="Open sub-tasks for ${esc(r.task||"task")}">${s.total?`<span class="mini-prog"><i><span style="width:${s.done/s.total*100}%"></span></i>${s.done}/${s.total}</span>`:"Add"}</button></td>
+    <td>${engCell(r)}</td>
+    <td style="white-space:nowrap"><button class="open-btn" data-open="${r.id}">Open</button> <button class="open-btn" data-duprow="${r.id}" aria-label="Duplicate ${esc(r.task||"task")} for another platform"${dis}>Duplicate</button> <button class="del" data-del="${r.id}" aria-label="Delete ${esc(r.task||"task")}"${dis}>&times;</button></td>
+  </tr>`;
+}
+const destRoot=$("destViews");
+destRoot.addEventListener("input",e=>{
+  const el=e.target;const f=el.dataset.field;if(!f||el.tagName==="SELECT"||el.type==="checkbox"||el.type==="date")return;
+  const id=el.closest("tr").dataset.id;
+  update(id,{[f]:el.value},600);
+  destRoot.querySelectorAll(`tr[data-id="${id}"] [data-field="${f}"]`).forEach(x=>{if(x!==el)x.value=el.value;});
+});
+destRoot.addEventListener("change",e=>{
+  const el=e.target;const f=el.dataset.field;if(!f)return;
+  const tr=el.closest("tr");const id=tr.dataset.id;if(!rows.some(x=>x.id===id))return;
+  if(el.type==="checkbox")update(id,{sfx:el.checked},0);
+  else if(el.tagName==="SELECT"||el.type==="date")update(id,{[f]:el.value},0);
+  else return;
+  const keep=el.id;renderGroup(current);const again=$(keep);if(again)again.focus({preventScroll:true});
+});
+/* Ideation: Tab or Enter in a filled idea moves to the idea below, opening a new blank one at the end */
+destRoot.addEventListener("keydown",e=>{
+  const el=e.target;
+  if(readOnly||!el.id||!el.id.startsWith("ideation-task-"))return;
+  if(!((e.key==="Tab"&&!e.shiftKey)||e.key==="Enter")||e.isComposing)return;
+  if(!el.value.trim())return;
+  e.preventDefault();
+  const id=el.closest("tr").dataset.id;
+  update(id,{task:el.value},0);
+  const inputs=Array.from(el.closest("tbody").querySelectorAll('input[id^="ideation-task-"]'));
+  const nextIn=inputs[inputs.indexOf(el)+1];
+  if(nextIn){nextIn.focus();nextIn.scrollIntoView({block:"nearest"});return;}
+  const r=newTask(current,{status:""});
+  renderGroup(current);
+  const inp=$("ideation-task-"+r.id);
+  if(inp){inp.focus();inp.scrollIntoView({block:"nearest"});}
+});
+/* Task tables: Tab or Enter in a filled task name moves to the task below, adding a new task at the end */
+destRoot.addEventListener("keydown",e=>{
+  const el=e.target;
+  if(readOnly||el.dataset.field!=="task"||!el.id||el.id.startsWith("ideation-"))return;
+  if(!((e.key==="Tab"&&!e.shiftKey)||e.key==="Enter")||e.isComposing)return;
+  if(!el.value.trim())return;
+  e.preventDefault();
+  const id=el.closest("tr").dataset.id;
+  update(id,{task:el.value},0);
+  const tkey=el.id.slice(0,el.id.indexOf("-task-"));
+  const inputs=Array.from(el.closest("tbody").querySelectorAll('input[data-field="task"]'));
+  const nextIn=inputs[inputs.indexOf(el)+1];
+  if(nextIn){nextIn.focus();nextIn.scrollIntoView({block:"nearest"});return;}
+  const st=STATUSES.find(s=>slug(s.key)===tkey);
+  const r=newTask(current,st?{status:st.key}:{});
+  renderGroup(current);
+  const inp=$(tkey+"-task-"+r.id)||$("all-task-"+r.id);
+  if(inp){inp.focus();inp.scrollIntoView({block:"nearest"});}
+});
+destRoot.addEventListener("click",e=>{
+  const rg=e.target.closest("[data-rankg]");
+  if(rg){rankByGroup[current]=rg.dataset.rankg;renderGroup(current);const again=destRoot.querySelector(`#view-${current} [data-rankg="${rg.dataset.rankg}"]`);if(again)again.focus({preventScroll:true});return;}
+  const sb=e.target.closest("[data-sort]");
+  if(sb){
+    const k=current+":"+sb.dataset.table;const st=sortState[k]||{key:"date",dir:"asc"};
+    sortState[k]=st.key===sb.dataset.sort?{key:st.key,dir:st.dir==="asc"?"desc":"asc"}:{key:sb.dataset.sort,dir:"asc"};
+    renderGroup(current);
+    const again=destRoot.querySelector(`#view-${current} [data-sort="${sb.dataset.sort}"][data-table="${sb.dataset.table}"]`);if(again)again.focus({preventScroll:true});
+    return;
+  }
+  const jb=e.target.closest("[data-jump]");
+  if(jb){const t=$(jb.dataset.jump);if(t)t.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});return;}
+  const dr=e.target.closest("[data-duprow]");
+  if(dr&&!readOnly){const c=duplicateTask(dr.dataset.duprow,"");if(c){justDup=c.id;renderGroup(current);openTask(c.id);const pf=$("dPlatform");if(pf)pf.focus({preventScroll:true});}return;}
+  const ai=e.target.closest("[data-addidea]");
+  if(ai&&!readOnly){const r=newTask(ai.dataset.addidea,{status:""});renderGroup(current);const inp=$("ideation-task-"+r.id);if(inp){inp.focus();inp.scrollIntoView({block:"center"});}return;}
+  const add=e.target.closest("[data-add]");
+  if(add&&!readOnly){const r=newTask(add.dataset.add);renderGroup(current);const inp=$("all-task-"+r.id);if(inp){inp.focus();inp.scrollIntoView({block:"center"});}return;}
+  const del=e.target.closest("[data-del]");
+  if(del&&!readOnly){
+    if(!del.classList.contains("armed")){del.classList.add("armed");del.textContent="Delete?";del.style.width="auto";del.style.padding="0 8px";del.style.background="var(--warn-bg)";del.style.color="var(--warn-fg)";setTimeout(()=>{if(del.isConnected){del.classList.remove("armed");del.innerHTML="&times;";del.removeAttribute("style");}},3000);return;}
+    removeTask(del.dataset.del);renderGroup(current);
+  }
+});
+
+/* ---------- task panel ---------- */
+let openId=null, opener=null, photoState={};
+const drawer=$("drawer"), scrim=$("scrim");
+function openTask(id){
+  if(!rows.some(r=>r.id===id))return;
+  opener=document.activeElement;openId=id;
+  drawer.hidden=false;scrim.hidden=false;document.body.classList.add("locked");
+  renderDrawer();
+  const c=$("dClose");if(c)c.focus({preventScroll:true});
+}
+let justDup=null;
+function closeTask(){
+  justDup=null;openId=null;openDay=null;dayReturn=null;sideMode=null;sideArg=null;drawer.hidden=true;scrim.hidden=true;drawer.innerHTML="";document.body.classList.remove("locked");
+  render();
+  if(opener&&opener.isConnected)opener.focus({preventScroll:true});
+}
+scrim.addEventListener("click",closeTask);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&(openId||openDay||sideMode))closeTask();});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-open]");if(b&&!drawer.contains(b))openTask(b.dataset.open);});
+
+function renderDrawer(){
+  const r=rows.find(x=>x.id===openId);
+  if(!r){closeTask();return;}
+  const g=groupOf(r.group);const idea=!r.status;const st=statOf(r.status);const s=subStats(r);const dis=readOnly?" disabled":"";
+  const ps=photoState[r.id]||{};
+  const canPhoto=!!assets&&!readOnly;
+  const scrollTop=($("dScroll")||{}).scrollTop||0;
+  drawer.innerHTML=`
+    <div class="d-top">
+      <div class="d-crumb">${dayReturn?`<button class="btn sm" id="dDayBack">&#8249; ${fmtDate(dayReturn)}</button>`:""}<span>${esc(g.title)}</span>${idea?`<span class="pill s-ideation">Ideation</span>`:`<span class="pill s-${slug(st.key)}">${esc(st.key)}</span>`}${r.date?`<span>${fmtDate(r.date)}, ${parts(r.date).y}</span>`:""}</div>
+      <button class="icon-btn" id="dClose" aria-label="Close task details">&times;</button>
+    </div>
+    <div class="d-scroll" id="dScroll">
+      <textarea class="d-title" id="dTitle" data-f="task" rows="1" placeholder="Name this task" aria-label="Task name"${dis}>${esc(r.task)}</textarea>
+      ${(()=>{const o=r.copiedFrom&&rows.find(x=>x.id===r.copiedFrom);return o?`<p class="copied-from">Reused from <button class="inline-link" data-goto="${o.id}">${esc(o.task||"Untitled")}${o.platform?" · "+esc(o.platform):""}</button></p>`:"";})()}
+      ${justDup===r.id?`<p class="idea-note"><b>Copy created${platOf(r.platform)?" for "+esc(platOf(r.platform).name):""}.</b> ${r.platform?"Change anything that's different for this platform.":"Pick the platform it's going to, then adjust anything that's different."}</p>`:""}
+      <div class="d-main">
+        <div class="d-photo">
+          ${canPhoto?`<button class="photo-btn" id="dPhotoBtn" aria-label="${r.image?"Replace":"Add"} preview photo">${photoSq(r,ps.busy?"Uploading…":(r.image?"":"Add a 1:1 preview photo"))}</button>`:photoSq(r,r.image?"":"Preview photo")}
+          ${canPhoto&&r.image?`<div class="photo-acts"><button class="btn sm" id="dPhotoReplace">Replace</button><button class="btn sm danger" id="dPhotoRemove">Remove</button></div>`:""}
+          ${ps.err?`<p class="photo-note err">${esc(ps.err)}</p>`:(canPhoto?`<p class="photo-note">${ps.busy?"Uploading photo…":"Shows as a square, like the post will."}</p>`:`<p class="photo-note">${mode==="offline"?"Photos upload when this planner is opened from claude.ai.":"Only editors can add photos."}</p>`)}
+        </div>
+        <dl class="d-fields">
+          <div><dt><label for="dDate">Post date</label></dt><dd><input class="cell-in" type="date" id="dDate" data-f="date" value="${esc(r.date)}" min="2025-01-01" max="2028-12-31"${dis}></dd></div>
+          <div><dt><label for="dStatus">Status</label></dt><dd><select class="pick ${statClass(r.status)}" id="dStatus" data-f="status"${dis}>${opts(STATUSES.map(x=>x.key),r.status,idea?"Ideation · pick to make it a task":"")}</select></dd></div>
+          <div><dt><label for="dPlatform">Platform</label></dt><dd><select class="pick ${platClass(r.platform)}" id="dPlatform" data-f="platform"${dis}>${opts(platOpts,r.platform,"Pick platform")}</select></dd></div>
+          <div><dt><label for="dPillar">Pillar</label></dt><dd><select class="pick ${neutral(r.pillar)}" id="dPillar" data-f="pillar"${dis}>${opts(PILLARS,r.pillar,"Pick pillar")}</select></dd></div>
+          <div><dt><label for="dFormat">Format</label></dt><dd><select class="pick ${neutral(r.format)}" id="dFormat" data-f="format"${dis}>${opts(FORMATS,r.format,"Pick format")}</select></dd></div>
+          <div><dt><label for="dEffort">Effort</label></dt><dd><select class="pick ${effClass(r.effort)}" id="dEffort" data-f="effort"${dis}>${opts(EFFORTS,r.effort,"Pick effort")}</select></dd></div>
+          <div><dt><label for="dDest">Destination</label></dt><dd><input class="cell-in" id="dDest" data-f="dest" value="${esc(r.dest)}" placeholder="Type destination"${dis}></dd></div>
+          <div><dt><label for="dGroup">Content group</label></dt><dd><select class="pick neutral" id="dGroup" data-f="group"${dis}>${opts(GROUPS.map(x=>({v:x.key,l:x.name})),r.group)}</select></dd></div>
+          <div><dt>Special effects</dt><dd><label class="sfx"><input type="checkbox" id="dSfx" data-f="sfx"${r.sfx?" checked":""}${dis}><span>${r.sfx?"Yes":"No"}</span></label></dd></div>
+          ${isIGp(r.platform)?`<div><dt>Collaboration</dt><dd><label class="sfx"><input type="checkbox" id="dCollab" data-f="collab"${r.collab?" checked":""}${dis}><span>${r.collab?"Yes":"No"}</span></label></dd></div>
+          ${r.collab?`<div class="sub-field"><dt><label for="dCollabWith">Collab account</label></dt><dd><input class="cell-in" id="dCollabWith" data-f="collabWith" value="${esc(r.collabWith)}" placeholder="@accountname (separate several with commas)" autocapitalize="off" autocomplete="off" spellcheck="false"${dis}></dd></div>`:""}`:""}
+          ${r.platform==="TT"?`<div><dt>Promotional post</dt><dd><label class="sfx"><input type="checkbox" id="dPromo" data-f="promo"${r.promo?" checked":""}${dis}><span>${r.promo?"Yes":"No"}</span></label></dd></div>
+          ${r.promo?`<div class="sub-field"><dt><label for="dPromoBrand">Product or brand</label></dt><dd><input class="cell-in" id="dPromoBrand" data-f="promoBrand" value="${esc(r.promoBrand)}" placeholder="What the promo was for"${dis}></dd></div>`:""}`:""}
+        </dl>
+      </div>
+
+      <section class="d-sec">
+        <h3><label for="dDesc">Description</label></h3>
+        <textarea class="d-desc" id="dDesc" data-f="desc" placeholder="Caption ideas, hook, shot list, hashtags, music, links…"${dis}>${esc(r.desc)}</textarea>
+      </section>
+
+      <section class="d-sec">
+        <h3>Sub-tasks <span id="dSubCount">${s.total?s.done+" of "+s.total+" done":"None yet"}</span></h3>
+        <div class="prog"><span id="dSubBar" style="width:${s.total?s.done/s.total*100:0}%"></span></div>
+        <ul class="subs" id="dSubs">${r.subtasks.map((x,i)=>`<li class="${x.done?"done":""}" data-i="${i}"><input type="checkbox" aria-label="Done"${x.done?" checked":""}${dis}><input class="cell-in" data-sub="${i}" value="${esc(x.t)}" placeholder="Sub-task" aria-label="Sub-task ${i+1}"${dis}><button class="del" data-subdel="${i}" aria-label="Remove sub-task"${dis}>&times;</button></li>`).join("")}</ul>
+        ${readOnly?"":`<form class="sub-add" id="dSubAdd"><input id="dSubNew" placeholder="Add a sub-task, then press Enter" aria-label="New sub-task"><button class="btn sm" type="submit">Add</button></form>`}
+      </section>
+
+      ${idea?`<p class="idea-note"><b>This is still in Ideation.</b> It stays off the calendar, the dashboard and the Production List. Pick a Status above when it's ready to become a task.</p>`:""}
+      <section class="d-sec"${idea?" hidden":""}>
+        <h3>Engagement results <span>${r.status==="Published"?"from the platform's insights":"log these after it posts"}</span></h3>
+        <div class="link-row">
+          <label for="dLink">Live post link</label>
+          <div class="link-in"><input type="url" inputmode="url" autocomplete="off" id="dLink" data-f="link" value="${esc(r.link)}" placeholder="Paste the post's URL from Instagram, TikTok, YouTube or your blog"${dis}><a class="btn sm" id="dLinkOpen" href="${esc(safeUrl(r.link))}" target="_blank" rel="noopener noreferrer"${safeUrl(r.link)?"":" hidden"}>Open &#8599;</a></div>
+          <p class="hint" id="dLinkHint"${r.link&&!safeUrl(r.link)?"":" hidden"}>Links need to start with https:// to open.</p>
+        </div>
+        ${platOf(r.platform)?`<p class="hint" style="margin:0 0 8px">Showing the ${esc(platOf(r.platform).name)}${isTTPhoto(r)?" "+esc(r.format.toLowerCase())+" post":""} metrics.</p>`:""}
+        ${(()=>{const ms=metricsFor(r.platform,r.format);const field=x=>{const v=r.metrics[x.k]==null?"":esc(r.metrics[x.k]);
+          if(x.type==="text")return `<label>${x.l}<input type="text" data-m="${x.k}" data-mt="text" value="${v}" placeholder="${x.ph}" maxlength="40"${dis}></label>`;
+          if(x.type==="dec")return `<label>${x.l}<input type="number" inputmode="decimal" min="0" step="0.1" data-m="${x.k}" value="${v}" placeholder="${x.ph}"${dis}></label>`;
+          return `<label>${x.l}<input type="number" inputmode="numeric" min="0" step="1" data-m="${x.k}" value="${v}" placeholder="0"${dis}></label>`;};
+          const key=ms.filter(x=>x.key),rest=ms.filter(x=>!x.key);
+          return key.length?`<p class="m-label">Key metrics</p><div class="m-grid">${key.map(field).join("")}</div><p class="m-label">More metrics</p><div class="m-grid">${rest.map(field).join("")}</div>`:`<div class="m-grid">${ms.map(field).join("")}</div>`;})()}
+        <div class="m-out">
+          ${engBoxHTML(r)}
+          <div><span>Interactions</span><b id="mInt">${hasResults(r)||interactions(r.metrics)?fmtNum(interactions(r.metrics)):"—"}</b></div>
+          ${metricsFor(r.platform,r.format).some(x=>x.k==="clicks")?`<div><span>Click rate</span><b id="mCTR">${num(r.metrics.reach)?pctTxt(num(r.metrics.clicks)/num(r.metrics.reach)):"—"}</b></div>`:""}
+          ${isIGp(r.platform)?igRates(r).map(x=>`<div><span>${x.l}</span><b id="${x.id}">${x.v}</b><small>${x.n}</small></div>`).join(""):""}
+          <div id="mFolBox"><span>By followers</span><b id="mFol">${folER(r).v}</b><small id="mFolNote">${folER(r).note}</small></div>
+        </div>
+        <p class="hint">${r.platform==="IGS"?"Engagement = interactions ÷ views (if Interactions is blank, likes + replies + shares are added up instead). Stories don't report viewers, so views stand in for reach in the totals.":`Engagement = likes + comments + shares + saves${isIGp(r.platform)?" + reposts":""}, divided by ${isIGp(r.platform)?"viewers (Instagram's reach)":isTTPhoto(r)?"total viewers":r.platform==="TT"?"viewers":"reach"}.`} It feeds Top performing posts and the monthly analytics. By followers uses the follower count saved on or before the post date; brand medians are about 0.36% on Instagram (1%+ is top 25%) and 1.73% on TikTok.${isIGp(r.platform)?" On Instagram, engagement uses Viewers (Reach), the number creators and brands report. Like rate and send rate use Views instead, since those per-view signals (plus watch time) are what Instagram's algorithm ranks on.":""}</p>
+      </section>
+
+      ${readOnly?"":`<section class="d-sec"><h3>Reuse on another platform <span>makes a separate copy</span></h3>
+        <div class="dup-row">${PLATFORMS.filter(p=>p.code!==r.platform).map(p=>`<button class="dup-btn p-${p.code}" data-dup="${p.code}">+ ${p.code} · ${esc(p.short)}</button>`).join("")}</div>
+        <p class="hint">Copies the name, date, details, photo and sub-tasks (unchecked). Results and the live link start fresh, and a published post's copy starts as Drafting.</p></section>`}
+      <div class="d-foot">
+        <span class="muted" style="font-size:12px">${r.updated?"Last saved "+new Date(r.updated).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):""}</span>
+        ${readOnly?"":`<button class="btn danger" id="dDelete">Delete task</button>`}
+      </div>
+    </div>`;
+  const sc=$("dScroll");if(sc)sc.scrollTop=scrollTop;
+  growTitle();
+}
+function growTitle(){const t=$("dTitle");if(t){t.style.height="auto";t.style.height=t.scrollHeight+"px";}}
+function engBoxHTML(r){const er=erOf(r.metrics),t=tierOf(r.platform,er);return `<div id="mERBox" class="${t==="low"?"m-low":t?"m-ok":""}"><span>Engagement</span><b id="mER">${pctTxt(er)}</b><small id="mTier">${engNote(r)}</small></div>`;}
+function engNote(r){const er=erOf(r.metrics),t=tierOf(r.platform,er),b=BENCH[r.platform];if(!b)return er==null?"":"no benchmark for this platform";return t?TIER_TXT[t]+" · "+b.range:b.range;}
+function folER(r){const k=folKey(r.platform);if(!k)return{v:"—",note:"not tracked for this platform"};const f=followersOn(r.platform,r.date);if(!f)return{v:"—",note:"add follower counts on the dashboard"};const it=interactions(r.metrics);return{v:it?pctTxt(it/f.n):"—",note:`of ${fmtCompact(f.n)} on ${fmtDate(f.date)}`};}
+function igRates(r){const m=r.metrics||{},v=num(m.views),re=num(m.reach);return [
+  {id:"mLR",l:"Like rate",v:v?pctTxt(num(m.likes)/v):"—",n:"likes ÷ views"},
+  {id:"mSR",l:"Send rate",v:v?pctTxt(num(m.shares)/v):"—",n:"shares ÷ views"}];}
+function refreshMetricsOut(r){
+  if(isIGp(r.platform))igRates(r).forEach(x=>{const e=$(x.id);if(e)e.textContent=x.v;});
+  const er=$("mER"),it=$("mInt"),ct=$("mCTR");
+  if(er)er.textContent=pctTxt(erOf(r.metrics));
+  const box=$("mERBox");if(box){const t=tierOf(r.platform,erOf(r.metrics));box.className=t==="low"?"m-low":t?"m-ok":"";const n=$("mTier");if(n)n.textContent=engNote(r);}
+  const fo=$("mFol");if(fo){const f=folER(r);fo.textContent=f.v;const fn=$("mFolNote");if(fn)fn.textContent=f.note;}
+  if(it)it.textContent=hasResults(r)||interactions(r.metrics)?fmtNum(interactions(r.metrics)):"—";
+  if(ct)ct.textContent=num(r.metrics.reach)?pctTxt(num(r.metrics.clicks)/num(r.metrics.reach)):"—";
+}
+function refreshSubs(r){
+  const s=subStats(r);
+  $("dSubCount").textContent=s.total?s.done+" of "+s.total+" done":"None yet";
+  $("dSubBar").style.width=(s.total?s.done/s.total*100:0)+"%";
+}
+drawer.addEventListener("input",e=>{
+  const el=e.target;const r=rows.find(x=>x.id===openId);if(!r||readOnly)return;
+  if(el.dataset.f&&(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type!=="date"&&el.type!=="checkbox"))){update(r.id,{[el.dataset.f]:el.value},700);if(el.id==="dTitle")growTitle();if(el.id==="dLink"){const u=safeUrl(el.value),a=$("dLinkOpen"),h=$("dLinkHint");if(a){a.hidden=!u;if(u)a.href=u;}if(h)h.hidden=!el.value.trim()||!!u;render();}return;}
+  if(el.dataset.m){const v=el.value===""?null:(el.dataset.mt==="text"?el.value.slice(0,40):num(el.value));r.metrics=Object.assign({},r.metrics,{[el.dataset.m]:v});if(r.platform==="IGS"&&el.dataset.m==="views")r.metrics.reach=v||null;queueSave(r.id,700);refreshMetricsOut(r);return;}
+  if(el.dataset.sub!=null){const i=+el.dataset.sub;if(r.subtasks[i]){r.subtasks[i].t=el.value;queueSave(r.id,700);}}
+});
+drawer.addEventListener("change",e=>{
+  const el=e.target;const r=rows.find(x=>x.id===openId);if(!r||readOnly)return;
+  const f=el.dataset.f;
+  if(f==="collab"||f==="promo"){update(r.id,{[f]:el.checked},0);renderDrawer();const t=$(f==="collab"?"dCollabWith":"dPromoBrand");if(t&&el.checked)t.focus();else{const c=$(f==="collab"?"dCollab":"dPromo");if(c)c.focus({preventScroll:true});}return;}
+  if(f==="collabWith"){const v=el.value.split(/[\s,]+/).filter(Boolean).map(h=>h.startsWith("@")?h:"@"+h).join(", ");el.value=v;update(r.id,{collabWith:v},0);return;}
+  if(f==="sfx"){update(r.id,{sfx:el.checked},0);el.nextElementSibling.textContent=el.checked?"Yes":"No";render();return;}
+  if(f&&el.tagName==="SELECT"){update(r.id,{[f]:el.value},0);el.className="pick "+(f==="group"?"neutral":pickClass(f,el.value));render();if(f==="status"||f==="platform"||f==="format"){renderDrawer();const again=$(f==="status"?"dStatus":f==="platform"?"dPlatform":"dFormat");if(again)again.focus({preventScroll:true});}return;}
+  if(f==="date"){update(r.id,{date:el.value},0);render();return;}
+  const li=el.closest(".subs li");
+  if(li&&el.type==="checkbox"){const i=+li.dataset.i;if(r.subtasks[i]){r.subtasks[i].done=el.checked;li.classList.toggle("done",el.checked);queueSave(r.id,0);refreshSubs(r);}}
+});
+/* metrics: Tab jumps to the next empty field, reading left to right then down a row */
+const mFields=()=>Array.from(drawer.querySelectorAll("input[data-m]:not([disabled])"));
+const mEmpty=x=>x.value===""&&!(x.validity&&x.validity.badInput);
+function nextEmptyMetric(el){const all=mFields();return all.slice(all.indexOf(el)+1).find(mEmpty)||null;}
+let mSkipping=false,lastPointer=0;
+drawer.addEventListener("pointerdown",()=>{lastPointer=Date.now();},true);
+drawer.addEventListener("keydown",e=>{
+  const el=e.target;if(!el.dataset||el.dataset.m==null||e.shiftKey)return;
+  if(e.key!=="Tab"&&e.key!=="Enter")return;
+  const next=nextEmptyMetric(el);
+  if(next){e.preventDefault();mSkipping=true;next.focus();mSkipping=false;next.scrollIntoView({block:"nearest"});}
+  else if(e.key==="Enter"){e.preventDefault();el.blur();}
+},true);
+/* phones and tablets: the keyboard's next arrow moves focus without a Tab key, so skip filled fields on arrival too */
+drawer.addEventListener("focusin",e=>{
+  const el=e.target,from=e.relatedTarget;
+  if(mSkipping||!el.dataset||el.dataset.m==null||mEmpty(el))return;
+  if(!from||!from.dataset||from.dataset.m==null||Date.now()-lastPointer<600)return;
+  const all=mFields();if(all.indexOf(from)>=all.indexOf(el))return;
+  const next=all.slice(all.indexOf(el)).find(mEmpty);
+  if(next&&next!==el){mSkipping=true;next.focus();mSkipping=false;next.scrollIntoView({block:"nearest"});}
+});
+drawer.addEventListener("submit",e=>{
+  if(e.target.id!=="dSubAdd")return;e.preventDefault();
+  const r=rows.find(x=>x.id===openId);const inp=$("dSubNew");if(!r||!inp||!inp.value.trim())return;
+  r.subtasks=r.subtasks.concat([{t:inp.value.trim(),done:false}]);queueSave(r.id,0);
+  renderDrawer();const again=$("dSubNew");if(again)again.focus({preventScroll:true});
+});
+drawer.addEventListener("click",e=>{
+  const r=rows.find(x=>x.id===openId);
+  if(e.target.closest("#dClose")){closeTask();return;}
+  if(!r||readOnly)return;
+  const sd=e.target.closest("[data-subdel]");
+  if(sd){r.subtasks=r.subtasks.filter((x,i)=>i!==+sd.dataset.subdel);queueSave(r.id,0);renderDrawer();return;}
+  if(e.target.closest("#dPhotoBtn")||e.target.closest("#dPhotoReplace")){if(photoState[r.id]&&photoState[r.id].busy)return;uploadFor=r.id;$("fileIn").value="";$("fileIn").click();return;}
+  if(e.target.closest("#dPhotoRemove")){const old=r.image;update(r.id,{image:""},0);releaseImage(old,r.id);photoState[r.id]={};renderDrawer();render();return;}
+  const gt=e.target.closest("[data-goto]");
+  if(gt){justDup=null;openId=gt.dataset.goto;renderDrawer();const c=$("dClose");if(c)c.focus({preventScroll:true});return;}
+  const dp=e.target.closest("[data-dup]");
+  if(dp){const c=duplicateTask(r.id,dp.dataset.dup);if(c){justDup=c.id;openId=c.id;render();renderDrawer();const sc=$("dScroll");if(sc)sc.scrollTop=0;const cl=$("dClose");if(cl)cl.focus({preventScroll:true});}return;}
+  const del=e.target.closest("#dDelete");
+  if(del){
+    if(!del.classList.contains("armed")){del.classList.add("armed");del.textContent="Tap again to delete";setTimeout(()=>{if(del.isConnected){del.classList.remove("armed");del.textContent="Delete task";}},3500);return;}
+    const id=r.id;closeTask();removeTask(id);render();
+  }
+});
+
+/* photos: resize to a light JPEG, upload, keep the id on the task */
+let uploadFor=null;
+$("fileIn").addEventListener("change",async e=>{
+  const file=e.target.files&&e.target.files[0];const id=uploadFor;uploadFor=null;
+  if(!file||!id||!assets)return;
+  photoState[id]={busy:true};if(openId===id)renderDrawer();
+  let blob=null;
+  try{blob=await toJpeg(file);}catch(err){if(["image/png","image/jpeg","image/webp","image/gif"].includes(file.type))blob=file;}
+  if(!blob){photoState[id]={err:"This photo format can't be read here. Try a JPG or PNG."};if(openId===id)renderDrawer();return;}
+  try{
+    const res=await assets.upload(blob,{type:blob.type||"image/jpeg"});
+    urlCache[res.id]=res.url;
+    const r=rows.find(x=>x.id===id);
+    if(r){const old=r.image;update(id,{image:res.id},0);releaseImage(old,id);}
+    photoState[id]={};
+  }catch(err){
+    const c=err&&err.code;
+    photoState[id]={err:c==="too_large"?"That photo is too large. Try a smaller one.":c==="quota_or_state"?"Photo storage is full. Remove some photos and try again.":c==="rate_limited"?"Too many uploads at once. Wait a moment and try again.":"The photo didn't upload. Check your connection and try again."};
+  }
+  if(openId===id)renderDrawer();render();
+});
+function loadImg(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file);const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error("decode"));im.src=u;});}
+async function toJpeg(file){
+  let src;
+  try{src=await createImageBitmap(file);}catch(e){src=await loadImg(file);}
+  const w0=src.width||src.naturalWidth,h0=src.height||src.naturalHeight;
+  if(!w0||!h0)throw new Error("size");
+  const s=Math.min(1,1440/Math.max(w0,h0));
+  const c=document.createElement("canvas");c.width=Math.round(w0*s);c.height=Math.round(h0*s);
+  c.getContext("2d").drawImage(src,0,0,c.width,c.height);
+  return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error("encode")),"image/jpeg",0.86));
+}
+
+/* clear the sample tasks, one delete at a time */
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("#clearSamples");if(!b||readOnly)return;
+  if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="Tap again to clear all samples";setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.textContent="Clear sample tasks";}},4000);return;}
+  b.disabled=true;b.textContent="Clearing…";
+  const ids=rows.filter(r=>r.sample).map(r=>r.id);
+  for(const id of ids){
+    const r=rows.find(x=>x.id===id);if(r)releaseImage(r.image,id);
+    rows=rows.filter(x=>x.id!==id);deletedLocal.add(id);
+    try{await db.collection("tasks").doc(id).delete();}catch(err){}
+  }
+  refreshNotice();render();
+});
+
+/* swipe left for the next page, right for the previous one (touch screens) */
+let swipe=null;
+const NO_SWIPE=".tbl-wrap,.tp-row,nav.pages,.cal,input,select,textarea,.drawer";
+document.addEventListener("touchstart",e=>{
+  if(openId||openDay||sideMode||e.touches.length!==1||e.target.closest(NO_SWIPE)){swipe=null;return;}
+  const t=e.touches[0];swipe={x:t.clientX,y:t.clientY,t:Date.now()};
+},{passive:true});
+document.addEventListener("touchend",e=>{
+  if(!swipe||openId)return;
+  const t=e.changedTouches[0];const dx=t.clientX-swipe.x,dy=t.clientY-swipe.y,dt=Date.now()-swipe.t;swipe=null;
+  if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.8||dt>800)return;
+  const ov=orderedViews();const i=ov.findIndex(v=>v.key===current);const j=i+(dx<0?1:-1);
+  if(j<0||j>=ov.length)return;
+  location.hash=ov[j].key;
+},{passive:true});
+window.addEventListener("hashchange",()=>{const a=document.querySelector('#pages a[aria-current="page"]');if(a)a.scrollIntoView({block:"nearest",inline:"center"});});
+
+show(location.hash.slice(1)||"yearly");
+setSync();
+connect();
+})();
+</script>
+</body>
+</html>
+
+</body></html>
