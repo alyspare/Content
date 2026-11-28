@@ -2181,9 +2181,20 @@ async function igGet(url){let res;try{res=await fetch(url);}catch(e){const x=new
 const igQ=(o)=>Object.entries(o).map(([k,v])=>k+"="+encodeURIComponent(v)).join("&");
 async function igWho(token){
   if(/^EA/.test(token)){
-    const j=await igGet(igHost({kind:"fb"})+"/me/accounts?"+igQ({fields:"name,instagram_business_account{id,username}",access_token:token}));
-    const pg=(j.data||[]).find(x=>x.instagram_business_account);if(!pg)throw new Error("No Instagram professional account is linked to the Facebook pages this token can see. When generating the token, tick your Blyssful Travels page and Instagram account.");
-    return{kind:"fb",igId:pg.instagram_business_account.id,username:pg.instagram_business_account.username||""};}
+    const fb=igHost({kind:"fb"}),tok={access_token:token},tried=[];let me=null;
+    try{me=await igGet(fb+"/me?"+igQ(Object.assign({fields:"id,name,instagram_business_account{id,username}"},tok)));}catch(e){if(e.blocked||e.code===190)throw e;try{me=await igGet(fb+"/me?"+igQ(Object.assign({fields:"id,name"},tok)));}catch(e2){if(e2.blocked||e2.code===190)throw e2;}}
+    if(me&&me.instagram_business_account)return{kind:"fb",igId:me.instagram_business_account.id,username:me.instagram_business_account.username||""};
+    try{const j=await igGet(fb+"/me/accounts?"+igQ(Object.assign({fields:"name,instagram_business_account{id,username},connected_instagram_account{id,username}"},tok)));
+      const pages=j.data||[];const pg=pages.find(x=>x.instagram_business_account||x.connected_instagram_account);
+      if(pg){const a=pg.instagram_business_account||pg.connected_instagram_account;return{kind:"fb",igId:a.id,username:a.username||""};}
+      tried.push(pages.length?`it can see ${pages.length} Facebook page${pages.length===1?"":"s"} (${pages.map(x=>x.name).slice(0,4).join(", ")}) but none shows a linked Instagram account`:"it can't see any Facebook pages");}
+    catch(e){if(e.blocked||e.code===190)throw e;tried.push("it isn't allowed to list your Facebook pages");}
+    try{const j=await igGet(fb+"/me/businesses?"+igQ(Object.assign({fields:"name,owned_instagram_accounts{id,username},instagram_business_accounts{id,username}"},tok)));
+      for(const bz of (j.data||[])){const l=((bz.instagram_business_accounts||{}).data||[]).concat((bz.owned_instagram_accounts||{}).data||[]);if(l.length)return{kind:"fb",igId:l[0].id,username:l[0].username||""};}
+      tried.push("no Instagram account in your business portfolio");}
+    catch(e){if(e.blocked||e.code===190)throw e;}
+    try{const j=await igGet(igHost({kind:"ig"})+"/me?"+igQ(Object.assign({fields:"user_id,username"},tok)));if(j&&(j.user_id||j.id))return{kind:"ig",igId:String(j.user_id||j.id),username:j.username||""};}catch(e){if(e.blocked)throw e;}
+    const x=new Error(`This is a Facebook token${me&&me.name?` for ${me.name}`:""}, and ${tried.join("; ")||"no Instagram account was found"}`);x.fbnolink=true;throw x;}
   const j=await igGet(igHost({kind:"ig"})+"/me?"+igQ({fields:"user_id,username",access_token:token}));
   return{kind:"ig",igId:String(j.user_id||j.id||""),username:j.username||""};
 }
@@ -2212,6 +2223,7 @@ async function igConnect(token){
 }
 function igErrText(e){if(e.blocked)return "Your browser couldn't reach Instagram from this page (it may be blocking requests from websites). Tell Claude \"Instagram was blocked\" and it will set up the small relay.";
   if(e.code===190)return "Instagram says this token is expired or not valid. Generate a new token in your Meta app and paste it here.";
+  if(e.fbnolink)return e.message+". See the fix steps Claude gave you, then paste the new token.";
   return "Instagram said: "+(e.message||"something went wrong")+".";}
 async function igSync(manual){
   const c=igConn;if(!c||!IG_LIVE||readOnly||igState.busy)return;
