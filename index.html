@@ -1358,7 +1358,7 @@ const EFFORTS=["Low","Medium","High"];
 const FORMATS=["Reel","Short video","Long-form video","Carousel","Photo","Collage","Story","Repost","Blog post","Multimedia","Live"];
 const PLAT_FORMATS={IG:["Reel","Photo","Carousel"],IGS:["Short video","Photo","Collage","Repost"],TT:["Short video","Long-form video","Photo","Carousel","Story","Live"],YTS:["Short video"],YT:["Short video","Long-form video"],BL:["Blog post","Multimedia"]};
 const fmtsFor=(pl,cur)=>{const l=PLAT_FORMATS[pl]||FORMATS;return cur&&!l.includes(cur)?l.concat([cur]):l;};
-const ASPECTS=[{v:"9:16",l:"9:16 (Portrait)"},{v:"16:9",l:"16:9 (Landscape)"}];
+const ASPECTS=[{v:"9:16",l:"9:16 (Portrait)"},{v:"4:5",l:"4:5 (Portrait)"},{v:"16:9",l:"16:9 (Landscape)"}];
 const GROUPS=[
   {key:"lifestyle",page:"04",name:"Lifestyle",def:""},
   {key:"sxm",page:"05",name:"SXM",def:"SXM"},
@@ -2481,7 +2481,7 @@ async function igSync(manual){
   igState={busy:true,msg:"Checking your live stories…"};if(sideMode==="import")renderSide();
   try{await igMaybeRefresh();const cc=igConn;
     const j=await igGet(igHost(cc)+"/"+(cc.kind==="fb"?cc.igId:"me")+"/stories?"+igQ({fields:"id,media_type,media_url,thumbnail_url,permalink,timestamp,caption",access_token:cc.token}));
-    const list=j.data||[];let n=0;
+    const list=j.data||[];let n=0,nt=0;
     for(const st of list){const ins=await igInsights(cc,st.id);const when=new Date(st.timestamp);if(isNaN(when))continue;
       const id="ig_"+st.id,old=stories.find(x=>x.id===id)||{};const mx=(a,b)=>b==null?(a==null?null:a):Math.max(num(a),num(b));
       const s=Object.assign({},old,{id,date:ymd(when.getFullYear(),when.getMonth(),when.getDate()),time:pad(when.getHours())+":"+pad(when.getMinutes()),
@@ -2490,9 +2490,9 @@ async function igSync(manual){
         type:st.media_type==="VIDEO"?"Video":st.media_type==="IMAGE"?"Photo":(old.type||""),src:"api",checked:Date.now(),thumbUrl:safeUrl(st.media_type==="VIDEO"?st.thumbnail_url:(st.media_url||st.thumbnail_url))||old.thumbUrl||""});
       Object.keys(s).forEach(k=>{if(s[k]==null)delete s[k];});
       const i=stories.findIndex(x=>x.id===id);if(i>=0)stories[i]=s;else stories.push(s);await saveStory(s);n++;
-      if(!s.image)await igStoryPhoto(s,safeUrl(st.media_type==="VIDEO"?st.thumbnail_url:(st.media_url||st.thumbnail_url)));else igStoryToTask(s);}
+      if(!s.image)await igStoryPhoto(s,safeUrl(st.media_type==="VIDEO"?st.thumbnail_url:(st.media_url||st.thumbnail_url)));if(igStoryToTask(stories.find(x=>x.id===s.id)||s))nt++;}
     try{localStorage.setItem(IG_LAST,String(Date.now()));}catch(e){}
-    igState={busy:false,msg:list.length?`Updated ${n} live stor${n===1?"y":"ies"} just now.`:"No live stories right now. Stories are checked each time you open the planner while they're up."};
+    igState={busy:false,msg:list.length?`Updated ${n} live stor${n===1?"y":"ies"} just now${nt?` and the stats on ${nt} IGS task${nt===1?"":"s"}`:""}.`:"No live stories right now. Stories are checked each time you open the planner while they're up."};
     scheduleRender();
   }catch(e){igState={busy:false,err:igErrText(e)};}
   if(sideMode==="import")renderSide();
@@ -2579,7 +2579,17 @@ let igPhotoQ=[], igPhotoRun=false, igPhotoNote="";
 async function igDownload(u){if(!u||!assets)return null;let res;try{res=await fetch(u,{referrerPolicy:"no-referrer"});}catch(e){igPhotoNote="Instagram's image server wouldn't let the planner download preview photos. Tell Claude \"photos were blocked\".";return null;}
   if(!res.ok)return null;const raw=await res.blob();let blob=null;try{blob=await toJpeg(raw);}catch(e){blob=raw;}
   const up=await assets.upload(blob,{type:blob.type||"image/jpeg"});urlCache[up.id]=up.url;return up.id;}
-function igStoryToTask(s){if(!s.image||!s.taskId)return;const r=rows.find(x=>x.id===s.taskId);if(r&&!r.image){update(r.id,{image:s.image},0);scheduleRender();}}
+function igStoryToTask(s){if(!s||readOnly)return false;
+  let r=s.taskId?rows.find(x=>x.id===s.taskId):null;
+  if(!r&&safeUrl(s.link))r=rows.find(x=>x.platform==="IGS"&&safeUrl(x.link)===safeUrl(s.link))||null;
+  if(!r&&s.date&&stories.filter(x=>x.date===s.date).length===1){const c=rows.filter(x=>x.platform==="IGS"&&x.date===s.date&&!stories.some(t=>t.taskId===x.id));if(c.length===1)r=c[0];}
+  if(!r)return false;
+  if(s.taskId!==r.id){s.taskId=r.id;const cur=stories.find(x=>x.id===s.id);if(cur)cur.taskId=r.id;saveStory(cur||s);}
+  const m=Object.assign({},r.metrics);const put=(k,v)=>{if(v!=null&&v!==""&&!Number.isNaN(Number(v)))m[k]=num(v);};
+  put("views",s.views);put("reach",s.reach!=null?s.reach:s.views);put("totalInter",s.inter);put("likes",s.likes);put("comments",s.replies);put("shares",s.shares);put("profile",s.profile);put("follows",s.follows);
+  const patch={};if(JSON.stringify(m)!==JSON.stringify(r.metrics))patch.metrics=m;
+  if(s.image&&!r.image)patch.image=s.image;if(!safeUrl(r.link)&&safeUrl(s.link))patch.link=s.link;if(!r.time&&s.time)patch.time=s.time;if(r.status!=="Published")patch.status="Published";
+  if(Object.keys(patch).length){update(r.id,patch,0);scheduleRender();if(openId===r.id&&!isEditing())renderDrawer();return true;}return false;}
 async function igStoryPhoto(s,u){if(!u){igPhotoNote=igPhotoNote||"Instagram didn't include a preview image for one of your stories (this happens with some music or shared stories).";return;}try{const id=await igDownload(u);if(!id)return;const cur=stories.find(x=>x.id===s.id)||s;cur.image=id;await saveStory(cur);igStoryToTask(cur);}catch(e){igPhotoNote="A story preview couldn't be saved ("+(e&&e.message||"upload problem")+"). It will try again on the next check while the story is up.";}}
 function igpQueuePhoto(taskId,mediaId){if(!assets||!IG_LIVE||igPhotoQ.some(q=>q.t===taskId))return;igPhotoQ.push({t:taskId,m:mediaId});igpPhotoPump();}
 async function igpPhotoUrl(c,mid){
@@ -2804,10 +2814,11 @@ function jsonTable(data){
 async function doImport(){
   if(!imp||imp.busy||readOnly)return;const {out}=impBuild();if(!out.length)return;
   const byId=new Map(stories.map(s=>[s.id,s]));
-  const items=out.map(s=>{const old=byId.get(s.id);return old&&old.taskId?Object.assign(s,{taskId:old.taskId}):s;});
+  const items=out.map(s=>{const old=byId.get(s.id);if(!old)return s;["taskId","image","thumbUrl","type"].forEach(k=>{if(old[k]&&!s[k])s[k]=old[k];});return s;});
   imp.busy=true;imp.finished=false;imp.done=0;imp.fail=0;imp.total=items.length;renderSide();
   if(mode!=="live"){items.forEach(s=>byId.set(s.id,s));stories=[...byId.values()];saveStoriesLocal();imp.done=items.length;}
   else{let i=0;const worker=async()=>{while(i<items.length){const s=items[i++];try{await db.collection("stories").doc(s.id).set(storyDoc(s));}catch(e){imp.fail++;}imp.done++;const p=$("stProg");if(p)p.textContent=imp.done+"/"+imp.total;}};await Promise.all(Array.from({length:6},worker));}
+  items.forEach(s=>{const cur=stories.find(x=>x.id===s.id)||s;igStoryToTask(cur);});
   imp.busy=false;imp.finished=true;if(sideMode==="import")renderSide();render();
 }
 async function clearStories(){
