@@ -610,6 +610,20 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid rgba(255,255,255,.2
 .m-out span{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.85}
 .m-out b{font-size:22px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .hint{font-size:12px;color:var(--muted);margin:8px 0 0}
+.igp-bulk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:13px}
+.igp-bulk label{display:flex;align-items:center;gap:8px}
+.igp-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.igp-item{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff}
+.igp-th{position:relative;flex:0 0 52px;width:52px;height:52px;border-radius:8px;overflow:hidden;background:var(--bg);display:grid;place-items:center}
+.igp-th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.igp-th i{font-style:normal;color:var(--muted);font-size:14px}
+.igp-th img+i{display:none}
+.igp-txt{flex:1;min-width:0;display:grid;gap:2px}
+.igp-txt b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.igp-txt small{font-size:11.5px;color:var(--muted)}
+.igp-acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.igp-acts .pick{max-width:120px}
+@media (max-width:560px){.igp-item{flex-wrap:wrap}.igp-acts{width:100%;justify-content:flex-start}}
 .blog-links{margin-top:12px;display:grid;gap:12px}
 .bl-q{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:600}
 .bl-urls{display:grid;gap:8px;padding:10px 12px;border:1px dashed var(--line);border-radius:12px}
@@ -1430,7 +1444,7 @@ function normalizeRaw(o){
     collab:!!o.collab, collabWith:String(o.collabWith||"").slice(0,300), promo:!!o.promo, promoBrand:String(o.promoBrand||"").slice(0,200),
     subtasks:Array.isArray(o.subtasks)?o.subtasks.filter(s=>s&&typeof s==="object").map(s=>({t:String(s.t||""),done:!!s.done})):[],
     metrics:(o.metrics&&typeof o.metrics==="object")?Object.fromEntries(METRICS.map(x=>{const v=o.metrics[x.k];return [x.k,v===""||v==null?null:(x.type==="text"?String(v).slice(0,40):num(v))];})):{},
-    image:typeof o.image==="string"?o.image:"", igroup:typeof o.igroup==="string"?o.igroup.slice(0,80):"", aerial:!!o.aerial, time:/^\d{2}:\d{2}$/.test(o.time||"")?o.time:"", stAt:(()=>{const q=o.stAt&&typeof o.stAt==="object"?o.stAt:{};const z={};Object.keys(q).forEach(k=>{const v=Number(q[k]);if(v>0)z[k.slice(0,20)]=v;});return z;})(), pipe:(()=>{const q=o.pipe&&typeof o.pipe==="object"?o.pipe:{};return{filmed:!!q.filmed,saved:!!q.saved,edited:!!q.edited,caption:!!q.caption};})(), footLink:typeof o.footLink==="string"?o.footLink.slice(0,2000):"", copiedFrom:typeof o.copiedFrom==="string"?o.copiedFrom:"", link:typeof o.link==="string"?o.link.slice(0,2000):"", sample:!!o.sample,
+    image:typeof o.image==="string"?o.image:"", igroup:typeof o.igroup==="string"?o.igroup.slice(0,80):"", aerial:!!o.aerial, igId:typeof o.igId==="string"?o.igId.slice(0,40):"", time:/^\d{2}:\d{2}$/.test(o.time||"")?o.time:"", stAt:(()=>{const q=o.stAt&&typeof o.stAt==="object"?o.stAt:{};const z={};Object.keys(q).forEach(k=>{const v=Number(q[k]);if(v>0)z[k.slice(0,20)]=v;});return z;})(), pipe:(()=>{const q=o.pipe&&typeof o.pipe==="object"?o.pipe:{};return{filmed:!!q.filmed,saved:!!q.saved,edited:!!q.edited,caption:!!q.caption};})(), footLink:typeof o.footLink==="string"?o.footLink.slice(0,2000):"", copiedFrom:typeof o.copiedFrom==="string"?o.copiedFrom:"", link:typeof o.link==="string"?o.link.slice(0,2000):"", sample:!!o.sample,
     created:Number(o.created)||0, updated:Number(o.updated)||0
   };
 }
@@ -2176,7 +2190,7 @@ let igConn=null, igAutoDone=false, igState={busy:false,msg:"",err:""};
 const igHost=c=>c&&c.kind==="fb"?"https://graph.facebook.com/"+IG_V:"https://graph.instagram.com/"+IG_V;
 async function igGet(url){let res;try{res=await fetch(url);}catch(e){const x=new Error("blocked");x.blocked=true;throw x;}
   let j=null;try{j=await res.json();}catch(e){}
-  if(!res.ok||(j&&j.error)){const er=(j&&j.error)||{};const x=new Error(er.message||("Instagram answered "+res.status));x.code=er.code;throw x;}
+  if(!res.ok||(j&&j.error)){const er=(j&&j.error)||{};const x=new Error(er.message||("Instagram answered "+res.status));x.code=er.code;x.rate=[4,17,32,613,80002].includes(er.code)||res.status===429;throw x;}
   return j;}
 const igQ=(o)=>Object.entries(o).map(([k,v])=>k+"="+encodeURIComponent(v)).join("&");
 async function igWho(token){
@@ -2227,7 +2241,7 @@ function igErrText(e){if(e.blocked)return "Your browser couldn't reach Instagram
   return "Instagram said: "+(e.message||"something went wrong")+".";}
 async function igSync(manual){
   const c=igConn;if(!c||!IG_LIVE||readOnly||igState.busy)return;
-  if(!manual){let last=0;try{last=+localStorage.getItem(IG_LAST)||0;}catch(e){}if(Date.now()-last<30*60e3)return;}
+  if(!manual){let last=0;try{last=+localStorage.getItem(IG_LAST)||0;}catch(e){}if(Date.now()-last<30*60e3){igPosts(false);return;}}
   igState={busy:true,msg:"Checking your live stories…"};if(sideMode==="import")renderSide();
   try{await igMaybeRefresh();const cc=igConn;
     const j=await igGet(igHost(cc)+"/"+(cc.kind==="fb"?cc.igId:"me")+"/stories?"+igQ({fields:"id,media_type,permalink,timestamp,caption",access_token:cc.token}));
@@ -2245,6 +2259,130 @@ async function igSync(manual){
     scheduleRender();
   }catch(e){igState={busy:false,err:igErrText(e)};}
   if(sideMode==="import")renderSide();
+  if(igConn&&!igState.err)igPosts(false);
+}
+/* ---------- Instagram posts & reels: import since 2025, refresh recent, review unmatched ---------- */
+const IGP_KEY="blyssful-ig-media-v1", IGP_SINCE="2025-01-01", IGP_EVERY=3*3600e3;
+const IGP_REEL=["reach","views","likes","comments","shares","saved","total_interactions","ig_reels_video_view_total_time"];
+const IGP_FEED=["reach","views","likes","comments","shares","saved","total_interactions","profile_visits","follows"];
+const IGP_SAFE=["reach","likes","comments","shares","saved"];
+let igp=(()=>{try{const v=JSON.parse(localStorage.getItem(IGP_KEY)||"null");if(v&&v.items)return v;}catch(e){}return{items:{},full:false,at:0};})();
+let postState={busy:false,msg:"",err:"",done:0,total:0}, reviewGroup={};
+function igpSave(){try{localStorage.setItem(IGP_KEY,JSON.stringify(igp));}catch(e){}}
+const igShort=u=>{const m=String(u||"").match(/instagram\.com\/(?:[^\/]+\/)?(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/);return m?m[1]:"";};
+const igLocal=ts=>{const d=new Date(ts);return isNaN(d)?null:{date:ymd(d.getFullYear(),d.getMonth(),d.getDate()),time:pad(d.getHours())+":"+pad(d.getMinutes()),t:d.getTime()};};
+const igFmt=it=>it.prod==="REELS"||it.type==="VIDEO"?"Reel":it.type==="CAROUSEL_ALBUM"?"Carousel":"Photo";
+function msToWatch(ms){ms=Math.round(num(ms)/1000);if(!ms)return null;const h=Math.floor(ms/3600),m=Math.floor(ms%3600/60),x=ms%60;return (h?h+"h ":"")+(h||m?m+"m ":"")+pad(x)+"s";}
+async function igpMetrics(c,it){
+  const base=igHost(c)+"/"+it.id+"/insights?";const set=igFmt(it)==="Reel"?IGP_REEL:IGP_FEED;const out={};
+  for(const ms of [set,IGP_SAFE]){try{const j=await igGet(base+igQ({metric:ms.join(","),access_token:c.token}));(j.data||[]).forEach(m=>{out[m.name]=igVal(m);});return out;}catch(e){if(e.blocked||e.code===190||e.rate)throw e;}}
+  return out;
+}
+function igpToMetrics(it){const i=it.ins||{};const m={};const put=(k,v)=>{if(v!=null&&v!=="")m[k]=v;};
+  put("reach",i.reach);put("views",i.views);put("likes",i.likes!=null?i.likes:it.likes);put("comments",i.comments!=null?i.comments:it.comments);
+  put("shares",i.shares);put("saves",i.saved);put("follows",i.follows);if(igFmt(it)==="Reel")put("watchTime",msToWatch(i.ig_reels_video_view_total_time));return m;}
+function igpMatch(it){
+  let r=rows.find(x=>x.igId===it.id);if(r)return r;
+  const sc=igShort(it.link);if(sc){r=rows.find(x=>!x.igId&&igShort(x.link)===sc);if(r)return r;}
+  const L=igLocal(it.ts);if(!L)return null;
+  const taken=new Set(Object.keys(igp.items));
+  const c=rows.filter(x=>x.platform==="IG"&&!x.igId&&x.date===L.date&&!(x.igId&&taken.has(x.igId)));
+  if(c.length===1)return c[0];
+  const f=c.filter(x=>!x.format||x.format===igFmt(it));return f.length===1?f[0]:null;
+}
+function igpApply(it){
+  const r=igpMatch(it);if(!r)return false;
+  const L=igLocal(it.ts);const m=igpToMetrics(it);const nm=Object.assign({},r.metrics,m);
+  const patch={};
+  if(r.igId!==it.id)patch.igId=it.id;
+  if(!safeUrl(r.link)&&it.link)patch.link=it.link;
+  if(L&&r.date!==L.date)patch.date=L.date;
+  if(L&&!r.time)patch.time=L.time;
+  if(!r.format)patch.format=igFmt(it);
+  if(JSON.stringify(nm)!==JSON.stringify(r.metrics))patch.metrics=nm;
+  if(r.status!=="Published")patch.status="Published";
+  if(Object.keys(patch).length){update(r.id,patch,0);if(patch.status&&L){r.stAt=Object.assign({},r.stAt,{Published:L.t});queueSave(r.id,0);}}
+  return true;
+}
+function igpPending(){const skip=new Set((igConn&&igConn.skip)||[]);
+  return Object.values(igp.items).filter(it=>it.ts&&it.ts.slice(0,10)>=IGP_SINCE&&!skip.has(it.id)&&!rows.some(r=>r.igId===it.id)).sort((a,b)=>a.ts<b.ts?1:-1);}
+async function igPosts(manual){
+  const c=igConn;if(!c||!IG_LIVE||readOnly||postState.busy)return;
+  if(!manual&&igp.full&&Date.now()-(igp.at||0)<IGP_EVERY)return;
+  postState={busy:true,msg:igp.full?"Refreshing recent posts…":"Importing your posts since Jan 2025…",done:0,total:0};if(sideMode==="import")renderSide();
+  const cut=igp.full?addDays(TODAY,-30):IGP_SINCE;
+  try{
+    // follower count, saved once a day
+    try{const who=c.kind==="fb"?c.igId:"me";const j=await igGet(igHost(c)+"/"+who+"?"+igQ({fields:"followers_count",access_token:c.token}));if(j&&num(j.followers_count))setFollower("IG",String(j.followers_count));}catch(e){if(e.blocked||e.code===190)throw e;}
+    // list posts newest first until older than the cut-off
+    let url=igHost(c)+"/"+(c.kind==="fb"?c.igId:"me")+"/media?"+igQ({fields:"id,caption,media_type,media_product_type,permalink,timestamp,thumbnail_url,media_url,like_count,comments_count",limit:50,access_token:c.token});
+    let stop=false;
+    while(url&&!stop){const j=await igGet(url);
+      for(const m of (j.data||[])){const L=igLocal(m.timestamp);if(!L)continue;if(L.date<cut){stop=true;continue;}
+        const old=igp.items[m.id]||{};
+        igp.items[m.id]=Object.assign(old,{id:m.id,ts:m.timestamp,type:m.media_type||"",prod:m.media_product_type||"",link:safeUrl(m.permalink),cap:String(m.caption||"").slice(0,600),thumb:safeUrl(m.thumbnail_url||m.media_url),likes:m.like_count,comments:m.comments_count});}
+      url=stop?null:(j.paging&&j.paging.next)||null;}
+    igpSave();
+    // stats: everything missing, plus anything from the last 30 days
+    const recent=addDays(TODAY,-30);
+    const todo=Object.values(igp.items).filter(it=>it.ts&&it.ts.slice(0,10)>=IGP_SINCE&&(!it.insAt||(it.ts.slice(0,10)>=recent&&Date.now()-it.insAt>IGP_EVERY-60e3)));
+    postState.total=todo.length;
+    for(const it of todo){it.ins=await igpMetrics(c,it);it.insAt=Date.now();postState.done++;const pg=$("igpProg");if(pg)pg.textContent=postState.done+"/"+postState.total;if(postState.done%10===0)igpSave();}
+    igp.full=true;igp.at=Date.now();igpSave();
+    let matched=0;Object.values(igp.items).forEach(it=>{if(it.ts&&it.ts.slice(0,10)>=IGP_SINCE&&igpApply(it))matched++;});
+    igpQueueMissing();
+    const pend=igpPending().length;
+    postState={busy:false,msg:`${Object.keys(igp.items).length} posts and reels found · ${matched} matched to your tasks${pend?` · ${pend} to review below`:""}.`};
+  }catch(e){igpSave();postState={busy:false,err:e.rate?"Instagram asked the planner to slow down. What's done so far is saved, and it will continue the next time you open the planner.":igErrText(e)};}
+  scheduleRender();if(sideMode==="import")renderSide();
+}
+let igPhotoQ=[], igPhotoRun=false, igPhotoNote="";
+function igpQueuePhoto(taskId,mediaId){if(!assets||!IG_LIVE||igPhotoQ.some(q=>q.t===taskId))return;igPhotoQ.push({t:taskId,m:mediaId});igpPhotoPump();}
+async function igpPhotoUrl(c,mid){
+  const j=await igGet(igHost(c)+"/"+mid+"?"+igQ({fields:"media_type,media_url,thumbnail_url,children{media_type,media_url,thumbnail_url}",access_token:c.token}));
+  let u=j.media_type==="VIDEO"?(j.thumbnail_url||""):(j.media_url||j.thumbnail_url||"");
+  if(!u&&j.children&&j.children.data&&j.children.data[0]){const k=j.children.data[0];u=k.media_type==="VIDEO"?k.thumbnail_url:k.media_url;}
+  return safeUrl(u);
+}
+async function igpPhotoPump(){
+  if(igPhotoRun)return;igPhotoRun=true;
+  while(igPhotoQ.length){const q=igPhotoQ.shift();const r=rows.find(x=>x.id===q.t);const c=igConn;if(!r||r.image||!c)continue;
+    try{const u=await igpPhotoUrl(c,q.m);if(!u)continue;
+      let res;try{res=await fetch(u,{referrerPolicy:"no-referrer"});}catch(e){igPhotoNote="Instagram's image server wouldn't let the planner download preview photos. Tell Claude \"photos were blocked\".";igPhotoQ=[];break;}
+      if(!res.ok)continue;const raw=await res.blob();let blob=null;try{blob=await toJpeg(raw);}catch(e){blob=raw;}
+      const up=await assets.upload(blob,{type:blob.type||"image/jpeg"});urlCache[up.id]=up.url;
+      const r2=rows.find(x=>x.id===q.t);if(r2&&!r2.image){update(q.t,{image:up.id},0);scheduleRender();}
+      const it=igp.items[q.m];if(it){it.photo=1;}
+    }catch(e){if(e.code===190||e.rate||e.blocked)break;}
+  }
+  igpSave();igPhotoRun=false;if(sideMode==="import")renderSide();
+}
+function igpQueueMissing(){rows.filter(r=>r.igId&&!r.image&&igp.items[r.igId]&&!igp.items[r.igId].photo).forEach(r=>igpQueuePhoto(r.id,r.igId));}
+async function igpSkip(ids){const c=Object.assign({},igConn);c.skip=Array.from(new Set((c.skip||[]).concat(ids))).slice(-3000);await igSaveConn(c);}
+function igpAdd(it,group){
+  const L=igLocal(it.ts);const cap=(it.cap||"").split("\n")[0].trim();
+  const r=newTask(group,{task:cap?cap.slice(0,80):igFmt(it)+" · "+fmtDate(L.date),date:L.date,time:L.time,platform:"IG",format:igFmt(it),status:"Published",link:it.link,igId:it.id,desc:it.cap||"",metrics:igpToMetrics(it)});
+  r.stAt={Published:L.t};queueSave(r.id,0);igpQueuePhoto(r.id,it.id);return r;
+}
+function igpReviewHTML(){
+  const l=igpPending();if(!l.length)return "";
+  const opt=g=>GROUPS.map(x=>`<option value="${x.key}"${x.key===g?" selected":""}>${esc(x.name)}</option>`).join("");
+  const bulk=reviewGroup._all||GROUPS[0].key;
+  return `<section class="d-sec igp-rev"><h3>Posts not in your planner <span>${l.length} to review</span></h3>
+    <p class="hint" style="margin:0 0 10px">These are on Instagram but don't match a task. Add the ones you want as Published tasks (stats and preview photo included), or skip them.</p>
+    <div class="igp-bulk"><label>Add all ${l.length} to <select class="pick neutral" id="igpAllGroup">${opt(bulk)}</select></label><button class="btn sm primary" id="igpAddAll">Add all</button></div>
+    <ul class="igp-list">${l.slice(0,60).map(it=>{const L=igLocal(it.ts);const m=igpToMetrics(it);const g=reviewGroup[it.id]||bulk;
+      return `<li class="igp-item"><span class="igp-th">${it.thumb?`<img src="${esc(it.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}<i>${igFmt(it)==="Reel"?"▶":igFmt(it)==="Carousel"?"❏":"◻"}</i></span>
+        <span class="igp-txt"><b>${esc((it.cap||"").split("\n")[0].slice(0,70)||igFmt(it))}</b><small>${igFmt(it)} · ${fmtDate(L.date)}, ${parts(L.date).y}${m.reach!=null?` · ${fmtCompact(m.reach)} viewers`:""}${m.likes!=null?` · ${fmtCompact(m.likes)} likes`:""}${it.link?` · <a href="${esc(it.link)}" target="_blank" rel="noopener">View</a>`:""}</small></span>
+        <span class="igp-acts"><select class="pick neutral" data-igpgroup="${it.id}" aria-label="Content group">${opt(g)}</select><button class="btn sm" data-igpadd="${it.id}">Add</button><button class="btn sm" data-igpskip="${it.id}">Skip</button></span></li>`;}).join("")}</ul>
+    ${l.length>60?`<p class="hint">Showing the newest 60. Add or skip these to see the rest.</p>`:""}</section>`;
+}
+function igpSectionHTML(){
+  if(!IG_LIVE||!igConn)return "";
+  const st=postState.err?`<p class="pipe-note warn">⚠ ${esc(postState.err)}</p>`:postState.busy?`<p class="hint" style="margin:8px 0 0">⏳ ${esc(postState.msg)} ${postState.total?`<span id="igpProg">${postState.done}/${postState.total}</span>`:""}</p>`:postState.msg?`<p class="hint" style="margin:8px 0 0">✓ ${esc(postState.msg)}</p>`:"";
+  return `<section class="d-sec ig-conn"><h3>Posts &amp; Reels <span>${Object.keys(igp.items).length?Object.keys(igp.items).length+" found since Jan 2025":"not imported yet"}</span></h3>
+    <p class="hint" style="margin:0 0 8px">Stats and the preview photo fill in on matching tasks (matched by post link, or by date for IG tasks). Posts from the last 30 days refresh every few hours when you open the planner, and your follower count is saved each day for the Follower growth chart.${igp.at?` Last updated ${new Date(igp.at).toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}.`:""}</p>
+    ${igPhotoQ.length||igPhotoRun?`<p class="hint" style="margin:0 0 8px">📷 Adding preview photos… ${igPhotoQ.length} to go.</p>`:""}${igPhotoNote?`<p class="pipe-note warn">⚠ ${esc(igPhotoNote)}</p>`:""}<div class="st-acts"><button class="btn sm primary" id="igpNow"${postState.busy?" disabled":""}>${postState.busy?"Working…":igp.full?"Refresh posts now":"Import posts since Jan 2025"}</button></div>${st}</section>${igpReviewHTML()}`;
 }
 function igSectionHTML(){
   const st=igState.err?`<p class="pipe-note warn">⚠ ${esc(igState.err)}</p>`:igState.msg?`<p class="hint" style="margin:8px 0 0">${igState.busy?"⏳ ":"✓ "}${esc(igState.msg)}</p>`:"";
@@ -2263,7 +2401,7 @@ function saveStoriesLocal(){try{localStorage.setItem(SKEY,JSON.stringify(stories
 function loadStoriesLocal(){try{const v=JSON.parse(localStorage.getItem(SKEY)||"null");return Array.isArray(v)?v:[];}catch(e){return [];}}
 async function saveStory(s){if(mode!=="live"){saveStoriesLocal();return;}try{await db.collection("stories").doc(s.id).set(storyDoc(s));}catch(e){}}
 function storyStats(a,b){const l=stories.filter(s=>s.date>=a&&s.date<=b);return{n:l.length,views:l.reduce((t,s)=>t+num(s.views),0),inter:l.reduce((t,s)=>t+num(s.inter),0),list:l};}
-const stBtns=(a,b,label)=>`<div class="st-acts"><button class="btn sm" data-stimport>Import IG Stories</button>${stories.length?`<button class="btn sm" data-stbrowse data-a="${a}" data-b="${b}" data-l="${esc(label)}">Browse stories</button>`:""}</div>`;
+const stBtns=(a,b,label)=>`<div class="st-acts"><button class="btn sm" data-stimport>${igConn&&IG_LIVE?`Instagram sync${igpPending().length?` · ${igpPending().length} to review`:""}`:"Import IG Stories"}</button>${stories.length?`<button class="btn sm" data-stbrowse data-a="${a}" data-b="${b}" data-l="${esc(label)}">Browse stories</button>`:""}</div>`;
 function storiesYearHTML(R){
   const c=storyStats(R.cur[0],R.cur[1]),p=storyStats(R.prev[0],R.prev[1]);
   let table="";
@@ -2363,9 +2501,9 @@ function importHTML(){
       <button class="btn primary" id="stImport"${!b.out.length||imp.busy||readOnly?" disabled":""}>${imp.busy?`Importing… <span id="stProg">${imp.done||0}/${imp.total}</span>`:`Import ${b.out.length} stories`}</button></section>`;
   }
   const ds=stories.map(s=>s.date).sort();
-  return `<div class="d-top"><div class="d-crumb"><span class="code-chip p-IGS">IGS</span><span>Import Instagram Stories</span></div><button class="icon-btn" id="dClose" aria-label="Close import">&times;</button></div>
+  return `<div class="d-top"><div class="d-crumb"><span class="code-chip p-IGS">IGS</span><span>${igConn&&IG_LIVE?"Instagram sync":"Import Instagram Stories"}</span></div><button class="icon-btn" id="dClose" aria-label="Close import">&times;</button></div>
   <div class="d-scroll" id="dScroll">
-    ${igSectionHTML()}
+    ${igSectionHTML()}${igpSectionHTML()}
     <section class="d-sec"><h3>1. Export from Meta <span>for older stories</span></h3><ol class="st-steps"><li>On a computer, open Meta Business Suite (business.facebook.com) and go to <b>Insights → Content</b>.</li><li>Filter the content type to <b>Stories</b> (Instagram) and set the date range you want.</li><li>Choose <b>Export data</b>, pick a CSV of the content-level data, and download it.</li></ol>
       <p class="hint">Do this about once a month so no stories are missed. Re-importing an overlapping file is safe: stories already here are updated, not doubled, and any you've made into tasks stay linked.</p></section>
     <section class="d-sec"><h3>2. Choose the file <span>${imp&&imp.name?esc(imp.name):""}</span></h3><button class="btn" id="stPick"${readOnly?" disabled":""}>Choose CSV or JSON file</button></section>
@@ -2424,6 +2562,12 @@ document.addEventListener("click",e=>{
 $("drawer").addEventListener("click",e=>{
   if(e.target.closest("#igGo")){igConnect(($("igTok")||{}).value);return;}
   if(e.target.closest("#igNow")){igSync(true);return;}
+  if(e.target.closest("#igpNow")){igPosts(true);return;}
+  const ia=e.target.closest("[data-igpadd]");
+  if(ia){const it=igp.items[ia.dataset.igpadd];if(it){const sel=drawer.querySelector(`[data-igpgroup="${it.id}"]`);igpAdd(it,sel?sel.value:GROUPS[0].key);render();renderSide();}return;}
+  const isk=e.target.closest("[data-igpskip]");
+  if(isk){igpSkip([isk.dataset.igpskip]).then(()=>renderSide());return;}
+  if(e.target.closest("#igpAddAll")){const g=($("igpAllGroup")||{}).value||GROUPS[0].key;igpPending().forEach(it=>igpAdd(it,reviewGroup[it.id]||g));render();renderSide();return;}
   const off=e.target.closest("#igOff");
   if(off){if(!off.classList.contains("armed")){off.classList.add("armed");off.textContent="Tap again to disconnect";setTimeout(()=>{if(off.isConnected){off.classList.remove("armed");off.textContent="Disconnect Instagram";}},3500);return;}
     igConn=null;igState={busy:false,msg:"Disconnected. The token was deleted; stories already collected stay."};if(mode==="live"){db.doc("settings/igconn").delete().catch(()=>{});}renderSide();return;}
@@ -3094,6 +3238,8 @@ drawer.addEventListener("input",e=>{
   if(el.dataset.sub!=null){const i=+el.dataset.sub;if(r.subtasks[i]){r.subtasks[i].t=el.value;queueSave(r.id,700);}}
 });
 drawer.addEventListener("change",e=>{
+  if(e.target.dataset&&e.target.dataset.igpgroup){reviewGroup[e.target.dataset.igpgroup]=e.target.value;return;}
+  if(e.target.id==="igpAllGroup"){reviewGroup._all=e.target.value;return;}
   const el=e.target;const r=rows.find(x=>x.id===openId);if(!r||readOnly)return;
   const f=el.dataset.f;
   if(f==="collab"||f==="promo"){update(r.id,{[f]:el.checked},0);renderDrawer();const t=$(f==="collab"?"dCollabWith":"dPromoBrand");if(t&&el.checked)t.focus();else{const c=$(f==="collab"?"dCollab":"dPromo");if(c)c.focus({preventScroll:true});}return;}
