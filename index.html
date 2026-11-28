@@ -610,6 +610,56 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid rgba(255,255,255,.2
 .m-out span{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.85}
 .m-out b{font-size:22px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .hint{font-size:12px;color:var(--muted);margin:8px 0 0}
+.svf-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.svf-c{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:6px}
+.svf-top{display:flex;align-items:center;gap:8px;font-size:13.5px}
+.svf-n{display:flex;gap:10px;font-size:12px}
+.svf-dl{margin:0;display:grid;gap:4px}
+.svf-dl div{display:flex;justify-content:space-between;gap:8px;font-size:12.5px}
+.svf-dl dt{color:var(--muted)}.svf-dl dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.svf-win{font-style:normal;font-size:10px;font-weight:700;color:#fff;background:#8E2C5D;border-radius:999px;padding:1px 6px;margin-left:4px}
+.svf-leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin-bottom:4px}
+.svf-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.svf-svg{width:100%;height:auto;display:block}
+.svf-ax{font-size:10px;fill:var(--muted)}
+.br-tiles{margin-bottom:14px}
+.br-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.br-filter{flex-wrap:wrap;max-width:100%}
+.br-year{display:flex;align-items:center;gap:6px;color:var(--on-bg);margin-left:auto}
+.br-year .btn{color:var(--ink);min-width:32px;justify-content:center}
+.br-board{display:grid;grid-template-columns:repeat(6,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px}
+.br-board.one{grid-template-columns:minmax(0,1fr)}
+.br-col{background:var(--card);border-radius:14px;padding:10px;min-width:0}
+.br-col h3{margin:0 0 8px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.br-col h3 span{color:var(--muted);font-weight:600}
+.br-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.br-card{border:1px solid var(--line);border-radius:12px;background:#fff;display:grid}
+.br-open{display:grid;gap:4px;text-align:left;background:none;border:0;padding:10px 12px;font:inherit;color:var(--ink);cursor:pointer}
+.br-open:hover .br-name{color:#8E2C5D}
+.br-name{font-weight:700;font-size:14px}
+.br-h{font-size:12px;color:var(--muted)}
+.br-meta,.br-pay{display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);align-items:center}
+.br-pay b{color:var(--ink)}
+.br-late{color:var(--warn-fg);font-weight:700}
+.br-tag{background:#F7E8EF;color:#8E2C5D;border-radius:999px;padding:1px 7px;font-weight:600}
+.br-ok{color:var(--pub-fg);font-weight:700}.br-wait{color:#9A5B00;font-weight:700}
+.br-next{margin:0 10px 10px;justify-self:start}
+.br-empty{padding:22px;color:var(--ink)}
+.br-empty h2{margin:0 0 6px;font-size:18px}.br-empty p{margin:0 0 12px;color:var(--muted)}
+.br-fields{margin-bottom:6px}
+.br-dels{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.br-dels li{display:grid;grid-template-columns:auto minmax(0,1fr) 140px auto;gap:6px;align-items:center}
+.br-dels li.done .cell-in[data-bdt]{text-decoration:line-through;color:var(--muted)}
+.br-chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.br-chip{border:1px solid #E7C7D7;background:#F7E8EF;color:#8E2C5D;border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+@media (max-width:800px){.svf-grid{grid-template-columns:1fr}.br-dels li{grid-template-columns:auto minmax(0,1fr) auto}.br-dels li input[type=date]{grid-column:2}}
+.cap-box{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;margin-bottom:10px}
+.cap-body{margin:0;white-space:pre-wrap;font-size:13.5px;line-height:1.5}
+.cap-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.cap-tag{font-size:11.5px;font-weight:600;color:#8E2C5D;background:#F7E8EF;border-radius:999px;padding:2px 8px}
+.cap-n{margin:6px 0 0;font-size:11px;color:var(--muted)}
+.cap-ok{font-size:12.5px;font-weight:600;color:var(--pub-fg);align-self:center}
+.lib-src{font-size:11px;color:#8E2C5D;font-weight:600;margin-right:6px}
 .igp-bulk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:13px}
 .igp-bulk label{display:flex;align-items:center;gap:8px}
 .igp-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
@@ -751,6 +801,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid rgba(255,255,255,.2
 .st-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
 .st-table{margin-top:12px;min-width:320px}
 .st-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.st-thumb{display:block;width:44px;height:44px;object-fit:cover;border-radius:8px;margin-bottom:4px}
 .st-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .st-row{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--card)}
 .st-when{display:grid;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -811,7 +862,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid rgba(255,255,255,.2
         <div class="upg-pop" id="upgPop" role="dialog" aria-label="Studio Upgrades" hidden>
           <p class="upg-eyebrow">Ideas for future upgrades</p><h2 class="upg-h">Studio <span class="upg-hl">Upgrades</span></h2>
           <p class="upg-sub">Ask Claude to build any of these whenever you're ready.</p>
-          <ul class="upg-list"><li class="upg-item"><span class="upg-type upg-org">Organization</span><b>Platform coverage per idea</b><span>Chips on each task showing which platforms it's posted to, planned for, or not used yet, so every shoot gets repurposed.</span></li><li class="upg-item"><span class="upg-type upg-org">Organization</span><b>Brand &amp; collab tracker</b><span>One view for collab and promo posts with deliverables, due dates and whether each one is done.</span></li><li class="upg-item"><span class="upg-type upg-org">Organization</span><b>Repost-ready</b><span>Top performers older than 90 days come back as ideas to repost or remix.</span></li><li class="upg-item"><span class="upg-type upg-viz">Analytics &amp; visuals</span><b>Aerial vs. ground performance</b><span>Average engagement and reach for 🚁 posts compared with everything else.</span></li><li class="upg-item"><span class="upg-type upg-viz">Analytics &amp; visuals</span><b>Destination × pillar heatmap</b><span>Which places and pillars perform best together, like SXM Travel Tips vs. Bali Lifestyle.</span></li><li class="upg-item"><span class="upg-type upg-viz">Analytics &amp; visuals</span><b>Stories vs. feed</b><span>Story views and interactions next to Reels and posts for the same period, from your Meta imports.</span></li></ul>
+          <ul class="upg-list"><li class="upg-item"><span class="upg-type upg-org">Organization</span><b>Platform coverage per idea</b><span>Chips on each task showing which platforms it's posted to, planned for, or not used yet, so every shoot gets repurposed.</span></li><li class="upg-item"><span class="upg-type upg-org">Organization</span><b>Repost-ready</b><span>Top performers older than 90 days come back as ideas to repost or remix.</span></li><li class="upg-item"><span class="upg-type upg-viz">Analytics &amp; visuals</span><b>Aerial vs. ground performance</b><span>Average engagement and reach for 🚁 posts compared with everything else.</span></li><li class="upg-item"><span class="upg-type upg-viz">Analytics &amp; visuals</span><b>Destination × pillar heatmap</b><span>Which places and pillars perform best together, like SXM Travel Tips vs. Bali Lifestyle.</span></li></ul>
         </div></div></div>
     <span class="sync" id="sync" role="status"><i></i><span id="syncText">Loading your planner</span></span>
   </header>
@@ -939,6 +990,15 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid rgba(255,255,255,.2
       </div>
       <section class="card pl-sec idea-card" id="plIdeation" aria-label="Ideation totals"></section>
       <div class="pl" id="plSections"></div>
+    </section>
+
+    <section id="view-brands" class="view" hidden>
+      <div class="page-head">
+        <p class="eyebrow">Page 04 · Brands &amp; Collabs</p>
+        <h1>Brands &amp; <span class="hl">Collabs</span></h1>
+        <p class="sub">Every brand you pitch or partner with, from first message to payment. Open a brand to track contacts, deliverables, linked tasks, fees and gifted stays.</p>
+      </div>
+      <div id="brBody"></div>
     </section>
 
     <div id="destViews"></div>
@@ -1334,7 +1394,7 @@ function metricsFor(platform,format){
   if(platform==="IG"&&IG_VIDEO.includes(format))set=set.slice(0,2).concat(["watchTime"],set.slice(2));
   return set.map(k=>Object.assign({},M[k],{l:(LABELS[platform]||{})[k]||M[k].l}));
 }
-const VIEWS=[{key:"yearly",page:"01",name:"Yearly Calendar Dashboard"},{key:"dashboard",page:"02",name:"Calendar Dashboard"},{key:"production",page:"03",name:"Production List"}].concat(GROUPS.map(g=>({key:g.key,page:g.page,name:g.title})));
+const VIEWS=[{key:"yearly",page:"01",name:"Yearly Calendar Dashboard"},{key:"dashboard",page:"02",name:"Calendar Dashboard"},{key:"production",page:"03",name:"Production List"},{key:"brands",page:"04",name:"Brands & Collabs"}].concat(GROUPS.map(g=>({key:g.key,page:g.page,name:g.title})));
 const CAMERA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.6"/></svg>';
 
 /* ---------- helpers ---------- */
@@ -1444,7 +1504,7 @@ function normalizeRaw(o){
     collab:!!o.collab, collabWith:String(o.collabWith||"").slice(0,300), promo:!!o.promo, promoBrand:String(o.promoBrand||"").slice(0,200),
     subtasks:Array.isArray(o.subtasks)?o.subtasks.filter(s=>s&&typeof s==="object").map(s=>({t:String(s.t||""),done:!!s.done})):[],
     metrics:(o.metrics&&typeof o.metrics==="object")?Object.fromEntries(METRICS.map(x=>{const v=o.metrics[x.k];return [x.k,v===""||v==null?null:(x.type==="text"?String(v).slice(0,40):num(v))];})):{},
-    image:typeof o.image==="string"?o.image:"", igroup:typeof o.igroup==="string"?o.igroup.slice(0,80):"", aerial:!!o.aerial, igId:typeof o.igId==="string"?o.igId.slice(0,40):"", time:/^\d{2}:\d{2}$/.test(o.time||"")?o.time:"", stAt:(()=>{const q=o.stAt&&typeof o.stAt==="object"?o.stAt:{};const z={};Object.keys(q).forEach(k=>{const v=Number(q[k]);if(v>0)z[k.slice(0,20)]=v;});return z;})(), pipe:(()=>{const q=o.pipe&&typeof o.pipe==="object"?o.pipe:{};return{filmed:!!q.filmed,saved:!!q.saved,edited:!!q.edited,caption:!!q.caption};})(), footLink:typeof o.footLink==="string"?o.footLink.slice(0,2000):"", copiedFrom:typeof o.copiedFrom==="string"?o.copiedFrom:"", link:typeof o.link==="string"?o.link.slice(0,2000):"", sample:!!o.sample,
+    image:typeof o.image==="string"?o.image:"", igroup:typeof o.igroup==="string"?o.igroup.slice(0,80):"", aerial:!!o.aerial, igId:typeof o.igId==="string"?o.igId.slice(0,40):"", igCaption:String(o.igCaption||"").slice(0,2300), time:/^\d{2}:\d{2}$/.test(o.time||"")?o.time:"", stAt:(()=>{const q=o.stAt&&typeof o.stAt==="object"?o.stAt:{};const z={};Object.keys(q).forEach(k=>{const v=Number(q[k]);if(v>0)z[k.slice(0,20)]=v;});return z;})(), pipe:(()=>{const q=o.pipe&&typeof o.pipe==="object"?o.pipe:{};return{filmed:!!q.filmed,saved:!!q.saved,edited:!!q.edited,caption:!!q.caption};})(), footLink:typeof o.footLink==="string"?o.footLink.slice(0,2000):"", copiedFrom:typeof o.copiedFrom==="string"?o.copiedFrom:"", link:typeof o.link==="string"?o.link.slice(0,2000):"", sample:!!o.sample,
     created:Number(o.created)||0, updated:Number(o.updated)||0
   };
 }
@@ -1522,12 +1582,13 @@ async function connect(){
     if(!window.claude||typeof window.claude.use!=="function")throw new Error("no runtime");
     db=await window.claude.use("db");
   }catch(e){db=null;}
-  if(!db){mode="offline";stories=loadStoriesLocal();try{library=normLib(JSON.parse(localStorage.getItem(LIBKEY)||"null"));}catch(e){}try{const gd=JSON.parse(localStorage.getItem(GKEY)||"null");goals=normGoals(gd&&gd.targets);goalSince=gd&&gd.since||"";}catch(e){}try{igroups=normIg(JSON.parse(localStorage.getItem(IGKEY)||"null"));}catch(e){}try{applyNavOrder(JSON.parse(localStorage.getItem(NKEY)||"null"));}catch(e){}rows=loadLocal();try{followers=normFollowers(JSON.parse(localStorage.getItem(FKEY)||"null"));}catch(e){}setSync();refreshNotice();renderAll();return;}
+  if(!db){mode="offline";stories=loadStoriesLocal();try{brands=normBrands(JSON.parse(localStorage.getItem(BRKEY)||"null"));}catch(e){}try{library=normLib(JSON.parse(localStorage.getItem(LIBKEY)||"null"));}catch(e){}try{const gd=JSON.parse(localStorage.getItem(GKEY)||"null");goals=normGoals(gd&&gd.targets);goalSince=gd&&gd.since||"";}catch(e){}try{igroups=normIg(JSON.parse(localStorage.getItem(IGKEY)||"null"));}catch(e){}try{applyNavOrder(JSON.parse(localStorage.getItem(NKEY)||"null"));}catch(e){}rows=loadLocal();try{followers=normFollowers(JSON.parse(localStorage.getItem(FKEY)||"null"));}catch(e){}setSync();refreshNotice();renderAll();return;}
   try{assets=await window.claude.use("assets");}catch(e){assets=null;}
   loadTimer=setTimeout(()=>{if(!loaded){stalled=true;refreshNotice();}},10000);
   db.collection("stories").onSnapshot(snap=>{stories=snap.docs.map(d=>Object.assign({},d.data()||{},{id:d.id})).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.date||""));scheduleRender();if(sideMode==="stories"&&!isEditing())renderSide();},()=>{});
   db.doc("settings/library").onSnapshot(snap=>{if(libDirty)return;const d=snap.exists?snap.data():null;library=normLib(d&&d.items);if(sideMode==="library"&&!isEditing())renderSide();},()=>{});
   db.doc("settings/igconn").onSnapshot(snap=>{const d=snap.exists?snap.data():null;igConn=d&&typeof d.token==="string"&&d.token?d:null;if(sideMode==="import"&&!isEditing())renderSide();if(igConn&&!igAutoDone){igAutoDone=true;setTimeout(()=>igSync(false),2500);}},()=>{});
+  db.doc("settings/brands").onSnapshot(snap=>{if(brDirty)return;const d=snap.exists?snap.data():null;brands=normBrands(d&&d.items);if(!isEditing()){if(current==="brands")render();if(sideMode==="brand")renderSide();}},()=>{});
   db.doc("settings/goals").onSnapshot(snap=>{if(goalDirty)return;const d=snap.exists?snap.data():null;goals=normGoals(d&&d.targets);goalSince=d&&typeof d.since==="string"?d.since:"";scheduleRender();},()=>{});
   db.doc("settings/igroups").onSnapshot(snap=>{const d=snap.exists?snap.data():null;const a=document.activeElement;if(a&&a.dataset&&a.dataset.igname!=null)return;if(igDirty)return;igroups=normIg(d&&d.groups);scheduleRender();},()=>{});
   db.doc("settings/nav").onSnapshot(snap=>{const d=snap.exists?snap.data():null;if(d&&!document.querySelector("#pages .dragging")){applyNavOrder(d.order);scheduleRender();}},()=>{});
@@ -1545,7 +1606,7 @@ let needRender=false;
 function isEditing(){const a=document.activeElement;if(!a)return false;if(a.id==="monthSelect"||a.id==="yaQ"||a.id==="ytQ"||a.closest(".filters"))return false;return a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT";}
 function scheduleRender(){if(isEditing()){needRender=true;return;}needRender=false;renderAll();}
 document.addEventListener("focusout",()=>{setTimeout(()=>{if(needRender&&!isEditing()){needRender=false;renderAll();}},0);});
-function renderAll(){render();if(openId)renderDrawer();else if(openDay)renderDayDrawer();else if(sideMode==="stories"||sideMode==="library")renderSide();}
+function renderAll(){render();if(openId)renderDrawer();else if(openDay)renderDayDrawer();else if(sideMode==="stories"||sideMode==="library"||sideMode==="brand")renderSide();}
 
 function update(id,patch,delay){
   const r=rows.find(x=>x.id===id);if(!r||readOnly)return;
@@ -1560,7 +1621,7 @@ function newTask(groupKey,extra){
   const r=normalize(base);
   rows.push(r);queueSave(id,0);return r;
 }
-function releaseImage(imgId,exceptId){if(!imgId||!assets)return;if(rows.some(x=>x.id!==exceptId&&x.image===imgId))return;assets.delete(imgId).catch(()=>{});}
+function releaseImage(imgId,exceptId){if(!imgId||!assets)return;if(rows.some(x=>x.id!==exceptId&&x.image===imgId)||stories.some(x=>x.image===imgId))return;assets.delete(imgId).catch(()=>{});}
 function duplicateTask(id,platform){
   const r=rows.find(x=>x.id===id);if(!r||readOnly)return null;
   return newTask(r.group,{task:r.task,date:r.date,pillar:r.pillar,dest:r.dest,platform:platform||"",format:r.format,effort:r.effort,sfx:r.sfx,aerial:r.aerial,time:r.time,aspect:r.aspect,igroup:r.igroup,pipe:{filmed:r.pipe.filmed,saved:r.pipe.saved,edited:false,caption:false},footLink:r.footLink,desc:r.desc,
@@ -1575,10 +1636,143 @@ function removeTask(id){
 
 /* ---------- minimize / expand any section (remembered on this device) ---------- */
 const FKEY2="blyssful-folds-v1";let folds={};try{folds=JSON.parse(localStorage.getItem(FKEY2)||"{}")||{};}catch(e){}
+/* ---------- Stories vs. feed (Instagram, 3-way) ---------- */
+function svfHTML(R){
+  const [a,b]=R.cur;
+  const pub=rows.filter(r=>r.status==="Published"&&r.date>=a&&r.date<=b);
+  const storyTaskIds=new Set(stories.map(s=>s.taskId).filter(Boolean));
+  const st=stories.filter(s=>s.date>=a&&s.date<=b).map(s=>({date:s.date,views:num(s.views)||num(s.reach),reach:num(s.reach)||num(s.views),inter:num(s.inter)}))
+    .concat(pub.filter(r=>r.platform==="IGS"&&!storyTaskIds.has(r.id)).map(r=>({date:r.date,views:num(r.metrics.views)||num(r.metrics.reach),reach:num(r.metrics.reach)||num(r.metrics.views),inter:interactions(r.metrics)})));
+  const asP=r=>({date:r.date,views:num(r.metrics.views)||num(r.metrics.reach),reach:num(r.metrics.reach),inter:interactions(r.metrics)});
+  const ig=pub.filter(r=>r.platform==="IG");
+  const reels=ig.filter(r=>IG_VIDEO.includes(r.format)).map(asP), feed=ig.filter(r=>!IG_VIDEO.includes(r.format)).map(asP);
+  const T=[{k:"Stories",l:st,col:"var(--igs-mid)",chip:"IGS"},{k:"Reels",l:reels,col:"#8E2C5D",chip:"IG"},{k:"Feed posts",l:feed,col:"var(--ig-mid)",chip:"IG"}];
+  T.forEach(t=>{const w=t.l.filter(x=>x.views||x.reach);t.n=t.l.length;t.w=w.length;t.avgV=w.length?w.reduce((s,x)=>s+x.views,0)/w.length:null;
+    t.avgI=w.length?w.reduce((s,x)=>s+x.inter,0)/w.length:null;const re=w.reduce((s,x)=>s+x.reach,0);t.er=re?w.reduce((s,x)=>s+x.inter,0)/re:null;});
+  if(!T.some(t=>t.n))return `<div class="block svf-block"><h3>Stories vs. feed <span>Instagram</span></h3><p class="empty">No published Instagram stories, Reels or feed posts in this period yet.</p></div>`;
+  const best=k=>{const v=T.filter(t=>t[k]!=null);return v.length>1?v.reduce((m,t)=>t[k]>m[k]?t:m):null;};
+  const bV=best("avgV"),bE=best("er");
+  const f=v=>v==null?"—":fmtCompact(Math.round(v));
+  const cards=T.map(t=>`<div class="svf-c"><div class="svf-top"><span class="code-chip p-${t.chip}">${t.chip}</span><b>${t.k}</b></div>
+    <div class="svf-n"><span><b>${t.n}</b> posted</span>${t.w<t.n?`<span class="muted">${t.w} with stats</span>`:""}</div>
+    <dl class="svf-dl"><div><dt>Avg. views</dt><dd>${f(t.avgV)}${bV===t?` <i class="svf-win">best</i>`:""}</dd></div>
+    <div><dt>Avg. interactions</dt><dd>${f(t.avgI)}</dd></div>
+    <div><dt>Engagement rate</dt><dd>${t.er==null?"—":pctTxt(t.er)}${bE===t?` <i class="svf-win">best</i>`:""}</dd></div></dl></div>`).join("");
+  // trend: months in range
+  const months=[];{let p=parts(a);let y=p.y,m=p.m;const pe=parts(b>TODAY?TODAY:b);while(y<pe.y||(y===pe.y&&m<=pe.m)){months.push({y,m});m++;if(m>11){m=0;y++;}if(months.length>24)break;}}
+  let trend="";
+  if(months.length>=2){
+    const key=(y,m)=>y+"-"+pad(m+1);
+    const series=T.map(t=>({t,v:months.map(({y,m})=>{const l=t.l.filter(x=>x.date.slice(0,7)===key(y,m)&&(x.views||x.reach));return l.length?l.reduce((s,x)=>s+x.views,0)/l.length:null;})}));
+    const mx=Math.max(1,...series.flatMap(s=>s.v.filter(v=>v!=null)));const W=1000,H=170,P=24;
+    const X=i=>P+i*(W-2*P)/(months.length-1),Y=v=>H-20-(v/mx)*(H-36);
+    const lines=series.map(s=>{let d="";s.v.forEach((v,i)=>{if(v==null)return;d+=(d&&s.v[i-1]!=null?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1);});
+      return `<path d="${d}" fill="none" style="stroke:${s.t.col}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`+s.v.map((v,i)=>v==null?"":`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3" fill="#fff" style="stroke:${s.t.col}" stroke-width="2"><title>${s.t.k} · ${MS[months[i].m]} ${months[i].y}: ${fmtCompact(Math.round(v))} avg. views</title></circle>`).join("");}).join("");
+    const step=Math.ceil(months.length/12);
+    trend=`<div class="svf-trend"><div class="svf-leg">${T.map(t=>`<span><i style="background:${t.col}"></i>${t.k}</span>`).join("")}<span class="muted">avg. views per piece, by month</span></div>
+      <svg viewBox="0 0 ${W} ${H}" class="svf-svg" role="img" aria-label="Average views per piece by month for Stories, Reels and Feed posts"><line x1="${P}" x2="${W-P}" y1="${H-20}" y2="${H-20}" stroke="#EFE9DE"/>${lines}${months.map((mo,i)=>i%step?"":`<text x="${X(i).toFixed(1)}" y="${H-4}" text-anchor="middle" class="svf-ax">${MS[mo.m]}</text>`).join("")}</svg></div>`;
+  }
+  return `<div class="block svf-block"><h3>Stories vs. feed <span>Instagram · ${esc(R.label)}</span></h3><div class="svf-grid">${cards}</div>${trend}
+    <p class="hint">Stories include your synced and imported stories plus IGS tasks. Reels are IG tasks with a video format; feed posts are photos and carousels. Averages only count pieces that have stats.</p></div>`;
+}
+
+/* ---------- brands & collabs ---------- */
+const BR_ST=["Pitched","Talking","Confirmed","Content due","Posted","Paid / Done"];
+const BR_PAY=["Paid","Gifted","Paid + gifted"];
+const BRKEY="blyssful-brands-local-v1";
+let brands=[],brDirty=false,brTimer=null,brFilter="all",brYear=now.getFullYear(),brReturn=null;
+const hNorm=h=>String(h||"").trim().replace(/^@/,"").toLowerCase();
+function normBrands(a){if(!Array.isArray(a))return [];return a.filter(x=>x&&typeof x.id==="string").map(x=>({
+  id:x.id.slice(0,40),name:String(x.name||"").slice(0,120),handles:Array.isArray(x.handles)?x.handles.map(h=>String(h).slice(0,60)).filter(Boolean).slice(0,10):[],
+  contact:String(x.contact||"").slice(0,120),email:String(x.email||"").slice(0,160),site:String(x.site||"").slice(0,300),
+  status:BR_ST.includes(x.status)?x.status:"Pitched",due:/^\d{4}-\d{2}-\d{2}$/.test(x.due||"")?x.due:"",
+  dels:Array.isArray(x.dels)?x.dels.filter(d=>d&&typeof d==="object").map(d=>({t:String(d.t||"").slice(0,160),due:/^\d{4}-\d{2}-\d{2}$/.test(d.due||"")?d.due:"",done:!!d.done})).slice(0,40):[],
+  tasks:Array.isArray(x.tasks)?x.tasks.filter(t=>typeof t==="string").slice(0,80):[],
+  pay:BR_PAY.includes(x.pay)?x.pay:"",fee:x.fee===""||x.fee==null?null:num(x.fee),perks:String(x.perks||"").slice(0,600),value:x.value===""||x.value==null?null:num(x.value),
+  invoiced:/^\d{4}-\d{2}-\d{2}$/.test(x.invoiced||"")?x.invoiced:"",paid:/^\d{4}-\d{2}-\d{2}$/.test(x.paid||"")?x.paid:"",
+  notes:String(x.notes||"").slice(0,4000),created:Number(x.created)||0}));}
+function saveBrands(delay){if(readOnly)return;brDirty=true;clearTimeout(brTimer);brTimer=setTimeout(async()=>{
+  if(mode!=="live"){try{localStorage.setItem(BRKEY,JSON.stringify(brands));}catch(e){}brDirty=false;return;}
+  try{await db.doc("settings/brands").set({items:JSON.parse(JSON.stringify(brands))});}catch(e){notice(`<span class="grow">A brand change didn't save. Check your connection and try again.</span>`);}
+  brDirty=false;},delay==null?600:delay);}
+function brEdit(id,fn,delay){brands=brands.map(x=>x.id===id?(()=>{const c=JSON.parse(JSON.stringify(x));fn(c);return c;})():x);saveBrands(delay);}
+function brTasks(b){const hs=b.handles.map(hNorm).filter(Boolean),nm=b.name.trim().toLowerCase();
+  return rows.filter(r=>b.tasks.includes(r.id)||(r.collab&&r.collabWith&&r.collabWith.split(/[\s,]+/).map(hNorm).some(h=>h&&hs.includes(h)))||(r.promo&&nm&&String(r.promoBrand||"").toLowerCase().includes(nm))||(r.promo&&r.promoBrand&&hs.includes(hNorm(r.promoBrand))))
+    .sort((x,y)=>(x.date||"9")<(y.date||"9")?-1:1);}
+const brandsOfTask=r=>brands.filter(b=>brTasks(b).some(t=>t.id===r.id));
+function brNextDue(b){const l=b.dels.filter(d=>!d.done&&d.due).map(d=>d.due).concat(b.due&&b.status!=="Posted"&&b.status!=="Paid / Done"?[b.due]:[]).sort();return l[0]||"";}
+const money=v=>v==null?"—":"$"+Math.round(v).toLocaleString();
+function brTotals(y){const ys=String(y);
+  const paid=brands.filter(b=>b.paid&&b.paid.startsWith(ys)).reduce((s,b)=>s+num(b.fee),0);
+  const owed=brands.filter(b=>b.fee&&!b.paid&&(b.invoiced||b.status==="Posted"||b.status==="Paid / Done"));
+  const gifted=brands.filter(b=>(b.pay==="Gifted"||b.pay==="Paid + gifted")&&((b.paid||b.due||(b.created?new Date(b.created).toISOString():"")).startsWith(ys))).reduce((s,b)=>s+num(b.value),0);
+  const active=brands.filter(b=>["Talking","Confirmed","Content due"].includes(b.status)).length;
+  const due30=brands.filter(b=>{const d=brNextDue(b);return d&&d<=addDays(TODAY,30);}).length;
+  return{paid,owed:owed.reduce((s,b)=>s+num(b.fee),0),owedN:owed.length,gifted,active,due30};}
+function brCardHTML(b){const tk=brTasks(b);const dd=b.dels.filter(d=>d.done).length;const nd=brNextDue(b);const late=nd&&nd<TODAY;
+  const si=BR_ST.indexOf(b.status);
+  return `<li class="br-card"><button type="button" class="br-open" data-bropen="${b.id}">
+    <span class="br-name">${esc(b.name||"Untitled brand")}</span>
+    ${b.handles.length?`<span class="br-h">${b.handles.slice(0,3).map(h=>esc("@"+hNorm(h))).join(" ")}</span>`:""}
+    <span class="br-meta">${b.dels.length?`<span>${dd}/${b.dels.length} deliverables</span>`:""}${tk.length?`<span>${tk.length} task${tk.length===1?"":"s"}</span>`:""}${nd?`<span class="${late?"br-late":""}">${late?"Overdue · ":"Due "}${fmtDate(nd)}</span>`:""}</span>
+    <span class="br-pay">${b.pay?`<span class="br-tag">${esc(b.pay)}</span>`:""}${b.fee?`<b>${money(b.fee)}</b>${b.paid?` <span class="br-ok">paid</span>`:b.invoiced?` <span class="br-wait">invoiced</span>`:""}`:""}${b.value&&!b.fee?`<span class="muted">~${money(b.value)} value</span>`:""}</span>
+  </button>${readOnly||si>=BR_ST.length-1?"":`<button type="button" class="btn sm br-next" data-brnext="${b.id}" aria-label="Move ${esc(b.name)} to ${BR_ST[si+1]}">→ ${BR_ST[si+1]}</button>`}</li>`;}
+function renderBrands(){
+  const t=brTotals(brYear);const list=brands.slice().sort((x,y)=>(brNextDue(x)||"9")<(brNextDue(y)||"9")?-1:1);
+  const cols=brFilter==="all"?BR_ST:[brFilter];
+  $("brBody").innerHTML=`
+    <div class="cmp-tiles br-tiles">
+      <div class="tile t-green"><span class="k">Active collabs</span><span class="v">${t.active}</span><span class="d">Talking, confirmed or content due</span></div>
+      <div class="tile t-orange"><span class="k">Due in 30 days</span><span class="v">${t.due30}</span><span class="d">brands with a deliverable due</span></div>
+      <div class="tile t-pink"><span class="k">Awaiting payment</span><span class="v">${money(t.owed)}</span><span class="d">${t.owedN} brand${t.owedN===1?"":"s"} invoiced or posted, not paid</span></div>
+      <div class="tile t-sky"><span class="k">Paid in ${brYear}</span><span class="v">${money(t.paid)}</span><span class="d">${t.gifted?`+ ~${money(t.gifted)} in gifted value`:"by paid date"}</span></div>
+    </div>
+    <div class="br-bar"><div class="seg seg-sm br-filter" role="group" aria-label="Filter by status"><button type="button" data-brf="all" aria-pressed="${brFilter==="all"}">All <span class="muted">${brands.length}</span></button>${BR_ST.map(s=>`<button type="button" data-brf="${s}" aria-pressed="${brFilter===s}">${s} <span class="muted">${brands.filter(b=>b.status===s).length}</span></button>`).join("")}</div>
+      <span class="br-year"><button type="button" class="btn sm" data-bry="-1" aria-label="Previous year">‹</button><b>${brYear}</b><button type="button" class="btn sm" data-bry="1" aria-label="Next year">›</button></span>
+      ${readOnly?"":`<button type="button" class="btn primary" id="brNew">+ New brand</button>`}</div>
+    ${brands.length?`<div class="br-board${brFilter==="all"?"":" one"}">${cols.map(s=>{const l=list.filter(b=>b.status===s);return `<section class="br-col"><h3>${s} <span>${l.length}</span></h3>${l.length?`<ul class="br-list">${l.map(brCardHTML).join("")}</ul>`:`<p class="empty">None</p>`}</section>`;}).join("")}</div>`
+      :`<section class="card br-empty"><h2>Track every brand you work with</h2><p>Add a brand to follow it from pitch to payment: contacts, what you owe them, due dates, linked planner tasks, fees and gifted stays. Tasks marked as a collab with the brand's @handle link themselves.</p>${readOnly?"":`<button type="button" class="btn primary" id="brNew2">+ Add your first brand</button>`}</section>`}`;
+}
+function brandSideHTML(){
+  const b=brands.find(x=>x.id===sideArg);if(!b)return `<div class="d-top"><div class="d-crumb"><span>Brand</span></div><button class="icon-btn" id="dClose" aria-label="Close">&times;</button></div><div class="d-scroll" id="dScroll"><p class="empty">This brand was deleted.</p></div>`;
+  const dis=readOnly?" disabled":"";const tk=brTasks(b);const manual=new Set(b.tasks);
+  const inp=(f,l,v,type,ph)=>`<div><dt><label for="bf-${f}">${l}</label></dt><dd><input class="cell-in" id="bf-${f}" data-bf="${f}" type="${type||"text"}" value="${esc(v==null?"":v)}"${ph?` placeholder="${esc(ph)}"`:""}${dis}></dd></div>`;
+  return `<div class="d-top"><div class="d-crumb">${brReturn?`<button class="btn sm" id="brBack">&#8249; Back to task</button>`:""}<span>🤝 Brands &amp; Collabs</span><span class="pill t-pink">${esc(b.status)}</span></div><button class="icon-btn" id="dClose" aria-label="Close brand">&times;</button></div>
+  <div class="d-scroll" id="dScroll">
+    <input class="d-title" id="bf-name" data-bf="name" value="${esc(b.name)}" placeholder="Brand name" aria-label="Brand name"${dis}>
+    <dl class="d-fields br-fields">
+      <div><dt><label for="bf-status">Status</label></dt><dd><select class="pick neutral" id="bf-status" data-bf="status"${dis}>${opts(BR_ST,b.status)}</select></dd></div>
+      ${inp("handles","@ handles",b.handles.map(h=>"@"+hNorm(h)).join(", "),"text","@brand, @hotel (commas between)")}
+      ${inp("contact","Contact person",b.contact,"text","Name")}
+      ${inp("email","Email",b.email,"email","name@brand.com")}
+      ${inp("site","Website",b.site,"url","https://")}
+      ${inp("due","Post-by date",b.due,"date")}
+    </dl>
+    <section class="d-sec"><h3>Deliverables <span>${b.dels.filter(d=>d.done).length} of ${b.dels.length} done</span></h3>
+      ${b.dels.length?`<ul class="br-dels">${b.dels.map((d,i)=>`<li class="${d.done?"done":""}"><input type="checkbox" data-bdd="${i}"${d.done?" checked":""} aria-label="Done"${dis}><input class="cell-in" data-bdt="${i}" value="${esc(d.t)}" placeholder="e.g. 1 Reel + 3 Stories"${dis}><input class="cell-in" type="date" data-bdu="${i}" value="${esc(d.due)}" aria-label="Due date"${dis}><button type="button" class="icon-btn" data-bdx="${i}" aria-label="Remove"${dis}>&times;</button></li>`).join("")}</ul>`:`<p class="empty" style="margin-bottom:8px">Nothing listed yet.</p>`}
+      ${readOnly?"":`<button type="button" class="btn sm" id="brDelAdd">+ Add deliverable</button>`}</section>
+    <section class="d-sec"><h3>Linked tasks <span>${tk.length}</span></h3>
+      ${tk.length?`<ul class="lk-list">${tk.map(x=>taskCardHTML(x,manual.has(x.id),dis).replace('data-linkdel=','data-brunlink=')).join("")}</ul>`:""}
+      <p class="hint" style="margin:0 0 8px">Tasks marked Collaboration with one of this brand's @handles (or a TikTok promo naming it) link automatically.</p>
+      ${readOnly?"":`<div class="lk-search"><input type="search" id="brLinkSearch" placeholder="Search tasks to link…" autocomplete="off" aria-label="Search tasks to link"><ul class="lk-list lk-results" id="brLinkResults"></ul></div>`}</section>
+    <section class="d-sec"><h3>Payment &amp; perks</h3>
+      <dl class="d-fields br-fields">
+        <div><dt><label for="bf-pay">Deal type</label></dt><dd><select class="pick neutral" id="bf-pay" data-bf="pay"${dis}>${opts(BR_PAY,b.pay,"Pick type")}</select></dd></div>
+        ${b.pay!=="Gifted"?inp("fee","Fee ($)",b.fee,"number","0"):""}
+        ${b.pay&&b.pay!=="Paid"?inp("perks","Gifted / comp",b.perks,"text","e.g. 3 nights + catamaran tour")+inp("value","Est. value ($)",b.value,"number","0"):""}
+        ${b.pay!=="Gifted"?inp("invoiced","Invoice sent",b.invoiced,"date")+inp("paid","Paid on",b.paid,"date"):""}
+      </dl></section>
+    <section class="d-sec"><h3><label for="bf-notes">Notes</label></h3><textarea class="d-desc" id="bf-notes" data-bf="notes" placeholder="Rates discussed, usage rights, brief, tone…"${dis}>${esc(b.notes)}</textarea></section>
+    ${readOnly?"":`<section class="d-sec"><button type="button" class="btn sm danger" id="brDelete">Delete brand</button></section>`}
+  </div>`;
+}
+function brandChipsHTML(r){const l=brandsOfTask(r);if(!l.length)return "";
+  return `<div class="br-chips">${l.map(b=>`<button type="button" class="br-chip" data-brfromtask="${b.id}">🤝 ${esc(b.name||"Brand")} · ${esc(b.status)}</button>`).join("")}</div>`;}
+
 const FOLD_RULES=[
   [".pl-sec",":scope > .pl-head"],[".tp",":scope > .tp-head"],[".ya",":scope > .ya-head"],[".idea-wrap",":scope > .idea-title"],
   [".ig-block",":scope > .ig-head"],[".rail",":scope > .rail-head"],[".block",":scope > h3"],[".cal-card",":scope > .cal-head"],
-  [".socials",":scope > .socials-title"],[".ycal-wrap",":scope > .ycal-title"],[".shot-sec",":scope > h2"],[".shoot-sec",":scope > h2"],[".igd-aerial",":scope > h2"],[".ig-aerial",":scope > h4"],[".fol-card",":scope > .fol-head"]
+  [".socials",":scope > .socials-title"],[".ycal-wrap",":scope > .ycal-title"],[".shot-sec",":scope > h2"],[".shoot-sec",":scope > h2"],[".igd-aerial",":scope > h2"],[".ig-aerial",":scope > h4"],[".br-col",":scope > h3"],[".fol-card",":scope > .fol-head"]
 ];
 function foldTitle(h){let t="";h.childNodes.forEach(n=>{if(n.nodeType===3)t+=n.textContent;else if(n.nodeType===1&&!n.matches("span.count,.count,button,.allctl,.seg,.ya-ctl,span:not(.hl):not(.aer-hl):not(.shot-hl)"))t+=n.textContent;});return t.replace(/\s+/g," ").trim().slice(0,60);}
 function applyFolds(){
@@ -1614,7 +1808,7 @@ function renderNav(){
   $("menuList").innerHTML=`<p class="menu-h">All pages</p>`+orderedViews().map(v=>`<a href="#${v.key}" data-view="${v.key}"${v.key===current?' aria-current="page"':""}><span class="n">${pageNum(v.key)}</span>${esc(v.name)}</a>`).join("");
   nav.querySelectorAll("a").forEach(a=>{if(a.dataset.view===current)a.setAttribute("aria-current","page");});
   GROUPS.forEach(g=>{g.page=pageNum(g.key);});
-  ["yearly","dashboard","production"].forEach(k=>{const ey=document.querySelector("#view-"+k+" .page-head .eyebrow");if(ey)ey.textContent=ey.textContent.replace(/^Page \d+/,"Page "+pageNum(k));});
+  ["yearly","dashboard","production","brands"].forEach(k=>{const ey=document.querySelector("#view-"+k+" .page-head .eyebrow");if(ey)ey.textContent=ey.textContent.replace(/^Page \d+/,"Page "+pageNum(k));});
 }
 function applyNavOrder(o){if(!Array.isArray(o))return;const clean=o.filter((k,i)=>VIEWS.some(v=>v.key===k)&&o.indexOf(k)===i);if(!clean.length)return;navOrder=clean;renderNav();}
 async function setNavOrder(o){
@@ -1676,6 +1870,7 @@ function render(){requestAnimationFrame(applyFolds);
   if(current==="dashboard")renderDashboard();
   else if(current==="production")renderProduction();
   else if(current==="yearly")renderYearly();
+  else if(current==="brands")renderBrands();
   else renderGroup(current);
 }
 window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
@@ -2078,7 +2273,7 @@ function renderYearAnalytics(){
       <div class="mlab">${MS.map(m=>`<span>${m}</span>`).join("")}</div></div>`;
   }
   $("yFol").innerHTML=folChartHTML(R);
-  $("yaBody").innerHTML=tiles+storiesYearHTML(R)+chart+`<div class="ya-grid ya-grid2">${bestDayHTML(c.list)}${speedHTML(R.cur[0],R.cur[1])}</div>`+
+  $("yaBody").innerHTML=tiles+storiesYearHTML(R)+chart+`<div class="ya-grid ya-grid2">${bestDayHTML(c.list)}${speedHTML(R.cur[0],R.cur[1])}</div>`+svfHTML(R)+
     `<div class="ya-grid">
       <div class="block"><h3>Posts by platform <span>${c.total} total</span></h3><div class="bars">${platPosts}</div></div>
       <div class="block"><h3>Engagement by platform <span>published posts</span></h3><div class="bars">${platER}</div></div>
@@ -2118,7 +2313,7 @@ let stories=[];
 /* ---------- hooks & caption library ---------- */
 const LIBKEY="blyssful-library-local-v1";let library=[],libDirty=false,libTimer=null,libOpen=false,libType="hook",libMType="hook",libReturn=null;
 const LIBT=[{k:"hook",l:"Hooks",one:"hook"},{k:"caption",l:"Captions",one:"caption"},{k:"hashtags",l:"Hashtag sets",one:"hashtag set"},{k:"cta",l:"Calls to action",one:"call to action"}];
-function normLib(a){if(!Array.isArray(a))return [];return a.filter(x=>x&&typeof x.id==="string"&&LIBT.some(t=>t.k===x.type)).map(x=>({id:x.id.slice(0,40),type:x.type,text:String(x.text||"").slice(0,4000),plats:Array.isArray(x.plats)?x.plats.filter(c=>platOf(c)):[],groups:Array.isArray(x.groups)?x.groups.filter(k=>GROUPS.some(g=>g.key===k)):[],fav:!!x.fav,uses:Math.max(0,Number(x.uses)||0),created:Number(x.created)||0}));}
+function normLib(a){if(!Array.isArray(a))return [];return a.filter(x=>x&&typeof x.id==="string"&&LIBT.some(t=>t.k===x.type)).map(x=>({id:x.id.slice(0,40),type:x.type,text:String(x.text||"").slice(0,4000),plats:Array.isArray(x.plats)?x.plats.filter(c=>platOf(c)):[],groups:Array.isArray(x.groups)?x.groups.filter(k=>GROUPS.some(g=>g.key===k)):[],fav:!!x.fav,uses:Math.max(0,Number(x.uses)||0),created:Number(x.created)||0,src:x.src==="ig"?"ig":"",task:typeof x.task==="string"?x.task.slice(0,40):""}));}
 function saveLib(delay){if(readOnly)return;libDirty=true;clearTimeout(libTimer);libTimer=setTimeout(async()=>{
   if(mode!=="live"){try{localStorage.setItem(LIBKEY,JSON.stringify(library));}catch(e){}libDirty=false;return;}
   try{await db.doc("settings/library").set({items:JSON.parse(JSON.stringify(library))});}catch(e){notice(`<span class="grow">A library change didn't save. Check your connection and try again.</span>`);}
@@ -2126,13 +2321,15 @@ function saveLib(delay){if(readOnly)return;libDirty=true;clearTimeout(libTimer);
 function libEdit(id,fn,delay){library=library.map(x=>x.id===id?(()=>{const c=JSON.parse(JSON.stringify(x));fn(c);return c;})():x);saveLib(delay);}
 let descCaret=null;document.addEventListener("selectionchange",()=>{const a=document.activeElement;if(a&&a.id==="dDesc")descCaret=[a.selectionStart,a.selectionEnd];});
 function libSorted(type,r){return library.filter(x=>x.type===type).map(x=>({x,sc:(x.fav?100:0)+(r&&r.platform&&x.plats.includes(r.platform)?20:0)+(r&&x.groups.includes(r.group)?20:0)+(!x.plats.length&&!x.groups.length?5:0)})).sort((a,b)=>b.sc-a.sc||b.x.uses-a.x.uses||b.x.created-a.x.created).map(z=>z.x);}
+function libSrcHTML(x){if(x.src!=="ig")return "";const t=x.task&&rows.find(r=>r.id===x.task);const er=t&&hasResults(t)?interactions(t.metrics)/num(t.metrics.reach):null;
+  return `<span class="lib-src">📸 From IG post${t&&t.date?" · "+fmtDate(t.date):""}${er!=null?" · "+pctTxt(er)+" engagement":""}</span>`;}
 function libTags(x){return x.plats.map(c=>`<span class="code-chip p-${c}">${c}</span>`).join("")+x.groups.map(k=>`<span class="lib-g">${esc(groupOf(k).name)}</span>`).join("");}
 function libPickerHTML(r){
   const list=libSorted(libType,r),T=LIBT.find(t=>t.k===libType),pl=platOf(r.platform),g=groupOf(r.group);
   return `<div class="lib-pick" id="libPick">
     <div class="seg seg-sm lib-tabs" role="group" aria-label="Library type">${LIBT.map(t=>`<button type="button" data-libtype="${t.k}" aria-pressed="${t.k===libType}">${t.l}</button>`).join("")}</div>
     ${list.length?`<ul class="lib-list">${list.slice(0,30).map(x=>`<li class="lib-item"><button type="button" class="lib-star${x.fav?" on":""}" data-libfav="${x.id}" aria-label="${x.fav?"Unstar":"Star"}" aria-pressed="${x.fav}">★</button>
-      <div class="lib-body"><p class="lib-text">${esc(x.text)}</p><div class="lib-meta">${libTags(x)}<span class="lib-uses">${x.uses?`Used ${x.uses}×`:"Not used yet"}</span></div></div>
+      <div class="lib-body"><p class="lib-text">${esc(x.text)}</p><div class="lib-meta">${libTags(x)}${libSrcHTML(x)}<span class="lib-uses">${x.uses?`Used ${x.uses}×`:"Not used yet"}</span></div></div>
       ${readOnly?"":`<button type="button" class="btn sm" data-libins="${x.id}">Insert</button>`}</li>`).join("")}</ul>`:`<p class="empty">No ${T.l.toLowerCase()} saved yet. Add your first one below.</p>`}
     ${readOnly?"":`<div class="lib-add"><textarea id="libNew" rows="2" placeholder="Save a new ${T.one}…"></textarea>
       <label class="lib-tagme"><input type="checkbox" id="libTag" checked> Tag with ${pl?pl.code+" · ":""}${esc(g.name)}</label>
@@ -2149,7 +2346,7 @@ function libManageHTML(){
       <div class="lib-body"><textarea class="lib-edit" data-libtext="${x.id}" rows="${Math.min(6,Math.max(2,Math.ceil(x.text.length/60)))}"${dis}>${esc(x.text)}</textarea>
         <div class="lib-tagrow">${PLATFORMS.map(p=>`<button type="button" class="lib-tg${x.plats.includes(p.code)?" on p-"+p.code:""}" data-libplat="${p.code}" data-lid="${x.id}" aria-pressed="${x.plats.includes(p.code)}"${dis}>${p.code}</button>`).join("")}</div>
         <div class="lib-tagrow">${GROUPS.map(g=>`<button type="button" class="lib-tg${x.groups.includes(g.key)?" on lib-gon":""}" data-libgrp="${g.key}" data-lid="${x.id}" aria-pressed="${x.groups.includes(g.key)}"${dis}>${esc(g.name)}</button>`).join("")}</div>
-        <span class="lib-uses">${x.uses?`Used ${x.uses}×`:"Not used yet"}</span></div>
+        <span class="lib-uses">${libSrcHTML(x)}${x.uses?`Used ${x.uses}×`:"Not used yet"}</span></div>
       ${readOnly?"":`<button type="button" class="del" data-libdel="${x.id}" aria-label="Delete">&times;</button>`}</li>`).join("")}</ul>`:`<p class="empty">Nothing saved here yet.</p>`}
     ${readOnly?"":`<div class="lib-add"><textarea id="libMNew" rows="2" placeholder="Add a new ${LIBT.find(t=>t.k===libMType).one}…"></textarea><div class="lib-row"><button type="button" class="btn sm primary" data-libmadd>Add</button></div></div>`}
     <p class="hint">Tap the platform and content group buttons to tag an item, so it shows first on matching tasks. Starred items always show first.</p>
@@ -2244,7 +2441,7 @@ async function igSync(manual){
   if(!manual){let last=0;try{last=+localStorage.getItem(IG_LAST)||0;}catch(e){}if(Date.now()-last<30*60e3){igPosts(false);return;}}
   igState={busy:true,msg:"Checking your live stories…"};if(sideMode==="import")renderSide();
   try{await igMaybeRefresh();const cc=igConn;
-    const j=await igGet(igHost(cc)+"/"+(cc.kind==="fb"?cc.igId:"me")+"/stories?"+igQ({fields:"id,media_type,permalink,timestamp,caption",access_token:cc.token}));
+    const j=await igGet(igHost(cc)+"/"+(cc.kind==="fb"?cc.igId:"me")+"/stories?"+igQ({fields:"id,media_type,media_url,thumbnail_url,permalink,timestamp,caption",access_token:cc.token}));
     const list=j.data||[];let n=0;
     for(const st of list){const ins=await igInsights(cc,st.id);const when=new Date(st.timestamp);if(isNaN(when))continue;
       const id="ig_"+st.id,old=stories.find(x=>x.id===id)||{};const mx=(a,b)=>b==null?(a==null?null:a):Math.max(num(a),num(b));
@@ -2253,7 +2450,8 @@ async function igSync(manual){
         profile:mx(old.profile,ins.profile_visits),follows:mx(old.follows,ins.follows),nav:mx(old.nav,ins.navigation),link:safeUrl(st.permalink)||old.link||"",desc:old.desc||String(st.caption||"").slice(0,300),
         type:st.media_type==="VIDEO"?"Video":st.media_type==="IMAGE"?"Photo":(old.type||""),src:"api",checked:Date.now()});
       Object.keys(s).forEach(k=>{if(s[k]==null)delete s[k];});
-      const i=stories.findIndex(x=>x.id===id);if(i>=0)stories[i]=s;else stories.push(s);await saveStory(s);n++;}
+      const i=stories.findIndex(x=>x.id===id);if(i>=0)stories[i]=s;else stories.push(s);await saveStory(s);n++;
+      if(!s.image)await igStoryPhoto(s,safeUrl(st.media_type==="VIDEO"?st.thumbnail_url:(st.media_url||st.thumbnail_url)));else igStoryToTask(s);}
     try{localStorage.setItem(IG_LAST,String(Date.now()));}catch(e){}
     igState={busy:false,msg:list.length?`Updated ${n} live stor${n===1?"y":"ies"} just now.`:"No live stories right now. Stories are checked each time you open the planner while they're up."};
     scheduleRender();
@@ -2299,6 +2497,8 @@ function igpApply(it){
   if(L&&r.date!==L.date)patch.date=L.date;
   if(L&&!r.time)patch.time=L.time;
   if(!r.format)patch.format=igFmt(it);
+  if(it.cap&&r.igCaption!==it.cap)patch.igCaption=it.cap;
+  if(it.cap&&!String(r.desc||"").trim())patch.desc=it.cap;
   if(JSON.stringify(nm)!==JSON.stringify(r.metrics))patch.metrics=nm;
   if(r.status!=="Published")patch.status="Published";
   if(Object.keys(patch).length){update(r.id,patch,0);if(patch.status&&L){r.stAt=Object.assign({},r.stAt,{Published:L.t});queueSave(r.id,0);}}
@@ -2310,7 +2510,7 @@ async function igPosts(manual){
   const c=igConn;if(!c||!IG_LIVE||readOnly||postState.busy)return;
   if(!manual&&igp.full&&Date.now()-(igp.at||0)<IGP_EVERY)return;
   postState={busy:true,msg:igp.full?"Refreshing recent posts…":"Importing your posts since Jan 2025…",done:0,total:0};if(sideMode==="import")renderSide();
-  const cut=igp.full?addDays(TODAY,-30):IGP_SINCE;
+  const cut=igp.full&&igp.capV===2?addDays(TODAY,-30):IGP_SINCE;
   try{
     // follower count, saved once a day
     try{const who=c.kind==="fb"?c.igId:"me";const j=await igGet(igHost(c)+"/"+who+"?"+igQ({fields:"followers_count",access_token:c.token}));if(j&&num(j.followers_count))setFollower("IG",String(j.followers_count));}catch(e){if(e.blocked||e.code===190)throw e;}
@@ -2320,7 +2520,7 @@ async function igPosts(manual){
     while(url&&!stop){const j=await igGet(url);
       for(const m of (j.data||[])){const L=igLocal(m.timestamp);if(!L)continue;if(L.date<cut){stop=true;continue;}
         const old=igp.items[m.id]||{};
-        igp.items[m.id]=Object.assign(old,{id:m.id,ts:m.timestamp,type:m.media_type||"",prod:m.media_product_type||"",link:safeUrl(m.permalink),cap:String(m.caption||"").slice(0,600),thumb:safeUrl(m.thumbnail_url||m.media_url),likes:m.like_count,comments:m.comments_count});}
+        igp.items[m.id]=Object.assign(old,{id:m.id,ts:m.timestamp,type:m.media_type||"",prod:m.media_product_type||"",link:safeUrl(m.permalink),cap:String(m.caption||"").slice(0,2300),thumb:safeUrl(m.thumbnail_url||m.media_url),likes:m.like_count,comments:m.comments_count});}
       url=stop?null:(j.paging&&j.paging.next)||null;}
     igpSave();
     // stats: everything missing, plus anything from the last 30 days
@@ -2328,7 +2528,7 @@ async function igPosts(manual){
     const todo=Object.values(igp.items).filter(it=>it.ts&&it.ts.slice(0,10)>=IGP_SINCE&&(!it.insAt||(it.ts.slice(0,10)>=recent&&Date.now()-it.insAt>IGP_EVERY-60e3)));
     postState.total=todo.length;
     for(const it of todo){it.ins=await igpMetrics(c,it);it.insAt=Date.now();postState.done++;const pg=$("igpProg");if(pg)pg.textContent=postState.done+"/"+postState.total;if(postState.done%10===0)igpSave();}
-    igp.full=true;igp.at=Date.now();igpSave();
+    igp.full=true;igp.capV=2;igp.at=Date.now();igpSave();
     let matched=0;Object.values(igp.items).forEach(it=>{if(it.ts&&it.ts.slice(0,10)>=IGP_SINCE&&igpApply(it))matched++;});
     igpQueueMissing();
     const pend=igpPending().length;
@@ -2337,6 +2537,11 @@ async function igPosts(manual){
   scheduleRender();if(sideMode==="import")renderSide();
 }
 let igPhotoQ=[], igPhotoRun=false, igPhotoNote="";
+async function igDownload(u){if(!u||!assets)return null;let res;try{res=await fetch(u,{referrerPolicy:"no-referrer"});}catch(e){igPhotoNote="Instagram's image server wouldn't let the planner download preview photos. Tell Claude \"photos were blocked\".";return null;}
+  if(!res.ok)return null;const raw=await res.blob();let blob=null;try{blob=await toJpeg(raw);}catch(e){blob=raw;}
+  const up=await assets.upload(blob,{type:blob.type||"image/jpeg"});urlCache[up.id]=up.url;return up.id;}
+function igStoryToTask(s){if(!s.image||!s.taskId)return;const r=rows.find(x=>x.id===s.taskId);if(r&&!r.image){update(r.id,{image:s.image},0);scheduleRender();}}
+async function igStoryPhoto(s,u){try{const id=await igDownload(u);if(!id)return;const cur=stories.find(x=>x.id===s.id)||s;cur.image=id;await saveStory(cur);igStoryToTask(cur);}catch(e){}}
 function igpQueuePhoto(taskId,mediaId){if(!assets||!IG_LIVE||igPhotoQ.some(q=>q.t===taskId))return;igPhotoQ.push({t:taskId,m:mediaId});igpPhotoPump();}
 async function igpPhotoUrl(c,mid){
   const j=await igGet(igHost(c)+"/"+mid+"?"+igQ({fields:"media_type,media_url,thumbnail_url,children{media_type,media_url,thumbnail_url}",access_token:c.token}));
@@ -2361,9 +2566,26 @@ function igpQueueMissing(){rows.filter(r=>r.igId&&!r.image&&igp.items[r.igId]&&!
 async function igpSkip(ids){const c=Object.assign({},igConn);c.skip=Array.from(new Set((c.skip||[]).concat(ids))).slice(-3000);await igSaveConn(c);}
 function igpAdd(it,group){
   const L=igLocal(it.ts);const cap=(it.cap||"").split("\n")[0].trim();
-  const r=newTask(group,{task:cap?cap.slice(0,80):igFmt(it)+" · "+fmtDate(L.date),date:L.date,time:L.time,platform:"IG",format:igFmt(it),status:"Published",link:it.link,igId:it.id,desc:it.cap||"",metrics:igpToMetrics(it)});
+  const r=newTask(group,{task:cap?cap.slice(0,80):igFmt(it)+" · "+fmtDate(L.date),date:L.date,time:L.time,platform:"IG",format:igFmt(it),status:"Published",link:it.link,igId:it.id,desc:it.cap||"",igCaption:it.cap||"",metrics:igpToMetrics(it)});
   r.stAt={Published:L.t};queueSave(r.id,0);igpQueuePhoto(r.id,it.id);return r;
 }
+function capParts(cap){cap=String(cap||"");const tags=Array.from(new Set((cap.match(/#[\p{L}\p{N}_]+/gu)||[])));
+  const lines=cap.split("\n");while(lines.length&&(!lines[lines.length-1].trim()||/^(\s*[#.•·]\S*\s*)+$/u.test(lines[lines.length-1])))lines.pop();
+  const body=lines.join("\n").replace(/\s+$/,"");const hook=(body.split("\n").find(l=>l.trim())||"").trim();
+  return{body,hook:hook.length>220?hook.slice(0,217)+"…":hook,tags};}
+function capToLibrary(r){const P=capParts(r.igCaption);const now=Date.now();let added=0;
+  const add=(type,text)=>{text=String(text||"").trim();if(!text)return;const ex=library.find(x=>x.type===type&&x.text===text);
+    if(ex){if(!ex.plats.includes(r.platform)||!ex.groups.includes(r.group))libEdit(ex.id,x=>{if(r.platform&&!x.plats.includes(r.platform))x.plats.push(r.platform);if(!x.groups.includes(r.group))x.groups.push(r.group);if(!x.task)x.task=r.id;x.src=x.src||"ig";},0);return;}
+    library=library.concat([{id:"lb"+now.toString(36)+Math.random().toString(36).slice(2,6),type,text:text.slice(0,4000),plats:r.platform?[r.platform]:[],groups:[r.group],fav:false,uses:0,created:now,src:"ig",task:r.id}]);added++;};
+  if(P.hook&&P.hook!==P.body)add("hook",P.hook);add("caption",P.body);if(P.tags.length)add("hashtags",P.tags.join(" "));
+  if(added)saveLib(0);return added;}
+const capSaved=r=>{const P=capParts(r.igCaption);return !!P.body&&library.some(x=>x.type==="caption"&&x.text===P.body.trim());};
+function postedCapHTML(r){if(!r.igCaption)return "";const P=capParts(r.igCaption);const saved=capSaved(r);const inDesc=String(r.desc||"").includes(P.body.trim());
+  return `<section class="d-sec cap-sec"><h3>Posted caption <span>from Instagram</span></h3>
+    <div class="cap-box">${P.body?`<p class="cap-body">${esc(P.body)}</p>`:`<p class="empty">No caption text.</p>`}
+    ${P.tags.length?`<div class="cap-tags">${P.tags.map(t=>`<span class="cap-tag">${esc(t)}</span>`).join("")}</div><p class="cap-n">${P.tags.length} hashtag${P.tags.length===1?"":"s"}</p>`:""}</div>
+    ${readOnly?"":`<div class="st-acts">${saved?`<span class="cap-ok">✓ Saved to your 📚 Library</span>`:`<button type="button" class="btn sm primary" data-capsave>📚 Save hook, caption &amp; hashtags to Library</button>`}${inDesc?"":`<button type="button" class="btn sm" data-capdesc>Copy into description</button>`}</div>`}
+  </section>`;}
 function igpReviewHTML(){
   const l=igpPending();if(!l.length)return "";
   const opt=g=>GROUPS.map(x=>`<option value="${x.key}"${x.key===g?" selected":""}>${esc(x.name)}</option>`).join("");
@@ -2382,7 +2604,7 @@ function igpSectionHTML(){
   const st=postState.err?`<p class="pipe-note warn">⚠ ${esc(postState.err)}</p>`:postState.busy?`<p class="hint" style="margin:8px 0 0">⏳ ${esc(postState.msg)} ${postState.total?`<span id="igpProg">${postState.done}/${postState.total}</span>`:""}</p>`:postState.msg?`<p class="hint" style="margin:8px 0 0">✓ ${esc(postState.msg)}</p>`:"";
   return `<section class="d-sec ig-conn"><h3>Posts &amp; Reels <span>${Object.keys(igp.items).length?Object.keys(igp.items).length+" found since Jan 2025":"not imported yet"}</span></h3>
     <p class="hint" style="margin:0 0 8px">Stats and the preview photo fill in on matching tasks (matched by post link, or by date for IG tasks). Posts from the last 30 days refresh every few hours when you open the planner, and your follower count is saved each day for the Follower growth chart.${igp.at?` Last updated ${new Date(igp.at).toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}.`:""}</p>
-    ${igPhotoQ.length||igPhotoRun?`<p class="hint" style="margin:0 0 8px">📷 Adding preview photos… ${igPhotoQ.length} to go.</p>`:""}${igPhotoNote?`<p class="pipe-note warn">⚠ ${esc(igPhotoNote)}</p>`:""}<div class="st-acts"><button class="btn sm primary" id="igpNow"${postState.busy?" disabled":""}>${postState.busy?"Working…":igp.full?"Refresh posts now":"Import posts since Jan 2025"}</button></div>${st}</section>${igpReviewHTML()}`;
+    ${igPhotoQ.length||igPhotoRun?`<p class="hint" style="margin:0 0 8px">📷 Adding preview photos… ${igPhotoQ.length} to go.</p>`:""}${igPhotoNote?`<p class="pipe-note warn">⚠ ${esc(igPhotoNote)}</p>`:""}${(()=>{const l=rows.filter(r=>r.igCaption&&!capSaved(r));return l.length&&!readOnly?`<p class="hint" style="margin:0 0 8px">${l.length} posted caption${l.length===1?" isn't":"s aren't"} in your 📚 Library yet. <button type="button" class="inline-link" id="capAll">Save them all</button> (hook, caption and hashtags, tagged IG and the task's group).</p>`:"";})()}<div class="st-acts"><button class="btn sm primary" id="igpNow"${postState.busy?" disabled":""}>${postState.busy?"Working…":igp.full?"Refresh posts now":"Import posts since Jan 2025"}</button></div>${st}</section>${igpReviewHTML()}`;
 }
 function igSectionHTML(){
   const st=igState.err?`<p class="pipe-note warn">⚠ ${esc(igState.err)}</p>`:igState.msg?`<p class="hint" style="margin:8px 0 0">${igState.busy?"⏳ ":"✓ "}${esc(igState.msg)}</p>`:"";
@@ -2421,7 +2643,7 @@ function storiesRailHTML(y,m){
 }
 function storyRowHTML(s){
   const linked=s.taskId&&rows.some(r=>r.id===s.taskId);const u=safeUrl(s.link);
-  return `<li class="st-row"><div class="st-when"><b>${fmtDate(s.date)}</b><span>${esc(s.time||"")}</span></div>
+  return `<li class="st-row"><div class="st-when">${s.image?`<img class="st-thumb" src="${esc(imgSrc(s.image))}" alt="">`:""}<b>${fmtDate(s.date)}</b><span>${esc(s.time||"")}</span></div>
     <div class="st-nums"><span><b>${fmtNum(s.views)||0}</b> views</span><span><b>${fmtNum(s.inter)||0}</b> interactions</span><span class="muted">${num(s.likes)} likes · ${num(s.replies)} replies · ${num(s.shares)} shares${num(s.profile)?" · "+num(s.profile)+" profile":""}</span>${s.desc?`<span class="st-desc">${esc(s.desc)}</span>`:""}</div>
     <div class="st-act">${u?`<a class="post-link" href="${esc(u)}" target="_blank" rel="noopener noreferrer" aria-label="Open story">&#8599;</a>`:""}${linked?`<button class="btn sm" data-opentask="${s.taskId}">Open task</button>`:readOnly?"":`<button class="btn sm" data-mktask="${s.id}">Make task</button>`}</div></li>`;
 }
@@ -2432,7 +2654,7 @@ function openSide(kind,arg){
   drawer.hidden=false;scrim.hidden=false;document.body.classList.add("locked");renderSide();
   const c=$("dClose");if(c)c.focus({preventScroll:true});
 }
-function renderSide(){const sc=($("dScroll")||{}).scrollTop||0;drawer.innerHTML=sideMode==="import"?importHTML():sideMode==="library"?libManageHTML():storiesListHTML();const n=$("dScroll");if(n)n.scrollTop=sc;}
+function renderSide(){const sc=($("dScroll")||{}).scrollTop||0;drawer.innerHTML=sideMode==="brand"?brandSideHTML():sideMode==="import"?importHTML():sideMode==="library"?libManageHTML():storiesListHTML();const n=$("dScroll");if(n)n.scrollTop=sc;}
 function storiesListHTML(){
   const {a,b,label}=sideArg||{};const l=stories.filter(s=>s.date>=a&&s.date<=b).sort((x,y)=>(y.date+(y.time||""))<(x.date+(x.time||""))?-1:1);const t=storyStats(a,b);
   return `<div class="d-top"><div class="d-crumb"><span class="code-chip p-IGS">IGS</span><span>Stories · ${esc(label||"")}</span><span class="pill t-pink">${l.length}</span></div><button class="icon-btn" id="dClose" aria-label="Close stories">&times;</button></div>
@@ -2563,6 +2785,7 @@ $("drawer").addEventListener("click",e=>{
   if(e.target.closest("#igGo")){igConnect(($("igTok")||{}).value);return;}
   if(e.target.closest("#igNow")){igSync(true);return;}
   if(e.target.closest("#igpNow")){igPosts(true);return;}
+  if(e.target.closest("#capAll")){let n=0;rows.filter(r=>r.igCaption&&!capSaved(r)).forEach(r=>{n+=capToLibrary(r);});postState=Object.assign({},postState,{err:"",msg:`Saved ${n} item${n===1?"":"s"} from your posted captions to the 📚 Library.`});renderSide();return;}
   const ia=e.target.closest("[data-igpadd]");
   if(ia){const it=igp.items[ia.dataset.igpadd];if(it){const sel=drawer.querySelector(`[data-igpgroup="${it.id}"]`);igpAdd(it,sel?sel.value:GROUPS[0].key);render();renderSide();}return;}
   const isk=e.target.closest("[data-igpskip]");
@@ -2579,7 +2802,7 @@ $("drawer").addEventListener("click",e=>{
   if(mk&&!readOnly){
     const s=stories.find(x=>x.id===mk.dataset.mktask);if(!s)return;const from=openDay;
     const g=GROUPS.some(x=>x.key===current)?current:"misc";
-    const r=newTask(g,{task:s.desc?s.desc.slice(0,80):"IG Story · "+fmtDate(s.date),date:s.date,platform:"IGS",format:"Story",status:"Published",link:s.link||"",
+    const r=newTask(g,{task:s.desc?s.desc.slice(0,80):"IG Story · "+fmtDate(s.date),date:s.date,platform:"IGS",format:s.type==="Video"?"Short video":s.type==="Photo"?"Photo":"Story",status:"Published",link:s.link||"",image:s.image||"",
       metrics:{views:s.views||null,reach:s.views||null,totalInter:s.inter||null,likes:s.likes||null,comments:s.replies||null,shares:s.shares||null,profile:s.profile||null}});
     s.taskId=r.id;saveStory(s);sideMode=null;openDay=null;dayReturn=from||null;justDup=null;render();openTask(r.id);return;
   }
@@ -3083,7 +3306,7 @@ function openTask(id){
 }
 let justDup=null;
 function closeTask(){
-  justDup=null;openId=null;openDay=null;dayReturn=null;linkReturn=[];sideMode=null;sideArg=null;libReturn=null;drawer.hidden=true;scrim.hidden=true;drawer.innerHTML="";document.body.classList.remove("locked");
+  justDup=null;openId=null;openDay=null;dayReturn=null;linkReturn=[];brReturn=null;sideMode=null;sideArg=null;libReturn=null;drawer.hidden=true;scrim.hidden=true;drawer.innerHTML="";document.body.classList.remove("locked");
   render();
   if(opener&&opener.isConnected)opener.focus({preventScroll:true});
 }
@@ -3109,6 +3332,41 @@ function linkedFromHTML(r){const bl=rows.filter(x=>x.platform==="BL"&&x.links.in
 function linkResults(r,q){q=q.trim().toLowerCase();if(!q)return "";
   const hits=rows.filter(x=>x.id!==r.id&&!r.links.includes(x.id)&&[x.task,x.dest,groupOf(x.group).name,x.platform].join(" ").toLowerCase().includes(q)).slice(0,8);
   return hits.length?hits.map(x=>{const g=groupOf(x.group);return `<li><button type="button" class="lk-open" data-linkadd="${x.id}"><span class="code-chip p-${x.platform||"none"}">${esc(x.platform||"—")}</span><span class="lk-txt"><b>${esc(x.task||"Untitled")}</b><small>${esc(g.name)}${x.date?" · "+fmtDate(x.date):""}</small></span><span class="lk-go">+ Link</span></button></li>`;}).join(""):`<li class="lk-none">No tasks match “${esc(q)}”.</li>`;}
+$("brBody").addEventListener("click",e=>{
+  const o=e.target.closest("[data-bropen]");if(o){brReturn=null;openSide("brand",o.dataset.bropen);return;}
+  const nx=e.target.closest("[data-brnext]");if(nx){const b=brands.find(x=>x.id===nx.dataset.brnext);if(b){const i=BR_ST.indexOf(b.status);brEdit(b.id,x=>{x.status=BR_ST[Math.min(BR_ST.length-1,i+1)];},0);render();}return;}
+  const f=e.target.closest("[data-brf]");if(f){brFilter=f.dataset.brf;render();const k=document.querySelector(`[data-brf="${CSS.escape(brFilter)}"]`);if(k)k.focus({preventScroll:true});return;}
+  const y=e.target.closest("[data-bry]");if(y){brYear+= +y.dataset.bry;render();return;}
+  if(e.target.closest("#brNew")||e.target.closest("#brNew2")){if(readOnly)return;const b=normBrands([{id:"br"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),status:brFilter!=="all"?brFilter:"Pitched",created:Date.now()}])[0];brands=brands.concat([b]);saveBrands(0);render();openSide("brand",b.id);const t=$("bf-name");if(t)t.focus();}
+});
+function brResults(b,q){q=q.trim().toLowerCase();if(!q)return "";const have=new Set(brTasks(b).map(x=>x.id));
+  const hits=rows.filter(x=>!have.has(x.id)&&[x.task,x.dest,groupOf(x.group).name,x.platform,x.collabWith,x.promoBrand].join(" ").toLowerCase().includes(q)).slice(0,8);
+  return hits.length?hits.map(x=>`<li><button type="button" class="lk-open" data-bradd="${x.id}"><span class="code-chip p-${x.platform||"none"}">${esc(x.platform||"—")}</span><span class="lk-txt"><b>${esc(x.task||"Untitled")}</b><small>${esc(groupOf(x.group).name)}${x.date?" · "+fmtDate(x.date):""}</small></span><span class="lk-go">+ Link</span></button></li>`).join(""):`<li class="lk-none">No tasks match “${esc(q)}”.</li>`;}
+const brCur=()=>sideMode==="brand"?brands.find(x=>x.id===sideArg):null;
+drawer.addEventListener("input",e=>{const b=brCur();if(!b||readOnly)return;const el=e.target;
+  if(el.id==="brLinkSearch"){$("brLinkResults").innerHTML=brResults(b,el.value);return;}
+  const f=el.dataset.bf;
+  if(f&&(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type!=="date"))){const v=el.value;brEdit(b.id,x=>{if(f==="handles")x.handles=v.split(/[\s,]+/).map(hNorm).filter(Boolean);else if(f==="fee"||f==="value")x[f]=v===""?null:num(v);else x[f]=v;},700);if(f==="name"){const crumbs=document.querySelectorAll(`[data-bropen="${b.id}"] .br-name`);crumbs.forEach(c=>c.textContent=v||"Untitled brand");}return;}
+  if(el.dataset.bdt!=null){const i=+el.dataset.bdt;brEdit(b.id,x=>{if(x.dels[i])x.dels[i].t=el.value;},700);}
+});
+drawer.addEventListener("change",e=>{const b=brCur();if(!b||readOnly)return;const el=e.target;const f=el.dataset.bf;
+  if(f&&(el.tagName==="SELECT"||el.type==="date")){brEdit(b.id,x=>{x[f]=el.value;},0);renderSide();render();const a=$("bf-"+f);if(a)a.focus({preventScroll:true});return;}
+  if(f){render();return;}
+  if(el.dataset.bdd!=null){const i=+el.dataset.bdd;brEdit(b.id,x=>{if(x.dels[i])x.dels[i].done=el.checked;},0);renderSide();render();return;}
+  if(el.dataset.bdu!=null){const i=+el.dataset.bdu;brEdit(b.id,x=>{if(x.dels[i])x.dels[i].due=el.value;},0);render();return;}
+  if(el.dataset.bdt!=null)render();
+});
+drawer.addEventListener("click",e=>{if(sideMode!=="brand")return;const b=brCur();
+  if(e.target.closest("#brBack")){const id=brReturn;brReturn=null;sideMode=null;sideArg=null;if(id&&rows.some(x=>x.id===id)){openId=id;renderDrawer();const c=$("dClose");if(c)c.focus({preventScroll:true});}else closeTask();return;}
+  const lg=e.target.closest("[data-linkgo]");if(lg){const id=lg.dataset.linkgo;sideMode=null;sideArg=null;brReturn=null;openId=id;renderDrawer();return;}
+  if(!b||readOnly)return;
+  if(e.target.closest("#brDelAdd")){brEdit(b.id,x=>{x.dels.push({t:"",due:"",done:false});},0);renderSide();const l=drawer.querySelectorAll("[data-bdt]");if(l.length)l[l.length-1].focus();return;}
+  const dx=e.target.closest("[data-bdx]");if(dx){const i=+dx.dataset.bdx;brEdit(b.id,x=>{x.dels.splice(i,1);},0);renderSide();render();return;}
+  const ad=e.target.closest("[data-bradd]");if(ad){brEdit(b.id,x=>{if(!x.tasks.includes(ad.dataset.bradd))x.tasks.push(ad.dataset.bradd);},0);renderSide();render();const s2=$("brLinkSearch");if(s2)s2.focus();return;}
+  const un=e.target.closest("[data-brunlink]");if(un){brEdit(b.id,x=>{x.tasks=x.tasks.filter(t=>t!==un.dataset.brunlink);},0);renderSide();render();return;}
+  const del=e.target.closest("#brDelete");if(del){if(!del.classList.contains("armed")){del.classList.add("armed");del.textContent="Tap again to delete";setTimeout(()=>{if(del.isConnected){del.classList.remove("armed");del.textContent="Delete brand";}},3500);return;}
+    brands=brands.filter(x=>x.id!==b.id);saveBrands(0);closeTask();return;}
+});
 let linkReturn=[];
 function renderDrawer(){
   const r=rows.find(x=>x.id===openId);
@@ -3126,6 +3384,7 @@ function renderDrawer(){
       <textarea class="d-title" id="dTitle" data-f="task" rows="1" placeholder="Name this task" aria-label="Task name"${dis}>${esc(r.task)}</textarea>
       ${(()=>{const o=r.copiedFrom&&rows.find(x=>x.id===r.copiedFrom);return o?`<p class="copied-from">Reused from <button class="inline-link" data-goto="${o.id}">${esc(o.task||"Untitled")}${o.platform?" · "+esc(o.platform):""}</button></p>`:"";})()}
       ${justDup===r.id?`<p class="idea-note"><b>Copy created${platOf(r.platform)?" for "+esc(platOf(r.platform).name):""}.</b> ${r.platform?"Change anything that's different for this platform.":"Pick the platform it's going to, then adjust anything that's different."}</p>`:""}
+      ${brandChipsHTML(r)}
       <div class="d-main">
         <div class="d-photo">
           ${canPhoto?`<button class="photo-btn" id="dPhotoBtn" aria-label="${r.image?"Replace":"Add"} preview photo">${photoSq(r,ps.busy?"Uploading…":(r.image?"":"Add a 1:1 preview photo"))}</button>`:photoSq(r,r.image?"":"Preview photo")}
@@ -3164,6 +3423,7 @@ function renderDrawer(){
         ${libOpen?libPickerHTML(r):""}
         ${r.platform==="BL"?blogLinksHTML(r,dis):linkedFromHTML(r)}
       </section>
+      ${postedCapHTML(r)}
 
       <section class="d-sec">
         <h3>Sub-tasks <span id="dSubCount">${s.total?s.done+" of "+s.total+" done":"None yet"}</span></h3>
@@ -3284,10 +3544,14 @@ drawer.addEventListener("submit",e=>{
 drawer.addEventListener("click",e=>{
   const r=rows.find(x=>x.id===openId);
   if(e.target.closest("#dClose")){closeTask();return;}
+  const bft=e.target.closest("[data-brfromtask]");
+  if(bft&&r){const rid=r.id;openSide("brand",bft.dataset.brfromtask);brReturn=rid;renderSide();return;}
   const lg=e.target.closest("[data-linkgo]");
   if(lg&&r){if(!rows.some(x=>x.id===lg.dataset.linkgo))return;linkReturn.push(r.id);justDup=null;openId=lg.dataset.linkgo;renderDrawer();const sc=$("dScroll");if(sc)sc.scrollTop=0;const c=$("dLinkBack");if(c)c.focus({preventScroll:true});return;}
   if(e.target.closest("#dLinkBack")){const id=linkReturn.pop();if(id&&rows.some(x=>x.id===id)){openId=id;renderDrawer();}const c=$("dLinkBack")||$("dClose");if(c)c.focus({preventScroll:true});return;}
   if(!r||readOnly)return;
+  if(e.target.closest("[data-capsave]")){const n=capToLibrary(r);renderDrawer();const ok=drawer.querySelector(".cap-ok");if(ok)ok.textContent=n?`✓ Saved ${n} item${n===1?"":"s"} to your 📚 Library`:"✓ Already in your 📚 Library";return;}
+  if(e.target.closest("[data-capdesc]")){const P=capParts(r.igCaption);const d=String(r.desc||"").trim();update(r.id,{desc:d?d+"\n\n"+r.igCaption:r.igCaption},0);renderDrawer();return;}
   const bs=e.target.closest("[data-blogsocial]");
   if(bs){update(r.id,{blogSocial:bs.dataset.blogsocial==="1"},0);renderDrawer();const f=drawer.querySelector(bs.dataset.blogsocial==="1"?"[data-burl]":"[data-blogsocial='0']");if(f)f.focus({preventScroll:true});return;}
   if(e.target.closest("[data-burladd]")){const u=(r.blogUrls.length?r.blogUrls:[""]).concat([""]);update(r.id,{blogUrls:u},0);renderDrawer();const a=drawer.querySelectorAll("[data-burl]");if(a.length)a[a.length-1].focus();return;}
