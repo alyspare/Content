@@ -399,6 +399,19 @@ h2,h3{text-wrap:balance}
 .chip .code{font-weight:700;font-size:10px;flex:none;letter-spacing:.02em}
 .chip .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .more{font-size:10.5px;color:var(--muted);padding-left:4px}
+button.more{background:none;border:0;text-align:left;font-family:inherit;cursor:pointer;padding:2px 4px;border-radius:6px}
+button.more:hover{background:var(--wash);color:var(--ink)}
+.st-more{color:var(--igs-fg)}
+button.dnum{border:0;background:none;font:inherit;font-weight:600;color:inherit;cursor:pointer}
+button.dnum:hover{background:var(--wash)}
+.day[data-daycell]{cursor:pointer}
+.day[data-daycell]:hover{box-shadow:inset 0 0 0 2px var(--line)}
+.dd-add{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.dd-live{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:-6px 0 14px}
+.dd-live .hint{margin:0}
+.dd-ico{font-size:22px;display:grid;place-items:center;width:56px}
+a.dd-link{text-decoration:none;color:var(--ink)}
+.dd-warn{font-style:normal;color:var(--warn-fg);font-weight:600}
 .legend{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-top:12px;font-size:12px;color:var(--muted)}
 .lg{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .lg-label{font-weight:700;color:var(--ink);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
@@ -2005,15 +2018,16 @@ function renderDashboard(){
     const key=ymd(dt.getFullYear(),dt.getMonth(),dt.getDate());
     const out=dt.getMonth()!==m;
     const posts=out?[]:(map[key]||[]).slice().sort((a,b)=>platRank(a.platform)-platRank(b.platform));
-    let inner=`<div class="day-top"><span class="dnum">${dt.getDate()}</span>${posts.length?`<span class="dcount">${posts.length} post${posts.length>1?"s":""}</span>`:""}</div>`;
+    let inner=`<div class="day-top"><button type="button" class="dnum" data-day="${key}" aria-label="Open everything on ${MN[dt.getMonth()]} ${dt.getDate()}">${dt.getDate()}</button>${posts.length?`<span class="dcount">${posts.length} post${posts.length>1?"s":""}</span>`:""}</div>`;
     if(!out)shootMap[key]&&shootMap[key].forEach(x=>{inner+=`<a class="chip shoot-chip" href="#${x.key}/${x.gid}" title="Shoot day · ${esc(x.name)}${x.s.time?" · "+fmt12(x.s.time):""}${x.s.loc?" · "+esc(x.s.loc):""}"><span class="code">🎬</span><span class="t">${x.s.time?fmt12(x.s.time)+" ":""}${esc(x.name)}</span></a>`;});
     posts.slice(0,3).forEach(p=>{
       const st=statOf(p.status);const pl=platOf(p.platform);
       const late=p.status==="Published"&&!hasResults(p)&&addDays(p.date,2)<=TODAY;
       inner+=`<button class="chip p-${pl?p.platform:"none"}${late?" needs-results":""}" data-open="${p.id}" title="${esc(p.task)} · ${esc(pl?pl.name:"No platform")} · ${esc(p.status)}${late?" · results not logged yet":""}"><span class="st s-${slug(st.key)}">${st.letter}</span><span class="code">${esc(p.platform||"—")}</span><span class="t">${aerTxt(p)}${esc(p.task||"Untitled")}</span></button>`;
     });
-    if(posts.length>3)inner+=`<span class="more">+${posts.length-3} more</span>`;
-    html+=`<div class="day${out?" out":""}${key===TODAY?" today":""}">${inner}</div>`;
+    if(posts.length>3)inner+=`<button type="button" class="more" data-day="${key}">+${posts.length-3} more</button>`;
+    const sn=out?0:stories.filter(x=>x.date===key).length;if(sn)inner+=`<button type="button" class="more st-more" data-day="${key}">◐ ${sn} stor${sn===1?"y":"ies"}</button>`;
+    html+=`<div class="day${out?" out":""}${key===TODAY?" today":""}"${out?"":` data-daycell="${key}"`}>${inner}</div>`;
   }
   $("calGrid").innerHTML=html;
 
@@ -2287,22 +2301,47 @@ $("yToday").addEventListener("click",()=>{yi=Math.max(0,YEARS.indexOf(now.getFul
 $("yaSeg").addEventListener("click",e=>{const b=e.target.closest("[data-yr]");if(!b)return;yRange=b.dataset.yr;renderYearAnalytics();});
 $("yaQ").addEventListener("change",e=>{yQuarter=+e.target.value;renderYearAnalytics();});
 $("yaBody").addEventListener("click",e=>{const b=e.target.closest("[data-bestby]");if(!b)return;bestBy=b.dataset.bestby;renderYearAnalytics();const f=$("yaBody").querySelector(`[data-bestby="${bestBy}"]`);if(f)f.focus({preventScroll:true});});
-document.addEventListener("click",e=>{const b=e.target.closest("[data-day]");if(b&&!drawer.contains(b))openDayPanel(b.dataset.day);});
+document.addEventListener("click",e=>{if(drawer.contains(e.target))return;const b=e.target.closest("[data-day]");if(b){openDayPanel(b.dataset.day);return;}
+  const c=e.target.closest("[data-daycell]");if(c&&!e.target.closest("[data-open],a,button,input,select"))openDayPanel(c.dataset.daycell);});
 function openDayPanel(date){
   opener=document.activeElement;openId=null;dayReturn=null;openDay=date;
   drawer.hidden=false;scrim.hidden=false;document.body.classList.add("locked");
   renderDayDrawer();if(current==="yearly")renderYearly();
   const c=$("dClose");if(c)c.focus({preventScroll:true});
 }
+let dayAddGroup=null;
 function renderDayDrawer(){
-  const list=statusRows().filter(r=>r.date===openDay).sort((a,b)=>platRank(a.platform)-platRank(b.platform));
-  const q=parts(openDay);
-  drawer.innerHTML=`<div class="d-top"><div class="d-crumb"><span>${fmtDow(openDay)}, ${MN[q.m]} ${q.d}, ${q.y}</span><span class="pill t-pink">${list.length} post${list.length===1?"":"s"}</span></div><button class="icon-btn" id="dClose" aria-label="Close day preview">&times;</button></div>
-    <div class="d-scroll" id="dScroll">${list.length?`<ul class="dd-list">${list.map(r=>{const st=statOf(r.status);return `<li><button class="dd-item" data-dayopen="${r.id}"><span>${photoSq(r)}</span><span class="dd-txt"><b>${aerTxt(r)}${esc(r.task||"Untitled")}</b><span class="g">${esc(r.platform||"—")} · ${esc(r.format||"No format")} · ${esc(groupOf(r.group).name)}${hasResults(r)?" · "+pctTxt(erOf(r.metrics))+" eng.":""}</span></span><span class="pill s-${slug(st.key)}">${esc(st.key)}</span></button></li>`;}).join("")}</ul><p class="hint">Tap a post to open its preview and details.</p>`:`<p class="empty">No posts on this day.</p>`}${dayStoriesHTML(openDay)}</div>`;
+  const D=openDay,q=parts(D);
+  const list=rows.filter(r=>r.date===D).sort((a,b)=>(a.status?0:1)-(b.status?0:1)||platRank(a.platform)-platRank(b.platform)||(a.time||"").localeCompare(b.time||""));
+  const sts=stories.filter(x=>x.date===D);
+  const shoots=allShoots().filter(x=>x.s.date===D);
+  const brDue=brands.flatMap(b=>b.dels.filter(d=>d.due===D).map(d=>({b,t:d.t||"Deliverable",done:d.done})).concat(b.due===D?[{b,t:"Post-by date",done:b.status==="Posted"||b.status==="Paid / Done"}]:[]));
+  const n=list.length+sts.length+shoots.length+brDue.length;
+  const sc=($("dScroll")||{}).scrollTop||0;
+  const row=r=>{const st=statOf(r.status);return `<li><button class="dd-item" data-dayopen="${r.id}"><span>${photoSq(r)}</span><span class="dd-txt"><b>${aerTxt(r)}${esc(r.task||"Untitled")}</b><span class="g">${r.time?fmt12(r.time)+" · ":""}${esc(r.platform||"—")} · ${esc(r.format||"No format")} · ${esc(groupOf(r.group).name)}${hasResults(r)?" · "+pctTxt(erOf(r.metrics))+" eng.":r.status==="Published"?" · <i class=\"dd-warn\">no results yet</i>":""}</span></span><span class="pill ${r.status?"s-"+slug(st.key):"s-ideation"}">${r.status?esc(st.key):"Ideation"}</span></button></li>`;};
+  const live=igConn&&IG_LIVE&&D>=addDays(TODAY,-1);
+  drawer.innerHTML=`<div class="d-top"><div class="d-crumb"><span>${fmtDow(D)}, ${MN[q.m]} ${q.d}, ${q.y}</span><span class="pill t-pink">${n} item${n===1?"":"s"}</span></div><button class="icon-btn" id="dClose" aria-label="Close day">&times;</button></div>
+    <div class="d-scroll" id="dScroll">
+      <section class="d-sec"><h3>Posts &amp; tasks <span>${list.length}</span></h3>
+        ${list.length?`<ul class="dd-list">${list.map(row).join("")}</ul><p class="hint">Tap a task to open and edit it. The back button returns you to this day.</p>`:`<p class="empty">Nothing planned on this day.</p>`}
+        ${readOnly?"":`<div class="dd-add"><select class="pick neutral" id="ddGroup" aria-label="Content group">${GROUPS.map(g=>`<option value="${g.key}"${g.key===(dayAddGroup||(GROUPS.some(x=>x.key===current)?current:"sxm"))?" selected":""}>${esc(g.name)}</option>`).join("")}</select><button type="button" class="btn sm" id="ddAdd">+ Add task on this day</button></div>`}
+      </section>
+      ${sts.length||live?`${dayStoriesHTML(D)||`<section class="d-sec"><h3>Instagram Stories <span>none yet</span></h3></section>`}`:""}
+      ${live?`<div class="dd-live"><button type="button" class="btn sm" id="ddIgNow"${igState.busy?" disabled":""}>${igState.busy?"Checking Instagram…":"↻ Check Instagram now"}</button><span class="hint">Stories from the last 24 hours update with their latest stats and preview.</span></div>${igState.err?`<p class="pipe-note warn">⚠ ${esc(igState.err)}</p>`:""}${igPhotoNote?`<p class="pipe-note warn">⚠ ${esc(igPhotoNote)}</p>`:""}`:""}
+      ${shoots.length?`<section class="d-sec"><h3>🎬 Shoot days <span>${shoots.length}</span></h3><ul class="dd-list">${shoots.map(x=>`<li><a class="dd-item dd-link" href="#${x.key}/${x.gid}" data-ddclose><span class="dd-ico">🎬</span><span class="dd-txt"><b>${esc(x.name)}</b><span class="g">${x.s.time?fmt12(x.s.time)+" · ":""}${esc(x.s.loc||groupOf(x.key).name)}</span></span><span class="pill t-plain">Open</span></a></li>`).join("")}</ul></section>`:""}
+      ${brDue.length?`<section class="d-sec"><h3>🤝 Brand deliverables <span>${brDue.length}</span></h3><ul class="dd-list">${brDue.map(x=>`<li><button class="dd-item" data-ddbrand="${x.b.id}"><span class="dd-ico">🤝</span><span class="dd-txt"><b>${esc(x.b.name||"Brand")}</b><span class="g">${esc(x.t)}</span></span><span class="pill ${x.done?"s-published":"t-pink"}">${x.done?"Done":esc(x.b.status)}</span></button></li>`).join("")}</ul></section>`:""}
+    </div>`;
+  const ns=$("dScroll");if(ns)ns.scrollTop=sc;
 }
 $("drawer").addEventListener("click",e=>{
   const d=e.target.closest("[data-dayopen]");
   if(d){dayReturn=openDay;openDay=null;openId=d.dataset.dayopen;renderDrawer();const c=$("dClose");if(c)c.focus({preventScroll:true});return;}
+  if(openDay&&!openId){
+    if(e.target.closest("#ddAdd")){const g=($("ddGroup")||{}).value||"sxm";dayAddGroup=g;const r=newTask(g,{date:openDay,status:"Idea"});dayReturn=openDay;openDay=null;openId=r.id;render();renderDrawer();const t=$("dTitle");if(t)t.focus();return;}
+    if(e.target.closest("#ddIgNow")){try{localStorage.removeItem(IG_LAST);}catch(x){}igSync(true).then(()=>{if(openDay)renderDayDrawer();});renderDayDrawer();return;}
+    const bb=e.target.closest("[data-ddbrand]");if(bb){const id=bb.dataset.ddbrand;openSide("brand",id);return;}
+    if(e.target.closest("[data-ddclose]")){closeTask();return;}
+  }
   if(e.target.closest("#dDayBack")){const day=dayReturn;dayReturn=null;justDup=null;openId=null;openDay=day;renderDayDrawer();const c=$("dClose");if(c)c.focus({preventScroll:true});}
 });
 
@@ -2448,7 +2487,7 @@ async function igSync(manual){
       const s=Object.assign({},old,{id,date:ymd(when.getFullYear(),when.getMonth(),when.getDate()),time:pad(when.getHours())+":"+pad(when.getMinutes()),
         views:mx(old.views,ins.views),reach:mx(old.reach,ins.reach),inter:mx(old.inter,ins.total_interactions),replies:mx(old.replies,ins.replies),shares:mx(old.shares,ins.shares),
         profile:mx(old.profile,ins.profile_visits),follows:mx(old.follows,ins.follows),nav:mx(old.nav,ins.navigation),link:safeUrl(st.permalink)||old.link||"",desc:old.desc||String(st.caption||"").slice(0,300),
-        type:st.media_type==="VIDEO"?"Video":st.media_type==="IMAGE"?"Photo":(old.type||""),src:"api",checked:Date.now()});
+        type:st.media_type==="VIDEO"?"Video":st.media_type==="IMAGE"?"Photo":(old.type||""),src:"api",checked:Date.now(),thumbUrl:safeUrl(st.media_type==="VIDEO"?st.thumbnail_url:(st.media_url||st.thumbnail_url))||old.thumbUrl||""});
       Object.keys(s).forEach(k=>{if(s[k]==null)delete s[k];});
       const i=stories.findIndex(x=>x.id===id);if(i>=0)stories[i]=s;else stories.push(s);await saveStory(s);n++;
       if(!s.image)await igStoryPhoto(s,safeUrl(st.media_type==="VIDEO"?st.thumbnail_url:(st.media_url||st.thumbnail_url)));else igStoryToTask(s);}
@@ -2541,7 +2580,7 @@ async function igDownload(u){if(!u||!assets)return null;let res;try{res=await fe
   if(!res.ok)return null;const raw=await res.blob();let blob=null;try{blob=await toJpeg(raw);}catch(e){blob=raw;}
   const up=await assets.upload(blob,{type:blob.type||"image/jpeg"});urlCache[up.id]=up.url;return up.id;}
 function igStoryToTask(s){if(!s.image||!s.taskId)return;const r=rows.find(x=>x.id===s.taskId);if(r&&!r.image){update(r.id,{image:s.image},0);scheduleRender();}}
-async function igStoryPhoto(s,u){try{const id=await igDownload(u);if(!id)return;const cur=stories.find(x=>x.id===s.id)||s;cur.image=id;await saveStory(cur);igStoryToTask(cur);}catch(e){}}
+async function igStoryPhoto(s,u){if(!u){igPhotoNote=igPhotoNote||"Instagram didn't include a preview image for one of your stories (this happens with some music or shared stories).";return;}try{const id=await igDownload(u);if(!id)return;const cur=stories.find(x=>x.id===s.id)||s;cur.image=id;await saveStory(cur);igStoryToTask(cur);}catch(e){igPhotoNote="A story preview couldn't be saved ("+(e&&e.message||"upload problem")+"). It will try again on the next check while the story is up.";}}
 function igpQueuePhoto(taskId,mediaId){if(!assets||!IG_LIVE||igPhotoQ.some(q=>q.t===taskId))return;igPhotoQ.push({t:taskId,m:mediaId});igpPhotoPump();}
 async function igpPhotoUrl(c,mid){
   const j=await igGet(igHost(c)+"/"+mid+"?"+igQ({fields:"media_type,media_url,thumbnail_url,children{media_type,media_url,thumbnail_url}",access_token:c.token}));
@@ -2643,7 +2682,7 @@ function storiesRailHTML(y,m){
 }
 function storyRowHTML(s){
   const linked=s.taskId&&rows.some(r=>r.id===s.taskId);const u=safeUrl(s.link);
-  return `<li class="st-row"><div class="st-when">${s.image?`<img class="st-thumb" src="${esc(imgSrc(s.image))}" alt="">`:""}<b>${fmtDate(s.date)}</b><span>${esc(s.time||"")}</span></div>
+  return `<li class="st-row"><div class="st-when">${s.image||s.thumbUrl?`<img class="st-thumb" src="${esc(s.image?imgSrc(s.image):s.thumbUrl)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:""}<b>${fmtDate(s.date)}</b><span>${esc(s.time||"")}</span></div>
     <div class="st-nums"><span><b>${fmtNum(s.views)||0}</b> views</span><span><b>${fmtNum(s.inter)||0}</b> interactions</span><span class="muted">${num(s.likes)} likes · ${num(s.replies)} replies · ${num(s.shares)} shares${num(s.profile)?" · "+num(s.profile)+" profile":""}</span>${s.desc?`<span class="st-desc">${esc(s.desc)}</span>`:""}</div>
     <div class="st-act">${u?`<a class="post-link" href="${esc(u)}" target="_blank" rel="noopener noreferrer" aria-label="Open story">&#8599;</a>`:""}${linked?`<button class="btn sm" data-opentask="${s.taskId}">Open task</button>`:readOnly?"":`<button class="btn sm" data-mktask="${s.id}">Make task</button>`}</div></li>`;
 }
@@ -3349,6 +3388,7 @@ drawer.addEventListener("input",e=>{const b=brCur();if(!b||readOnly)return;const
   if(f&&(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type!=="date"))){const v=el.value;brEdit(b.id,x=>{if(f==="handles")x.handles=v.split(/[\s,]+/).map(hNorm).filter(Boolean);else if(f==="fee"||f==="value")x[f]=v===""?null:num(v);else x[f]=v;},700);if(f==="name"){const crumbs=document.querySelectorAll(`[data-bropen="${b.id}"] .br-name`);crumbs.forEach(c=>c.textContent=v||"Untitled brand");}return;}
   if(el.dataset.bdt!=null){const i=+el.dataset.bdt;brEdit(b.id,x=>{if(x.dels[i])x.dels[i].t=el.value;},700);}
 });
+drawer.addEventListener("change",e=>{if(e.target.id==="ddGroup")dayAddGroup=e.target.value;});
 drawer.addEventListener("change",e=>{const b=brCur();if(!b||readOnly)return;const el=e.target;const f=el.dataset.bf;
   if(f&&(el.tagName==="SELECT"||el.type==="date")){brEdit(b.id,x=>{x[f]=el.value;},0);renderSide();render();const a=$("bf-"+f);if(a)a.focus({preventScroll:true});return;}
   if(f){render();return;}
